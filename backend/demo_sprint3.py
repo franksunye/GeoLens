@@ -15,21 +15,20 @@ import json
 from datetime import datetime
 
 # 导入我们的分析模块
-from app.services.crawler import HTMLCrawler, ContentExtractor, AntiBot
+from app.services.content_processing import ContentExtractor
 from app.services.analysis import ContentAnalyzer, KeywordAnalyzer, GEOScorer, EntityExtractor
 
 
-async def demo_crawler():
-    """演示网页爬虫功能"""
-    print("🕷️  演示网页爬虫功能")
+async def demo_content_processing():
+    """演示内容处理功能"""
+    print("📝 演示内容处理功能")
     print("=" * 50)
-    
-    # 初始化爬虫
-    crawler = HTMLCrawler(timeout=10, max_retries=2)
+
+    # 初始化内容处理器
     content_extractor = ContentExtractor()
     
-    # 模拟HTML内容（避免实际网络请求）
-    sample_html = """
+    # 模拟用户输入的内容（专注GEO分析）
+    sample_content = """
     <html>
         <head>
             <title>数字营销策略指南 - 提升SEO效果的完整教程</title>
@@ -54,8 +53,8 @@ async def demo_crawler():
     </html>
     """
     
-    # 提取内容
-    extracted_content = content_extractor.extract(sample_html, "https://example.com")
+    # 处理内容
+    extracted_content = content_extractor.extract(sample_content, "https://example.com")
     
     print(f"📄 标题: {extracted_content.title}")
     print(f"📝 Meta描述: {extracted_content.meta_description}")
@@ -254,37 +253,7 @@ def demo_geo_scoring(analysis_result, keyword_analysis):
     return geo_score
 
 
-def demo_anti_bot():
-    """演示反爬虫策略功能"""
-    print("🛡️  演示反爬虫策略功能")
-    print("=" * 50)
-    
-    # 初始化反爬虫处理器
-    anti_bot = AntiBot()
-    
-    # 演示用户代理池
-    print("🔄 用户代理池:")
-    print(f"  - 桌面端UA: {anti_bot.user_agent_pool.get_random_desktop()[:50]}...")
-    print(f"  - 移动端UA: {anti_bot.user_agent_pool.get_random_mobile()[:50]}...")
-    print()
-    
-    # 演示请求头生成
-    headers = anti_bot.get_headers("https://example.com")
-    print("📋 生成的请求头:")
-    for key, value in list(headers.items())[:5]:  # 显示前5个
-        print(f"  - {key}: {value[:50]}...")
-    print()
-    
-    # 演示延迟计算
-    delay = anti_bot.calculate_delay("https://example.com")
-    print(f"⏱️  计算的延迟时间: {delay:.2f} 秒")
-    print()
-    
-    # 演示反爬虫检测
-    sample_html = "Please solve the captcha below to continue"
-    measures = anti_bot.detect_anti_bot_measures(sample_html, 200, {})
-    print(f"🚨 检测到的反爬虫措施: {measures}")
-    print()
+# 移除反爬虫演示功能，专注GEO分析
 
 
 async def main():
@@ -295,8 +264,8 @@ async def main():
     print()
     
     try:
-        # 1. 演示网页爬虫
-        extracted_content = await demo_crawler()
+        # 1. 演示内容处理
+        extracted_content = await demo_content_processing()
         
         # 2. 演示内容分析
         analysis_result = demo_content_analysis(extracted_content)
@@ -310,18 +279,17 @@ async def main():
         # 5. 演示GEO评分
         geo_score = demo_geo_scoring(analysis_result, keyword_analysis)
         
-        # 6. 演示反爬虫策略
-        demo_anti_bot()
+        # 专注GEO分析，移除反爬虫演示
         
         print("✅ Sprint 3 功能演示完成!")
         print("=" * 60)
         print("🎯 主要功能:")
-        print("  ✅ 网页爬虫系统")
-        print("  ✅ 内容分析引擎")
-        print("  ✅ 关键词分析")
+        print("  ✅ 内容处理系统")
+        print("  ✅ GEO分析引擎")
+        print("  ✅ 关键词相关性分析")
         print("  ✅ 实体提取")
         print("  ✅ GEO评分算法")
-        print("  ✅ 反爬虫策略")
+        print("  ✅ AI友好度评估")
         print()
         print("📊 分析结果摘要:")
         print(f"  - GEO评分: {geo_score.overall_score:.1f}/100 ({geo_score.get_grade()})")

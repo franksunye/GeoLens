@@ -7,7 +7,7 @@ from typing import Dict, List, Optional
 from dataclasses import dataclass
 from collections import Counter
 
-from ..crawler.content_extractor import ExtractedContent
+from ..content_processing.content_extractor import ExtractedContent
 
 
 @dataclass

@@ -80,44 +80,15 @@ class BatchAnalysisResponse(BaseModel):
     analysis_time: float
 router = APIRouter()
 
-# 延迟初始化服务以避免导入错误
-crawler = None
-content_extractor = None
-anti_bot = None
-content_analyzer = None
-keyword_analyzer = None
-geo_scorer = None
-entity_extractor = None
+# 初始化分析服务
+from app.services.content_processing import ContentExtractor
+from app.services.analysis import ContentAnalyzer, KeywordAnalyzer, GEOScorer, EntityExtractor
 
-def get_services():
-    """获取服务实例"""
-    global crawler, content_extractor, anti_bot, content_analyzer, keyword_analyzer, geo_scorer, entity_extractor
-
-    if crawler is None:
-        try:
-            from app.services.crawler import HTMLCrawler, ContentExtractor, AntiBot
-            from app.services.analysis import ContentAnalyzer, KeywordAnalyzer, GEOScorer, EntityExtractor
-
-            crawler = HTMLCrawler()
-            content_extractor = ContentExtractor()
-            anti_bot = AntiBot()
-            content_analyzer = ContentAnalyzer()
-            keyword_analyzer = KeywordAnalyzer()
-            geo_scorer = GEOScorer()
-            entity_extractor = EntityExtractor()
-        except ImportError as e:
-            # 如果导入失败，返回模拟服务
-            pass
-
-    return {
-        'crawler': crawler,
-        'content_extractor': content_extractor,
-        'anti_bot': anti_bot,
-        'content_analyzer': content_analyzer,
-        'keyword_analyzer': keyword_analyzer,
-        'geo_scorer': geo_scorer,
-        'entity_extractor': entity_extractor
-    }
+content_extractor = ContentExtractor()
+content_analyzer = ContentAnalyzer()
+keyword_analyzer = KeywordAnalyzer()
+geo_scorer = GEOScorer()
+entity_extractor = EntityExtractor()
 
 
 @router.get("/health")
@@ -125,28 +96,25 @@ async def health_check():
     """
     健康检查
 
-    检查分析服务的可用性。
+    检查GEO分析服务的可用性。
     """
     try:
-        services = get_services()
-
-        # 检查服务是否可用
-        services_status = {}
-        for service_name, service in services.items():
-            if service is not None:
-                services_status[service_name] = "healthy"
-            else:
-                services_status[service_name] = "unavailable"
-
-        overall_status = "healthy" if all(status == "healthy" for status in services_status.values()) else "degraded"
+        # 检查各个分析服务是否可用
+        services_status = {
+            "content_extractor": "healthy",
+            "content_analyzer": "healthy",
+            "keyword_analyzer": "healthy",
+            "geo_scorer": "healthy",
+            "entity_extractor": "healthy"
+        }
 
         return JSONResponse(
             status_code=200,
             content={
-                "status": overall_status,
+                "status": "healthy",
                 "services": services_status,
                 "timestamp": "2024-06-03T12:00:00Z",
-                "version": "3.0.0-sprint3"
+                "version": "3.0.0-sprint3-geo-focused"
             }
         )
 
@@ -167,42 +135,69 @@ async def analyze_content(
     current_user: User = Depends(get_current_user)
 ):
     """
-    分析网页内容 (简化版本)
+    GEO内容分析
+
+    分析内容的AI友好度和GEO优化潜力。
     """
     try:
-        # 返回模拟的分析结果
-        return AnalysisResponse(
-            url=request.url or "",
-            content_analysis={
-                "seo_analysis": {"overall_score": 0.8},
-                "readability_analysis": {"readability_score": 0.7},
-                "structure_analysis": {"structure_score": 0.9},
-                "content_quality_score": 0.8,
-                "recommendations": ["Optimize title length", "Add more internal links"],
-                "overall_score": 0.8
-            },
-            keyword_analysis={
-                "target_keywords": [],
-                "discovered_keywords": [],
-                "overall_keyword_score": 0.7
-            },
-            entity_analysis={
-                "brands": [],
-                "technologies": [],
-                "total_entities": 0
-            },
-            extracted_content={
-                "title": request.title or "Sample Title",
-                "main_content": request.content or "Sample content",
-                "word_count": 500,
-                "reading_time": 3
-            }
+        # 处理内容输入
+        if request.content:
+            # 直接使用提供的内容
+            content_text = request.content
+        elif request.url:
+            # 如果提供URL但没有内容，返回错误要求用户提供内容
+            raise HTTPException(
+                status_code=400,
+                detail="Please provide content text for analysis. URL-only input is not supported in GEO-focused mode."
+            )
+        else:
+            raise HTTPException(
+                status_code=400,
+                detail="Either content or URL must be provided"
+            )
+
+        # 使用ContentExtractor处理内容
+        extracted_content = content_extractor.extract(content_text, request.url or "")
+        if request.title:
+            extracted_content.title = request.title
+        if request.meta_description:
+            extracted_content.meta_description = request.meta_description
+
+        # 执行内容分析
+        content_analysis = content_analyzer.analyze(
+            extracted_content,
+            request.target_keywords or []
         )
 
+        # 执行关键词分析
+        keyword_analysis = keyword_analyzer.analyze(
+            extracted_content.main_content,
+            extracted_content.title,
+            extracted_content.meta_description,
+            extracted_content.headings,
+            request.target_keywords or []
+        )
+
+        # 执行实体提取
+        entity_result = entity_extractor.extract(
+            extracted_content.main_content,
+            request.brand_keywords or []
+        )
+
+        return AnalysisResponse(
+            url=request.url or "",
+            content_analysis=content_analysis,
+            keyword_analysis=keyword_analysis,
+            entity_analysis=entity_result,
+            extracted_content=extracted_content
+        )
+
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(
             status_code=500,
-            detail=f"Analysis failed: {str(e)}"
+            detail=f"GEO analysis failed: {str(e)}"
         )
 
 
@@ -212,41 +207,44 @@ async def calculate_geo_score(
     current_user: User = Depends(get_current_user)
 ):
     """
-    计算GEO评分 (简化版本)
+    计算GEO评分
+
+    基于内容AI友好度计算生成式引擎优化评分。
     """
     try:
-        # 返回模拟的GEO评分结果
+        # 首先进行内容分析
+        analysis_request = AnalysisRequest(
+            url=request.url,
+            content=request.content,
+            title=request.title,
+            meta_description=request.meta_description,
+            target_keywords=request.target_keywords,
+            brand_keywords=request.brand_keywords
+        )
+
+        analysis_response = await analyze_content(analysis_request, current_user)
+
+        # 计算GEO评分
+        geo_score = geo_scorer.calculate_score(
+            analysis_response.content_analysis,
+            analysis_response.keyword_analysis,
+            request.url or "",
+            request.previous_scores or []
+        )
+
         return GEOScoreResponse(
             url=request.url or "",
-            geo_score={
-                "overall_score": 75.5,
-                "grade": "B",
-                "visibility_estimate": "Good - Moderate to high search visibility",
-                "category_scores": {
-                    "content_quality": 80.0,
-                    "seo_technical": 70.0,
-                    "keyword_optimization": 75.0,
-                    "user_experience": 78.0
-                },
-                "factors": {
-                    "content_quality": 0.8,
-                    "title_optimization": 0.7,
-                    "keyword_relevance": 0.75
-                },
-                "recommendations": [
-                    "Optimize title length",
-                    "Add more internal links",
-                    "Improve meta description"
-                ],
-                "last_updated": "2024-06-03T12:00:00Z"
-            },
+            geo_score=geo_score,
             analysis_summary={
-                "content_quality": 0.8,
-                "seo_score": 0.7,
-                "keyword_score": 0.75
+                "content_quality": analysis_response.content_analysis.content_quality_score,
+                "ai_friendliness": analysis_response.content_analysis.seo_analysis.overall_score(),
+                "keyword_relevance": analysis_response.keyword_analysis.overall_keyword_score,
+                "entity_count": analysis_response.entity_analysis.get_entity_count()
             }
         )
 
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(
             status_code=500,
