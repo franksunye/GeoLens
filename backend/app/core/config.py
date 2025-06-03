@@ -43,8 +43,19 @@ class Settings(BaseSettings):
     celery_result_backend: str = Field(default="redis://localhost:6379/0", env="CELERY_RESULT_BACKEND")
     
     # AI Services
-    openai_api_key: Optional[str] = Field(default=None, env="OPENAI_API_KEY")
-    perplexity_api_key: Optional[str] = Field(default=None, env="PERPLEXITY_API_KEY")
+    doubao_api_key: Optional[str] = Field(default=None, env="DOUBAO_API_KEY")
+    doubao_base_url: str = Field(default="https://ark.cn-beijing.volces.com/api/v3", env="DOUBAO_BASE_URL")
+    doubao_default_model: str = Field(default="doubao-pro-32k", env="DOUBAO_DEFAULT_MODEL")
+
+    deepseek_api_key: Optional[str] = Field(default=None, env="DEEPSEEK_API_KEY")
+    deepseek_base_url: str = Field(default="https://api.deepseek.com", env="DEEPSEEK_BASE_URL")
+    deepseek_default_model: str = Field(default="deepseek-chat", env="DEEPSEEK_DEFAULT_MODEL")
+
+    # AI Service General Settings
+    ai_request_timeout: int = Field(default=30, env="AI_REQUEST_TIMEOUT")
+    ai_max_retries: int = Field(default=3, env="AI_MAX_RETRIES")
+    ai_retry_delay: float = Field(default=1.0, env="AI_RETRY_DELAY")
+    default_ai_provider: str = Field(default="doubao", env="DEFAULT_AI_PROVIDER")
     
     # External Services
     sentry_dsn: Optional[str] = Field(default=None, env="SENTRY_DSN")

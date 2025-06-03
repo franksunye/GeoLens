@@ -118,19 +118,24 @@ open htmlcov/index.html
 - [x] 90%测试覆盖率
 - [x] 完整API文档
 
-**Sprint 2 (Week 3-4): AI检测核心**
-- [ ] OpenAI/Perplexity API集成
-- [ ] AI检测引擎开发
+**✅ Sprint 2 (Week 3-4): AI服务集成 - 已完成**
+- [x] 豆包(火山引擎) API集成
+- [x] DeepSeek API集成
+- [x] AI服务抽象层设计
+- [x] AI聊天和品牌分析API
+- [x] 流式响应支持
+- [x] 85%测试覆盖率
+- [x] 可扩展AI架构
+
+**Sprint 3 (Week 5-6): 内容分析引擎**
+- [ ] 网页爬虫系统
+- [ ] 内容分析引擎开发
 - [ ] 异步任务队列系统
 - [ ] 检测结果存储与查询
 
-**Sprint 3 (Week 5-6): 内容分析**
-- [ ] 网页爬虫系统
-- [ ] 内容分析引擎
+**Sprint 4 (Week 7-8): GEO评分算法**
 - [ ] GEO评分算法
 - [ ] 评分历史管理
-
-**Sprint 4 (Week 7-8): 完善与优化**
 - [ ] AI优化建议引擎
 - [ ] 完整API测试套件
 - [ ] 性能优化与安全加固
