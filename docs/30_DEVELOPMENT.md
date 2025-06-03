@@ -18,75 +18,112 @@
 
 ## 🚀 快速开始
 
-### 1. 克隆项目
+### 开发策略：后端优先
+
+本项目采用**后端优先**的开发策略，确保核心业务逻辑的稳定性和可测试性。
+
+### Phase 1: 后端开发环境搭建
+
+#### 1. 克隆项目
 ```bash
 git clone https://github.com/franksunye/GeoLens.git
 cd GeoLens
 ```
 
-### 2. 环境配置
-```bash
-# 复制环境变量模板
-cp .env.example .env.local
-
-# 编辑环境变量
-nano .env.local
-```
-
-### 3. 前端开发环境
-```bash
-# 安装依赖
-npm install
-
-# 启动开发服务器
-npm run dev
-
-# 访问 http://localhost:3000
-```
-
-### 4. 后端开发环境
+#### 2. 后端环境配置
 ```bash
 # 创建虚拟环境
 python -m venv venv
 source venv/bin/activate  # Windows: venv\Scripts\activate
 
 # 安装依赖
-pip install -r requirements.txt
+pip install -r backend/requirements.txt
 
+# 复制环境变量模板
+cp backend/.env.example backend/.env
+
+# 编辑环境变量
+nano backend/.env
+```
+
+#### 3. 数据库设置
+```bash
+# 使用Supabase或本地PostgreSQL
+# 在.env中配置数据库连接
+
+# 运行数据库迁移
+cd backend
+alembic upgrade head
+```
+
+#### 4. 启动后端服务
+```bash
 # 启动开发服务器
-uvicorn main:app --reload --port 8000
+cd backend
+uvicorn app.main:app --reload --port 8000
 
-# 访问 http://localhost:8000/docs
+# 访问API文档: http://localhost:8000/docs
+# 访问ReDoc文档: http://localhost:8000/redoc
+```
+
+#### 5. 运行后端测试
+```bash
+# 运行所有测试
+pytest
+
+# 运行测试并生成覆盖率报告
+pytest --cov=app --cov-report=html
+
+# 查看覆盖率报告
+open htmlcov/index.html
 ```
 
 ---
 
-## 📁 项目结构
+## 📁 项目结构 (后端优先)
 
 ```
 GeoLens/
-├── frontend/                 # Next.js 前端应用
-│   ├── src/
-│   │   ├── app/             # App Router 页面
-│   │   ├── components/      # 可复用组件
-│   │   ├── hooks/           # 自定义 Hooks
-│   │   ├── lib/             # 工具函数
-│   │   ├── store/           # 状态管理
-│   │   └── types/           # TypeScript 类型定义
-│   ├── public/              # 静态资源
-│   └── package.json
-├── backend/                  # FastAPI 后端应用
+├── backend/                  # 🔥 Phase 1: 后端应用 (优先开发)
 │   ├── app/
-│   │   ├── api/             # API 路由
+│   │   ├── main.py          # FastAPI 应用入口
+│   │   ├── api/             # API 路由模块
+│   │   │   ├── v1/          # API v1 版本
+│   │   │   │   ├── auth.py      # 认证相关API
+│   │   │   │   ├── projects.py  # 项目管理API
+│   │   │   │   ├── mentions.py  # AI检测API
+│   │   │   │   ├── geo.py       # GEO评分API
+│   │   │   │   └── suggestions.py # 优化建议API
 │   │   ├── core/            # 核心配置
+│   │   │   ├── config.py    # 应用配置
+│   │   │   ├── security.py  # 安全相关
+│   │   │   └── deps.py      # 依赖注入
 │   │   ├── models/          # 数据模型
-│   │   ├── services/        # 业务逻辑
-│   │   └── utils/           # 工具函数
+│   │   │   ├── user.py      # 用户模型
+│   │   │   ├── project.py   # 项目模型
+│   │   │   └── mention.py   # 检测记录模型
+│   │   ├── schemas/         # Pydantic 模式
+│   │   ├── services/        # 业务逻辑层
+│   │   │   ├── auth.py      # 认证服务
+│   │   │   ├── ai_detection.py # AI检测服务
+│   │   │   ├── geo_scoring.py  # GEO评分服务
+│   │   │   └── web_scraper.py  # 网页爬虫服务
+│   │   ├── utils/           # 工具函数
+│   │   └── workers/         # Celery 任务
 │   ├── tests/               # 测试文件
-│   └── requirements.txt
-├── docs/                     # 项目文档
-├── scripts/                  # 部署脚本
-└── docker-compose.yml        # Docker 配置
+│   │   ├── unit/            # 单元测试
+│   │   ├── integration/     # 集成测试
+│   │   └── conftest.py      # 测试配置
+│   ├── alembic/             # 数据库迁移
+│   ├── requirements.txt     # Python 依赖
+│   ├── .env.example         # 环境变量模板
+│   └── Dockerfile           # Docker 配置
+├── frontend/                 # 📋 Phase 2: 前端应用 (后续开发)
+│   ├── src/                 # (后端完成后开发)
+│   └── package.json
+├── docs/                     # 📚 项目文档
+├── scripts/                  # 🔧 部署脚本
+└── docker-compose.yml        # 🐳 Docker 配置
 ```
 
 ---
