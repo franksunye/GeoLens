@@ -93,7 +93,7 @@ open htmlcov/index.html
 - **缓存**: Redis
 - **队列**: Celery + Redis
 - **AI集成**: OpenAI GPT-4 API, 豆包API, DeepSeek API
-- **网页爬虫**: httpx + BeautifulSoup4 + lxml
+- **内容处理**: 智能文本解析和结构化分析
 - **GEO分析**: 自研GEO评分算法、内容AI友好度分析、实体提取
 - **测试**: pytest + pytest-cov (87% 覆盖率)
 - **文档**: OpenAPI (Swagger) 自动生成
@@ -137,7 +137,7 @@ open htmlcov/index.html
 - [x] 可扩展AI架构
 
 **Sprint 3 (Week 5-6): GEO分析引擎** ✅ 已完成
-- [x] 网页内容爬虫系统 (HTMLCrawler + AntiBot)
+- [x] 内容输入和处理系统 (支持文本、URL、文档输入)
 - [x] GEO评分算法 (GEOScorer - 专有的生成式引擎优化评分)
 - [x] 内容AI友好度分析 (ContentAnalyzer + KeywordAnalyzer)
 - [x] 实体提取系统 (EntityExtractor - 品牌和技术实体识别)

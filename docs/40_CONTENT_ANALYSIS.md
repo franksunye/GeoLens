@@ -10,14 +10,13 @@ GEO分析引擎是GeoLens平台的核心组件，专注于GEO (Generative Engine
 
 ```
 app/services/
-├── crawler/                 # 网页爬虫模块
-│   ├── base.py             # 抽象基类和数据结构
-│   ├── html_crawler.py     # HTML爬虫实现
-│   ├── content_extractor.py # 内容提取器
-│   └── anti_bot.py         # 反爬虫策略
-└── analysis/               # 内容分析模块
-    ├── content_analyzer.py  # 内容综合分析
-    ├── keyword_analyzer.py  # 关键词分析
+├── content/                 # 内容处理模块
+│   ├── input_handler.py    # 内容输入处理
+│   ├── content_extractor.py # 内容解析和清洗
+│   └── format_processor.py # 格式标准化处理
+└── analysis/               # GEO分析模块
+    ├── content_analyzer.py  # 内容AI友好度分析
+    ├── keyword_analyzer.py  # 关键词相关性分析
     ├── entity_extractor.py  # 实体提取
     └── geo_scorer.py       # GEO评分算法
 ```
@@ -25,58 +24,60 @@ app/services/
 ### 数据流
 
 ```
-URL输入 → 网页爬取 → 内容提取 → AI友好度分析 → GEO评分 → 优化建议
+内容输入 → 格式处理 → 内容解析 → AI友好度分析 → GEO评分 → 优化建议
 ```
 
-## 🕷️ 网页爬虫系统
+## 📝 内容输入和处理系统
 
-### HTMLCrawler
+### InputHandler
 
-异步HTML爬虫，支持：
-- 重试机制（指数退避）
-- 反爬虫策略
-- 批量处理
-- 错误分类处理
+多种内容输入方式支持：
+- 文本直接粘贴
+- URL内容获取
+- 文档文件上传
+- 批量内容处理
 
 ```python
-crawler = HTMLCrawler(
-    timeout=30,
-    max_retries=3,
-    follow_redirects=True
-)
+input_handler = InputHandler()
 
-result = await crawler.crawl("https://example.com")
+# 文本输入
+content = input_handler.process_text(text_content)
+
+# URL输入
+content = await input_handler.process_url("https://example.com")
+
+# 文档上传
+content = input_handler.process_document(file_path)
 ```
 
 ### ContentExtractor
 
-智能内容提取器，提取：
-- 页面标题和Meta信息
-- 主要内容文本
-- 标题层级结构
-- 链接和图片
-- Schema.org结构化数据
+智能内容解析器，处理：
+- 多种格式内容解析
+- 文本清洗和标准化
+- 结构化信息提取
+- 元数据提取
+- 内容质量评估
 
-### AntiBot
+### FormatProcessor
 
-反爬虫策略处理：
-- 用户代理轮换（桌面端/移动端）
-- 请求频率控制
-- 域名状态管理
-- 反爬虫措施检测
+格式标准化处理：
+- 统一内容格式
+- 编码标准化
+- 结构化数据处理
+- 内容完整性验证
 
-## 📊 内容分析引擎
+## 📊 GEO分析引擎
 
 ### ContentAnalyzer
 
-综合内容分析器，提供三大分析维度：
+内容AI友好度分析器，提供三大分析维度：
 
-#### 1. SEO分析
-- **标题优化**: 长度评分（30-60字符最佳）
-- **Meta描述**: 长度评分（120-160字符最佳）
-- **标题结构**: H1唯一性、层级合理性
-- **Schema.org**: 结构化数据检测
-- **图片优化**: Alt文本完整性
+#### 1. AI理解友好度分析
+- **语义清晰度**: 内容是否易于AI理解和解析
+- **结构化程度**: 信息组织的逻辑性和层次性
+- **权威性指标**: 内容的可信度和专业性评估
+- **概念完整性**: 关键概念的明确定义和表达
 
 #### 2. 可读性分析
 - **Flesch Reading Ease**: 标准可读性评分算法
