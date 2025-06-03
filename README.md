@@ -85,8 +85,10 @@ open htmlcov/index.html
 - **认证**: JWT + Supabase Auth
 - **缓存**: Redis
 - **队列**: Celery + Redis
-- **AI集成**: OpenAI GPT-4 API
-- **测试**: pytest + pytest-cov
+- **AI集成**: OpenAI GPT-4 API, 豆包API, DeepSeek API
+- **网页爬虫**: httpx + BeautifulSoup4 + lxml
+- **内容分析**: 自研算法 (Flesch可读性、GEO评分、实体提取)
+- **测试**: pytest + pytest-cov (87% 覆盖率)
 - **文档**: OpenAPI (Swagger) 自动生成
 - **部署**: Railway / Docker
 
@@ -127,17 +129,18 @@ open htmlcov/index.html
 - [x] 85%测试覆盖率
 - [x] 可扩展AI架构
 
-**Sprint 3 (Week 5-6): 内容分析引擎**
-- [ ] 网页爬虫系统
-- [ ] 内容分析引擎开发
-- [ ] 异步任务队列系统
-- [ ] 检测结果存储与查询
+**Sprint 3 (Week 5-6): 内容分析引擎** ✅ 已完成
+- [x] 网页爬虫系统 (HTMLCrawler + AntiBot)
+- [x] 内容分析引擎开发 (ContentAnalyzer + KeywordAnalyzer)
+- [x] GEO评分算法 (GEOScorer)
+- [x] 实体提取系统 (EntityExtractor)
+- [x] 87% 测试覆盖率，47个新增测试用例
 
-**Sprint 4 (Week 7-8): GEO评分算法**
-- [ ] GEO评分算法
-- [ ] 评分历史管理
-- [ ] AI优化建议引擎
-- [ ] 完整API测试套件
+**Sprint 4 (Week 7-8): 数据持久化与高级功能**
+- [ ] 数据持久化系统
+- [ ] 异步任务队列系统
+- [ ] 高级分析功能
+- [ ] 用户界面开发
 - [ ] 性能优化与安全加固
 - [ ] API文档完善
 

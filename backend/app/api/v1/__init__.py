@@ -3,7 +3,7 @@ API v1 package initialization.
 """
 from fastapi import APIRouter
 
-from app.api.v1 import auth, projects, ai
+from app.api.v1 import auth, projects, ai, analysis
 
 api_router = APIRouter()
 
@@ -24,4 +24,10 @@ api_router.include_router(
     ai.router,
     prefix="/ai",
     tags=["ai-services"]
+)
+
+api_router.include_router(
+    analysis.router,
+    prefix="/analysis",
+    tags=["content-analysis"]
 )
