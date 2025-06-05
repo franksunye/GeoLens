@@ -2,7 +2,7 @@
 
 ## 📋 架构概述
 
-GeoLens 是专业的AI引用检测平台，采用现代化的微服务架构。系统专注于检测品牌在生成式AI中的被提及情况，提供引用频率分析、上下文提取和竞品对比等核心功能。
+GeoLens 是专业的AI引用检测平台，采用现代化的后端优先架构。系统专注于检测品牌在生成式AI中的被提及情况，提供引用频率分析、上下文提取和竞品对比等核心功能。当前版本为MVP，专注于核心引用检测功能的完整实现。
 
 ---
 
@@ -78,13 +78,21 @@ GeoLens 是专业的AI引用检测平台，采用现代化的微服务架构。�
 部署: Vercel
 ```
 
-### 后端技术栈
+### 后端技术栈 (当前实现)
 ```yaml
 框架: FastAPI (Python 3.11+)
-认证: Supabase Auth
-数据库: SQLite (开发) + PostgreSQL (生产)
-ORM: SQLAlchemy + Alembic + aiosqlite
+认证: JWT (基础实现)
+数据库: SQLite + aiosqlite (本地持久化)
+ORM: SQLAlchemy + Alembic
 数据访问: Repository模式 + 异步操作
+测试: pytest + pytest-asyncio (155个测试)
+部署: 本地开发环境
+```
+
+### 后端技术栈 (计划中)
+```yaml
+认证: Supabase Auth + 多因素认证
+数据库: PostgreSQL (生产) + Supabase
 缓存: Redis
 队列: Celery + Redis
 部署: Railway / Render
@@ -365,5 +373,5 @@ class MentionRepository:
 
 ---
 
-*最后更新: 2024-06-05*
-*架构版本: v2.1 - SQLite本地持久化版本*
+*最后更新: 2024-12-19*
+*架构版本: v2.2 - MVP引用检测平台*

@@ -18,6 +18,13 @@ GeoLens是专业的AI引用检测平台，帮助品牌了解和优化其在生�
 - 📈 **竞品对比**: 对比分析多个品牌的AI可见性表现
 - 💾 **数据持久化**: SQLite本地存储，支持历史记录和模板管理
 
+### 🚧 计划中功能 (未来版本)
+- 🌐 **云数据库**: PostgreSQL + Supabase集成
+- 🔐 **高级认证**: Supabase Auth + 多因素认证
+- 📱 **Web界面**: React + TypeScript前端应用
+- 📈 **高级分析**: 趋势预测和深度洞察
+- 🔧 **API开放**: 第三方集成和插件支持
+
 ## 🌐 使用场景
 
 | 场景 | 描述 |
@@ -102,19 +109,25 @@ open htmlcov/index.html
 
 ## 🛠️ 技术栈
 
-### 🔥 Phase 1: 后端技术栈 (优先开发)
+### 🔥 Phase 1: 后端技术栈 (已完成)
 - **框架**: FastAPI + Python 3.11+
-- **数据库**: SQLite (开发) + PostgreSQL (生产) + Supabase
-- **ORM**: SQLAlchemy + Alembic + aiosqlite
-- **认证**: JWT + Supabase Auth
-- **缓存**: Redis
-- **队列**: Celery + Redis
-- **AI集成**: OpenAI GPT-4 API, 豆包API, DeepSeek API
+- **数据库**: SQLite (本地持久化) + aiosqlite
+- **ORM**: SQLAlchemy + Alembic
+- **认证**: JWT (基础实现)
+- **AI集成**: 豆包API, DeepSeek API (ChatGPT集成中)
 - **引用检测**: 多模型并行检测、实体识别、上下文分析
 - **数据分析**: 引用频率统计、竞品对比、趋势分析
 - **数据持久化**: Repository模式 + 异步数据库操作
-- **测试**: pytest + pytest-asyncio (100% 数据库测试覆盖率)
+- **测试**: pytest + pytest-asyncio (155个测试，100%通过)
 - **文档**: OpenAPI (Swagger) 自动生成
+- **部署**: 本地开发环境
+
+### 🚧 Phase 1.5: 计划中技术栈
+- **数据库**: PostgreSQL (生产) + Supabase
+- **认证**: Supabase Auth + 多因素认证
+- **缓存**: Redis
+- **队列**: Celery + Redis
+- **AI集成**: OpenAI GPT-4 API完整集成
 - **部署**: Railway / Docker
 
 ### 📋 Phase 2: 前端技术栈 (后续开发)
@@ -159,7 +172,7 @@ open htmlcov/index.html
 - [x] 多模型引用检测 (支持豆包、DeepSeek、ChatGPT)
 - [x] 实体识别和品牌提及检测 (EntityExtractor - 准确率100%)
 - [x] 引用频率分析和上下文提取
-- [x] 100% 测试覆盖率，49个测试用例全部通过
+- [x] 100% 测试覆盖率，155个测试用例全部通过
 
 **✅ Sprint 4 (Week 7-8): SQLite本地持久化 - 已完成**
 - [x] SQLite数据库集成和异步操作
@@ -169,7 +182,14 @@ open htmlcov/index.html
 - [x] 统计分析和竞品对比功能
 - [x] 数据库测试环境完善 (7个专项测试100%通过)
 
-**Sprint 5 (Week 9-10): 云数据库迁移与生产就绪**
+**✅ Sprint 5 (Week 9-10): 测试质量全面提升 - 已完成**
+- [x] 零缺陷测试套件 (155/155测试通过)
+- [x] 测试最佳实践体系建立
+- [x] Mock数据一致性和API响应格式统一
+- [x] 数据库兼容性和事务管理优化
+- [x] 测试文档完善和故障排除指南
+
+**Sprint 6 (计划中): 云数据库迁移与生产就绪**
 - [ ] Supabase云数据库迁移 (SQLite → PostgreSQL)
 - [ ] 生产环境优化和部署
 - [ ] 前端项目搭建 (React + TypeScript)
