@@ -66,7 +66,7 @@ echo "=================================="
 echo ""
 echo "📡 Phase 1: AI连通性测试"
 echo "------------------------"
-pytest tests/e2e/test_real_ai_connectivity.py -v --tb=short -s || {
+pytest tests/e2e/test_real_ai_connectivity.py -v --tb=short -s --asyncio-mode=auto || {
     echo "❌ AI连通性测试失败"
     exit 1
 }
@@ -74,23 +74,23 @@ pytest tests/e2e/test_real_ai_connectivity.py -v --tb=short -s || {
 echo ""
 echo "🔄 Phase 2: 完整业务流程测试"
 echo "----------------------------"
-pytest tests/e2e/test_full_mention_detection.py -v --tb=short -s || {
+pytest tests/e2e/test_full_mention_detection.py -v --tb=short -s --asyncio-mode=auto || {
     echo "❌ 业务流程测试失败"
     exit 1
 }
 
 echo ""
-echo "💾 Phase 2: 数据持久化测试"
+echo "💾 Phase 3: 数据持久化测试"
 echo "-------------------------"
-pytest tests/e2e/test_data_persistence.py -v --tb=short -s || {
+pytest tests/e2e/test_data_persistence.py -v --tb=short -s --asyncio-mode=auto || {
     echo "❌ 数据持久化测试失败"
     exit 1
 }
 
 echo ""
-echo "🏢 Phase 3: 业务场景测试"
+echo "🏢 Phase 4: 业务场景测试"
 echo "------------------------"
-pytest tests/e2e/test_business_scenarios.py -v --tb=short -s || {
+pytest tests/e2e/test_business_scenarios.py -v --tb=short -s --asyncio-mode=auto || {
     echo "❌ 业务场景测试失败"
     exit 1
 }
@@ -105,7 +105,7 @@ echo "📊 生成测试报告..."
 mkdir -p reports
 
 # 运行完整的E2E测试套件并生成HTML报告
-pytest tests/e2e/ --html=reports/e2e_report.html --self-contained-html -v --tb=short || {
+pytest tests/e2e/ --html=reports/e2e_report.html --self-contained-html -v --tb=short --asyncio-mode=auto || {
     echo "⚠️ 测试报告生成失败，但测试已完成"
 }
 

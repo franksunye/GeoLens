@@ -36,15 +36,15 @@ echo ""
 
 # 只运行最核心的测试
 echo "📡 测试AI连通性..."
-pytest tests/e2e/test_real_ai_connectivity.py::TestRealAIConnectivity::test_doubao_connection -v -s
+pytest tests/e2e/test_real_ai_connectivity.py::TestRealAIConnectivity::test_doubao_connection -v -s --asyncio-mode=auto
 
 echo ""
 echo "📡 测试DeepSeek连通性..."
-pytest tests/e2e/test_real_ai_connectivity.py::TestRealAIConnectivity::test_deepseek_connection -v -s
+pytest tests/e2e/test_real_ai_connectivity.py::TestRealAIConnectivity::test_deepseek_connection -v -s --asyncio-mode=auto
 
 echo ""
 echo "🔄 测试基础检测流程..."
-pytest tests/e2e/test_full_mention_detection.py::TestFullMentionDetection::test_end_to_end_detection_flow -v -s
+pytest tests/e2e/test_full_mention_detection.py::TestFullMentionDetection::test_end_to_end_detection_flow -v -s --asyncio-mode=auto
 
 echo ""
 echo "✅ 快速端到端测试完成！"
