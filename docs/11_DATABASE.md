@@ -2,7 +2,7 @@
 
 ## 📋 数据库概述
 
-GeoLens 使用 PostgreSQL 作为主数据库，通过 Supabase 提供的托管服务。数据库专注于GEO分析相关数据存储，包括用户项目、内容分析结果、GEO评分和优化建议等。
+GeoLens 使用 PostgreSQL 作为主数据库，通过 Supabase 提供的托管服务。数据库专注于引用检测相关数据存储，包括用户项目、检测记录、引用分析结果、Prompt模板和历史统计等。
 
 ---
 
@@ -42,10 +42,10 @@ GeoLens 使用 PostgreSQL 作为主数据库，通过 Supabase 提供的托管�
                                 │
                                 ▼
 ┌─────────────────────────────────────────────────────────────┐
-│                        GEO分析与评分                           │
+│                        引用检测与分析                           │
 ├─────────────────────────────────────────────────────────────┤
-│  content_analyses   │  geo_scores      │  geo_suggestions   │
-│  (内容分析表)        │  (GEO评分表)      │  (优化建议表)       │
+│  mention_checks     │  mention_results │  prompt_templates  │
+│  (引用检测表)        │  (检测结果表)     │  (Prompt模板表)     │
 └─────────────────────────────────────────────────────────────┘
                                 │
                                 ▼
@@ -122,116 +122,138 @@ INSERT INTO ai_providers (name, display_name, api_endpoint) VALUES
 ('deepseek', 'DeepSeek', 'https://api.deepseek.com/v1/chat/completions');
 ```
 
-### 4. 内容分析表 (content_analyses)
+### 4. 引用检测表 (mention_checks)
 ```sql
-CREATE TABLE content_analyses (
+CREATE TABLE mention_checks (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     project_id UUID NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
-    content_text TEXT NOT NULL,
-    content_url TEXT,
-    title TEXT,
-    meta_description TEXT,
+    prompt TEXT NOT NULL,
+    brands JSONB NOT NULL, -- 要检测的品牌列表
+    models JSONB NOT NULL, -- 使用的AI模型列表
 
-    -- 分析结果
-    word_count INTEGER,
-    reading_time INTEGER, -- 分钟
-    readability_score DECIMAL(5,2),
-    structure_score DECIMAL(5,2),
-    keyword_relevance_score DECIMAL(5,2),
-    entity_count INTEGER,
+    -- 检测状态
+    status VARCHAR(20) DEFAULT 'pending', -- pending, processing, completed, failed
 
-    -- 详细分析数据
-    headings JSONB,
-    keywords_found JSONB,
-    entities_found JSONB,
+    -- 统计结果
+    total_mentions INTEGER DEFAULT 0,
+    mention_rate DECIMAL(5,4), -- 0.0000-1.0000
+    avg_confidence DECIMAL(5,4),
 
+    -- 时间记录
     processing_time_ms INTEGER,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    completed_at TIMESTAMP WITH TIME ZONE
+);
+
+-- 索引
+CREATE INDEX idx_mention_checks_project ON mention_checks(project_id, created_at DESC);
+CREATE INDEX idx_mention_checks_status ON mention_checks(status);
+```
+
+### 5. 检测结果表 (mention_results)
+```sql
+CREATE TABLE mention_results (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    check_id UUID NOT NULL REFERENCES mention_checks(id) ON DELETE CASCADE,
+    model VARCHAR(50) NOT NULL, -- 'doubao', 'deepseek', 'chatgpt'
+    brand VARCHAR(100) NOT NULL,
+
+    -- 检测结果
+    mentioned BOOLEAN DEFAULT FALSE,
+    confidence_score DECIMAL(5,4), -- 0.0000-1.0000
+    context_snippet TEXT,
+    position INTEGER, -- 在回答中的位置
+
+    -- AI回答原文
+    response_text TEXT,
+    response_length INTEGER,
+
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
 -- 索引
-CREATE INDEX idx_content_analyses_project ON content_analyses(project_id, created_at DESC);
-CREATE INDEX idx_content_analyses_url ON content_analyses(content_url);
+CREATE INDEX idx_mention_results_check ON mention_results(check_id);
+CREATE INDEX idx_mention_results_brand ON mention_results(brand, mentioned);
+CREATE INDEX idx_mention_results_model ON mention_results(model);
 ```
 
-### 5. GEO评分表 (geo_scores)
+### 6. Prompt模板表 (prompt_templates)
 ```sql
-CREATE TABLE geo_scores (
+CREATE TABLE prompt_templates (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    project_id UUID NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
-    url TEXT NOT NULL,
-    total_score INTEGER CHECK (total_score >= 0 AND total_score <= 100),
-    structure_score INTEGER CHECK (structure_score >= 0 AND structure_score <= 100),
-    content_score INTEGER CHECK (content_score >= 0 AND content_score <= 100),
-    entity_score INTEGER CHECK (entity_score >= 0 AND entity_score <= 100),
-    keyword_score INTEGER CHECK (keyword_score >= 0 AND keyword_score <= 100),
-    
-    -- 详细分析数据
-    page_title TEXT,
-    meta_description TEXT,
-    h1_tags TEXT[],
-    h2_tags TEXT[],
-    keywords_found TEXT[],
-    entities_found JSONB,
-    schema_markup JSONB,
-    word_count INTEGER,
-    
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
+    user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+    name VARCHAR(100) NOT NULL,
+    category VARCHAR(50) NOT NULL, -- 'productivity', 'comparison', 'recommendation'
+    template TEXT NOT NULL,
+    variables JSONB, -- 模板变量定义
+    description TEXT,
 
--- 索引
-CREATE INDEX idx_geo_scores_project ON geo_scores(project_id, created_at DESC);
-CREATE INDEX idx_geo_scores_url ON geo_scores(url);
-CREATE INDEX idx_geo_scores_total ON geo_scores(total_score DESC);
-```
+    -- 使用统计
+    usage_count INTEGER DEFAULT 0,
+    is_public BOOLEAN DEFAULT FALSE,
 
-### 6. 优化建议表 (geo_suggestions)
-```sql
-CREATE TABLE geo_suggestions (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    project_id UUID NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
-    geo_score_id UUID REFERENCES geo_scores(id) ON DELETE CASCADE,
-    url TEXT NOT NULL,
-    suggestion_type VARCHAR(50) NOT NULL, -- 'structure', 'content', 'entity', 'keyword'
-    title VARCHAR(200) NOT NULL,
-    description TEXT NOT NULL,
-    priority VARCHAR(20) DEFAULT 'medium', -- 'low', 'medium', 'high', 'critical'
-    status VARCHAR(20) DEFAULT 'pending', -- 'pending', 'in_progress', 'completed', 'ignored'
-    estimated_impact INTEGER CHECK (estimated_impact >= 1 AND estimated_impact <= 10),
-    
-    -- AI生成的详细建议
-    detailed_suggestion TEXT,
-    example_implementation TEXT,
-    
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
 -- 索引
-CREATE INDEX idx_geo_suggestions_project ON geo_suggestions(project_id, status);
-CREATE INDEX idx_geo_suggestions_score ON geo_suggestions(geo_score_id);
-CREATE INDEX idx_geo_suggestions_priority ON geo_suggestions(priority, created_at);
+CREATE INDEX idx_prompt_templates_user ON prompt_templates(user_id);
+CREATE INDEX idx_prompt_templates_category ON prompt_templates(category);
+CREATE INDEX idx_prompt_templates_public ON prompt_templates(is_public, usage_count DESC);
 ```
 
-### 7. 提示模板表 (prompt_templates)
+### 7. 引用统计表 (mention_analytics)
 ```sql
-CREATE TABLE prompt_templates (
+CREATE TABLE mention_analytics (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    name VARCHAR(100) UNIQUE NOT NULL,
-    category VARCHAR(50) NOT NULL, -- 'general', 'industry_specific', 'competitor'
-    template TEXT NOT NULL,
-    variables JSONB, -- 模板变量定义
-    is_active BOOLEAN DEFAULT TRUE,
-    usage_count INTEGER DEFAULT 0,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+    project_id UUID NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
+    brand VARCHAR(100) NOT NULL,
+    model VARCHAR(50) NOT NULL,
+    date DATE NOT NULL,
+
+    -- 统计数据
+    total_checks INTEGER DEFAULT 0,
+    total_mentions INTEGER DEFAULT 0,
+    mention_rate DECIMAL(5,4), -- 0.0000-1.0000
+    avg_confidence DECIMAL(5,4),
+
+    -- 上下文分析
+    top_contexts JSONB, -- 最常见的提及上下文
+    position_stats JSONB, -- 位置统计 (第1位、第2位等)
+
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- 初始模板数据
-INSERT INTO prompt_templates (name, category, template, variables) VALUES
-('协作工具推荐', 'general', '推荐几个适合{team_size}人团队使用的{tool_type}工具', 
- '{"team_size": "string", "tool_type": "string"}'),
-('项目管理软件', 'general', '有哪些好用的项目管理软件适合{industry}行业？', 
- '{"industry": "string"}');
+-- 索引
+CREATE INDEX idx_mention_analytics_project ON mention_analytics(project_id, date DESC);
+CREATE INDEX idx_mention_analytics_brand ON mention_analytics(brand, date DESC);
+CREATE INDEX idx_mention_analytics_model ON mention_analytics(model);
+CREATE UNIQUE INDEX idx_mention_analytics_unique ON mention_analytics(project_id, brand, model, date);
+```
+
+---
+
+## 📝 初始数据
+### AI服务商初始数据
+```sql
+INSERT INTO ai_providers (name, display_name, api_endpoint) VALUES
+('doubao', '豆包AI', 'https://ark.cn-beijing.volces.com/api/v3/chat/completions'),
+('deepseek', 'DeepSeek', 'https://api.deepseek.com/v1/chat/completions'),
+('openai', 'OpenAI GPT-4', 'https://api.openai.com/v1/chat/completions');
+```
+
+### Prompt模板初始数据
+```sql
+INSERT INTO prompt_templates (name, category, template, variables, description) VALUES
+('协作工具推荐', 'productivity', '推荐几个适合{team_size}人团队使用的{tool_type}工具',
+ '{"team_size": "string", "tool_type": "string"}', '用于推荐团队协作工具的模板'),
+('项目管理软件', 'productivity', '有哪些好用的项目管理软件适合{industry}行业？',
+ '{"industry": "string"}', '针对特定行业推荐项目管理软件'),
+('知识管理工具', 'productivity', '推荐几个适合{use_case}的知识管理工具',
+ '{"use_case": "string"}', '根据使用场景推荐知识管理工具'),
+('竞品对比', 'comparison', '对比{brand1}和{brand2}这两个{category}工具的优缺点',
+ '{"brand1": "string", "brand2": "string", "category": "string"}', '用于竞品对比分析');
 ```
 
 ---
@@ -243,8 +265,9 @@ INSERT INTO prompt_templates (name, category, template, variables) VALUES
 -- 启用RLS
 ALTER TABLE projects ENABLE ROW LEVEL SECURITY;
 ALTER TABLE mention_checks ENABLE ROW LEVEL SECURITY;
-ALTER TABLE geo_scores ENABLE ROW LEVEL SECURITY;
-ALTER TABLE geo_suggestions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE mention_results ENABLE ROW LEVEL SECURITY;
+ALTER TABLE mention_analytics ENABLE ROW LEVEL SECURITY;
+ALTER TABLE prompt_templates ENABLE ROW LEVEL SECURITY;
 
 -- 用户只能访问自己的项目
 CREATE POLICY "Users can only access their own projects" ON projects
@@ -380,4 +403,4 @@ WHERE created_at < NOW() - INTERVAL '1 year';
 ---
 
 *最后更新: 2024-06-03*
-*数据库版本: v2.0 - GEO专注版本*
+*数据库版本: v2.0 - 引用检测专注版本*

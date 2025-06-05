@@ -2,7 +2,7 @@
 
 ## 📋 架构概述
 
-GeoLens 是专注于GEO (Generative Engine Optimization) 的智能分析平台，采用现代化的微服务架构。系统专注于内容AI友好度分析和GEO评分，帮助用户优化内容以适应生成式AI的理解和推荐机制。
+GeoLens 是专业的AI引用检测平台，采用现代化的微服务架构。系统专注于检测品牌在生成式AI中的被提及情况，提供引用频率分析、上下文提取和竞品对比等核心功能。
 
 ---
 
@@ -43,8 +43,8 @@ GeoLens 是专注于GEO (Generative Engine Optimization) 的智能分析平台�
 ┌─────────────────────────────────────────────────────────────┐
 │                        应用服务层                              │
 ├─────────────────────────────────────────────────────────────┤
-│  Auth Service  │  Project Service  │  GEO Analysis Service  │
-│  (Supabase)    │  (FastAPI)        │  (FastAPI)             │
+│  Auth Service  │  Project Service  │  Mention Detection     │
+│  (Supabase)    │  (FastAPI)        │  Service (FastAPI)     │
 └─────────────────────────────────────────────────────────────┘
                                 │
                                 ▼
@@ -88,11 +88,11 @@ GeoLens 是专注于GEO (Generative Engine Optimization) 的智能分析平台�
 部署: Railway / Render
 ```
 
-### GEO分析 & AI处理
+### 引用检测 & AI处理
 ```yaml
-LLM: OpenAI GPT-4 API + 豆包API + DeepSeek API
-内容处理: BeautifulSoup + lxml
-GEO算法: 自研多维度评分算法
+LLM: 豆包API + DeepSeek API + OpenAI GPT-4 API
+实体识别: NER + 关键词匹配算法
+引用分析: 多模型并行检测和频率统计
 异步: asyncio + httpx
 ```
 
@@ -128,20 +128,20 @@ GEO算法: 自研多维度评分算法
 - RESTful API设计
 ```
 
-### 3. GEO分析模块 (GEO Analysis Service)
+### 3. 引用检测模块 (Mention Detection Service)
 ```python
 # 功能职责
-- 内容AI友好度分析
-- GEO评分算法
-- 关键词相关性分析
-- 实体提取和识别
-- 优化建议生成
+- 多模型并行调用 (豆包、DeepSeek、ChatGPT)
+- 智能实体识别和品牌提及检测
+- 引用频率统计和分析
+- 上下文提取和高亮显示
+- 竞品对比分析
 
 # 技术实现
-- 多维度GEO评分算法
-- 自研内容分析算法
-- 多AI服务集成
-- Redis结果缓存
+- NER + 关键词匹配算法 (准确率≥95%)
+- 多AI服务统一调用层
+- 异步任务处理和结果缓存
+- 引用数据结构化存储
 ```
 
 ### 4. 内容处理模块 (Content Processing Service)
@@ -179,24 +179,26 @@ sequenceDiagram
     F-->>U: 注册成功，跳转首页
 ```
 
-### 2. GEO分析流程
+### 2. 引用检测流程
 ```mermaid
 sequenceDiagram
     participant U as 用户
     participant F as 前端
     participant API as API服务
-    participant GEO as GEO分析引擎
+    participant MD as 引用检测引擎
+    participant AI as AI模型服务
     participant D as 数据库
 
-    U->>F: 提交内容分析请求
-    F->>API: 发送内容和参数
-    API->>GEO: 执行GEO分析
-    GEO->>GEO: 内容处理和AI友好度分析
-    GEO->>GEO: 计算GEO评分
-    GEO->>D: 保存分析结果
-    D-->>API: 返回分析结果
-    API-->>F: 返回GEO评分和建议
-    F-->>U: 显示分析结果和优化建议
+    U->>F: 提交引用检测请求
+    F->>API: 发送Prompt和品牌列表
+    API->>MD: 执行引用检测
+    MD->>AI: 并行调用多个AI模型
+    AI-->>MD: 返回AI回答
+    MD->>MD: 实体识别和引用分析
+    MD->>D: 保存检测结果
+    D-->>API: 返回检测结果
+    API-->>F: 返回引用频率和上下文
+    F-->>U: 显示检测结果和可视化
 ```
 
 ---
@@ -294,4 +296,4 @@ sequenceDiagram
 ---
 
 *最后更新: 2024-06-03*
-*架构版本: v2.0 - GEO专注版本*
+*架构版本: v2.0 - 引用检测专注版本*

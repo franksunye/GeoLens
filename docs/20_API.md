@@ -2,7 +2,7 @@
 
 ## 📋 API概述
 
-GeoLens 提供专注于GEO (Generative Engine Optimization) 的 RESTful API 服务，支持用户管理、项目管理、内容分析和GEO评分等核心功能。所有API遵循REST设计原则，使用JSON格式进行数据交换。
+GeoLens 提供专业的AI引用检测 RESTful API 服务，支持用户管理、项目管理、引用检测和历史记录管理等核心功能。专注于检测品牌在生成式AI中的被提及情况。所有API遵循REST设计原则，使用JSON格式进行数据交换。
 
 ---
 
@@ -210,22 +210,21 @@ DELETE /projects/{project_id}
 
 ---
 
-## 📊 内容分析
+## 🔍 引用检测
 
-### 执行内容分析
+### 执行引用检测
 ```http
-POST /analysis/analyze
+POST /api/check-mention
 ```
 
 **请求体:**
 ```json
 {
   "project_id": "project-uuid",
-  "content": "生成式引擎优化(GEO)是一种新型的优化方式，旨在提升品牌在生成式AI中被推荐、被引用的可见性...",
-  "title": "GEO优化指南",
-  "meta_description": "学习如何优化内容以适应生成式AI",
-  "target_keywords": ["GEO", "生成式引擎优化", "AI优化"],
-  "brand_keywords": ["GeoLens"]
+  "prompt": "推荐几个适合团队协作的知识管理工具",
+  "brands": ["Notion", "Obsidian", "Roam Research"],
+  "models": ["doubao", "deepseek", "chatgpt"],
+  "custom_template": false
 }
 ```
 
@@ -234,51 +233,99 @@ POST /analysis/analyze
 {
   "success": true,
   "data": {
-    "id": "analysis-uuid",
+    "check_id": "check-uuid",
     "project_id": "project-uuid",
-    "content_analysis": {
-      "seo_analysis": {
-        "title_score": 0.85,
-        "meta_description_score": 0.90,
-        "heading_structure_score": 0.88,
-        "overall_score": 0.87
+    "prompt": "推荐几个适合团队协作的知识管理工具",
+    "status": "completed",
+    "results": [
+      {
+        "model": "doubao",
+        "response_text": "我推荐以下几个优秀的知识管理工具：1. Notion - 功能全面的工作空间...",
+        "mentions": [
+          {
+            "brand": "Notion",
+            "mentioned": true,
+            "confidence_score": 0.95,
+            "context_snippet": "Notion - 功能全面的工作空间，支持文档、数据库、看板等多种功能",
+            "position": 1
+          },
+          {
+            "brand": "Obsidian",
+            "mentioned": false,
+            "confidence_score": 0.05,
+            "context_snippet": null,
+            "position": null
+          }
+        ],
+        "processing_time_ms": 1250
       },
-      "readability_analysis": {
-        "flesch_reading_ease": 65.2,
-        "readability_score": 0.75,
-        "reading_level": "适中"
-      },
-      "structure_analysis": {
-        "structure_score": 0.82,
-        "heading_hierarchy": ["H1", "H2", "H3"],
-        "content_sections": 5
-      },
-      "content_quality_score": 0.84,
-      "recommendations": [
-        "建议增加更多相关关键词",
-        "优化段落结构以提高可读性"
-      ]
+      {
+        "model": "deepseek",
+        "response_text": "对于团队协作的知识管理，我建议考虑：Notion、Obsidian和Roam Research...",
+        "mentions": [
+          {
+            "brand": "Notion",
+            "mentioned": true,
+            "confidence_score": 0.92,
+            "context_snippet": "Notion、Obsidian和Roam Research都是优秀的选择",
+            "position": 1
+          },
+          {
+            "brand": "Obsidian",
+            "mentioned": true,
+            "confidence_score": 0.90,
+            "context_snippet": "Obsidian适合个人知识管理和团队协作",
+            "position": 2
+          }
+        ],
+        "processing_time_ms": 980
+      }
+    ],
+    "summary": {
+      "total_mentions": 3,
+      "brands_mentioned": ["Notion", "Obsidian"],
+      "mention_rate": 0.75,
+      "avg_confidence": 0.92
     },
-    "keyword_analysis": {
-      "target_keywords": [
-        {
-          "keyword": "GEO",
-          "frequency": 8,
-          "density": 2.1,
-          "prominence_score": 8.5
-        }
-      ],
-      "overall_keyword_score": 0.78
-    },
-    "entity_analysis": {
-      "brands": ["GeoLens"],
-      "technologies": ["AI", "生成式AI"],
-      "total_entities": 5
-    },
-    "extracted_content": {
-      "title": "GEO优化指南",
-      "word_count": 380,
-      "reading_time": 2
+    "created_at": "2024-06-03T10:00:00Z",
+    "completed_at": "2024-06-03T10:02:30Z"
+  }
+}
+```
+
+### 获取检测历史
+```http
+GET /api/get-history?project_id={project_id}&page=1&limit=20
+```
+
+**查询参数:**
+- `project_id`: 项目ID (必需)
+- `page`: 页码 (默认: 1)
+- `limit`: 每页数量 (默认: 20, 最大: 100)
+- `brand`: 筛选特定品牌 (可选)
+- `model`: 筛选特定模型 (可选)
+
+**响应:**
+```json
+{
+  "success": true,
+  "data": {
+    "checks": [
+      {
+        "id": "check-uuid-1",
+        "prompt": "推荐几个适合团队协作的知识管理工具",
+        "brands_checked": ["Notion", "Obsidian"],
+        "models_used": ["doubao", "deepseek"],
+        "total_mentions": 3,
+        "mention_rate": 0.75,
+        "created_at": "2024-06-03T10:00:00Z"
+      }
+    ],
+    "pagination": {
+      "page": 1,
+      "limit": 20,
+      "total": 45,
+      "pages": 3
     }
   }
 }
@@ -286,21 +333,24 @@ POST /analysis/analyze
 
 ---
 
-## 🎯 GEO评分
+## 📝 Prompt模板管理
 
-### 计算GEO评分
+### 保存自定义Prompt模板
 ```http
-POST /analysis/geo-score
+POST /api/save-prompt
 ```
 
 **请求体:**
 ```json
 {
-  "project_id": "project-uuid",
-  "content": "生成式引擎优化(GEO)是一种新型的优化方式...",
-  "title": "GEO优化指南",
-  "target_keywords": ["GEO", "生成式引擎优化"],
-  "brand_keywords": ["GeoLens"]
+  "name": "协作工具推荐",
+  "category": "productivity",
+  "template": "推荐几个适合{team_size}人团队使用的{tool_type}工具",
+  "variables": {
+    "team_size": "string",
+    "tool_type": "string"
+  },
+  "description": "用于推荐团队协作工具的模板"
 }
 ```
 
@@ -309,46 +359,115 @@ POST /analysis/geo-score
 {
   "success": true,
   "data": {
-    "score_id": "score-uuid",
-    "project_id": "project-uuid",
-    "geo_score": {
-      "overall_score": 78.5,
-      "grade": "B+",
-      "visibility_estimate": "良好 - 中高AI推荐概率",
-      "category_scores": {
-        "content_quality": 82.0,
-        "technical_optimization": 75.0,
-        "keyword_relevance": 80.0,
-        "user_experience": 77.0
-      },
-      "factors": {
-        "content_quality": 0.82,
-        "content_length": 0.75,
-        "readability": 0.80,
-        "title_optimization": 0.85,
-        "keyword_relevance": 0.80,
-        "ai_friendliness": 0.78
-      },
-      "recommendations": [
-        "优化内容结构以提高AI理解度",
-        "增加相关概念的明确定义",
-        "改进关键词的上下文相关性"
-      ],
-      "last_updated": "2024-06-03T10:00:00Z"
+    "id": "template-uuid",
+    "name": "协作工具推荐",
+    "category": "productivity",
+    "template": "推荐几个适合{team_size}人团队使用的{tool_type}工具",
+    "variables": {
+      "team_size": "string",
+      "tool_type": "string"
     },
-    "analysis_summary": {
-      "content_quality": 0.82,
-      "ai_friendliness": 0.78,
-      "keyword_relevance": 0.80,
-      "entity_count": 5
-    }
+    "usage_count": 0,
+    "created_at": "2024-06-03T10:00:00Z"
   }
 }
 ```
 
-### 获取评分历史
+---
+
+## 📊 引用频率分析
+
+### 获取品牌引用统计
 ```http
-GET /geo/scores?project_id={project_id}&page=1&limit=20
+GET /api/analytics/mentions?project_id={project_id}&brand={brand}&timeframe=30d
+```
+
+**查询参数:**
+- `project_id`: 项目ID (必需)
+- `brand`: 品牌名称 (可选，不指定则返回所有品牌)
+- `timeframe`: 时间范围 (7d, 30d, 90d, 默认30d)
+- `model`: 筛选特定模型 (可选)
+
+**响应:**
+```json
+{
+  "success": true,
+  "data": {
+    "brand": "Notion",
+    "timeframe": "30d",
+    "total_checks": 45,
+    "total_mentions": 32,
+    "mention_rate": 0.71,
+    "model_performance": {
+      "doubao": {
+        "checks": 20,
+        "mentions": 15,
+        "rate": 0.75,
+        "avg_confidence": 0.92
+      },
+      "deepseek": {
+        "checks": 15,
+        "mentions": 10,
+        "rate": 0.67,
+        "avg_confidence": 0.88
+      },
+      "chatgpt": {
+        "checks": 10,
+        "mentions": 7,
+        "rate": 0.70,
+        "avg_confidence": 0.90
+      }
+    },
+    "trend_data": [
+      {"date": "2024-05-01", "mentions": 5, "checks": 7},
+      {"date": "2024-05-15", "mentions": 8, "checks": 12},
+      {"date": "2024-05-30", "mentions": 12, "checks": 15}
+    ],
+    "top_contexts": [
+      "推荐作为团队协作工具",
+      "适合知识管理和文档整理",
+      "支持多种内容类型的工作空间"
+    ]
+  }
+}
+```
+
+### 竞品对比分析
+```http
+GET /api/analytics/compare?project_id={project_id}&brands=Notion,Obsidian,Roam
+```
+
+**响应:**
+```json
+{
+  "success": true,
+  "data": {
+    "comparison": [
+      {
+        "brand": "Notion",
+        "mention_rate": 0.75,
+        "avg_confidence": 0.92,
+        "total_mentions": 32
+      },
+      {
+        "brand": "Obsidian",
+        "mention_rate": 0.45,
+        "avg_confidence": 0.85,
+        "total_mentions": 18
+      },
+      {
+        "brand": "Roam Research",
+        "mention_rate": 0.30,
+        "avg_confidence": 0.78,
+        "total_mentions": 12
+      }
+    ],
+    "insights": [
+      "Notion在团队协作场景中被提及最多",
+      "Obsidian在个人知识管理场景表现较好"
+    ]
+  }
+}
 ```
 
 ---
@@ -438,14 +557,64 @@ GET /analytics/project/{project_id}/stats
 
 ## 🔧 系统接口
 
-### 获取AI平台列表
+### 获取AI模型列表
 ```http
-GET /platforms
+GET /api/models
 ```
 
-### 获取提示模板
+**响应:**
+```json
+{
+  "success": true,
+  "data": {
+    "models": [
+      {
+        "id": "doubao",
+        "name": "豆包",
+        "provider": "ByteDance",
+        "status": "active",
+        "rate_limit": 60
+      },
+      {
+        "id": "deepseek",
+        "name": "DeepSeek",
+        "provider": "DeepSeek",
+        "status": "active",
+        "rate_limit": 100
+      }
+    ]
+  }
+}
+```
+
+### 获取Prompt模板列表
 ```http
-GET /prompts/templates?category=general
+GET /api/prompts/templates?category=productivity&page=1&limit=10
+```
+
+**响应:**
+```json
+{
+  "success": true,
+  "data": {
+    "templates": [
+      {
+        "id": "template-uuid",
+        "name": "协作工具推荐",
+        "category": "productivity",
+        "template": "推荐几个适合{team_size}人团队使用的{tool_type}工具",
+        "usage_count": 25,
+        "created_at": "2024-06-01T10:00:00Z"
+      }
+    ],
+    "pagination": {
+      "page": 1,
+      "limit": 10,
+      "total": 15,
+      "pages": 2
+    }
+  }
+}
 ```
 
 ### 系统健康检查
@@ -495,11 +664,11 @@ GET /health
 - **企业用户**: 10000次/小时
 
 ### 数据限制
-- **单次检测**: 最多5个平台
+- **单次检测**: 最多5个AI模型，10个品牌
 - **批量操作**: 最多100条记录
-- **文件上传**: 最大10MB
+- **Prompt长度**: 最大2000字符
 
 ---
 
 *最后更新: 2024-06-03*
-*API版本: v2.0 - GEO专注版本*
+*API版本: v2.0 - 引用检测专注版本*
