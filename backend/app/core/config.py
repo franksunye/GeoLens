@@ -45,17 +45,31 @@ class Settings(BaseSettings):
     # AI Services
     doubao_api_key: Optional[str] = Field(default=None, env="DOUBAO_API_KEY")
     doubao_base_url: str = Field(default="https://ark.cn-beijing.volces.com/api/v3", env="DOUBAO_BASE_URL")
-    doubao_default_model: str = Field(default="doubao-pro-32k", env="DOUBAO_DEFAULT_MODEL")
+    doubao_default_model: str = Field(default="doubao-1-5-lite-32k-250115", env="DOUBAO_DEFAULT_MODEL")
 
     deepseek_api_key: Optional[str] = Field(default=None, env="DEEPSEEK_API_KEY")
     deepseek_base_url: str = Field(default="https://api.deepseek.com", env="DEEPSEEK_BASE_URL")
-    deepseek_default_model: str = Field(default="deepseek-chat", env="DEEPSEEK_DEFAULT_MODEL")
+    deepseek_default_model: str = Field(default="deepseek-reasoner", env="DEEPSEEK_DEFAULT_MODEL")
+
+    openai_api_key: Optional[str] = Field(default=None, env="OPENAI_API_KEY")
+    openai_base_url: str = Field(default="https://api.openai.com/v1", env="OPENAI_BASE_URL")
+    openai_default_model: str = Field(default="gpt-3.5-turbo", env="OPENAI_DEFAULT_MODEL")
+
+    claude_api_key: Optional[str] = Field(default=None, env="CLAUDE_API_KEY")
+    claude_base_url: str = Field(default="https://api.anthropic.com", env="CLAUDE_BASE_URL")
+    claude_default_model: str = Field(default="claude-3-sonnet-20240229", env="CLAUDE_DEFAULT_MODEL")
 
     # AI Service General Settings
     ai_request_timeout: int = Field(default=30, env="AI_REQUEST_TIMEOUT")
     ai_max_retries: int = Field(default=3, env="AI_MAX_RETRIES")
     ai_retry_delay: float = Field(default=1.0, env="AI_RETRY_DELAY")
     default_ai_provider: str = Field(default="doubao", env="DEFAULT_AI_PROVIDER")
+
+    # Mention Detection Settings
+    default_detection_strategy: str = Field(default="improved", env="DEFAULT_DETECTION_STRATEGY")
+    max_concurrent_detections: int = Field(default=5, env="MAX_CONCURRENT_DETECTIONS")
+    detection_timeout: int = Field(default=60, env="DETECTION_TIMEOUT")
+    brand_detection_cache_ttl: int = Field(default=3600, env="BRAND_DETECTION_CACHE_TTL")
     
     # External Services
     sentry_dsn: Optional[str] = Field(default=None, env="SENTRY_DSN")
@@ -94,6 +108,67 @@ class Settings(BaseSettings):
     class Config:
         env_file = ".env"
         case_sensitive = False
+
+    def get_ai_model_config(self, provider: str) -> dict:
+        """Get AI model configuration for a specific provider."""
+        configs = {
+            "doubao": {
+                "api_key": self.doubao_api_key,
+                "base_url": self.doubao_base_url,
+                "default_model": self.doubao_default_model
+            },
+            "deepseek": {
+                "api_key": self.deepseek_api_key,
+                "base_url": self.deepseek_base_url,
+                "default_model": self.deepseek_default_model
+            },
+            "openai": {
+                "api_key": self.openai_api_key,
+                "base_url": self.openai_base_url,
+                "default_model": self.openai_default_model
+            },
+            "claude": {
+                "api_key": self.claude_api_key,
+                "base_url": self.claude_base_url,
+                "default_model": self.claude_default_model
+            }
+        }
+
+        if provider not in configs:
+            raise ValueError(f"Unsupported AI provider: {provider}")
+
+        return configs[provider]
+
+    def get_database_url(self, for_testing: bool = False) -> str:
+        """Get database URL for the specified environment."""
+        if for_testing and self.database_test_url:
+            return self.database_test_url
+        return self.database_url
+
+    def is_development(self) -> bool:
+        """Check if running in development environment."""
+        return self.environment.lower() == "development"
+
+    def is_testing(self) -> bool:
+        """Check if running in testing environment."""
+        return self.environment.lower() == "testing"
+
+    def is_production(self) -> bool:
+        """Check if running in production environment."""
+        return self.environment.lower() == "production"
+
+    def get_available_ai_providers(self) -> List[str]:
+        """Get list of available AI providers with API keys."""
+        providers = []
+        if self.doubao_api_key:
+            providers.append("doubao")
+        if self.deepseek_api_key:
+            providers.append("deepseek")
+        if self.openai_api_key:
+            providers.append("openai")
+        if self.claude_api_key:
+            providers.append("claude")
+        return providers
 
 
 # Global settings instance
