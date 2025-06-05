@@ -1,8 +1,8 @@
-# 🗄️ GEO Insight - 数据库设计文档
+# 🗄️ GeoLens - 数据库设计文档
 
 ## 📋 数据库概述
 
-GEO Insight 使用 PostgreSQL 作为主数据库，通过 Supabase 提供的托管服务。数据库设计遵循第三范式，确保数据一致性和查询性能。
+GeoLens 使用 PostgreSQL 作为主数据库，通过 Supabase 提供的托管服务。数据库专注于GEO分析相关数据存储，包括用户项目、内容分析结果、GEO评分和优化建议等。
 
 ---
 
@@ -42,18 +42,18 @@ GEO Insight 使用 PostgreSQL 作为主数据库，通过 Supabase 提供的托�
                                 │
                                 ▼
 ┌─────────────────────────────────────────────────────────────┐
-│                        检测与分析                              │
+│                        GEO分析与评分                           │
 ├─────────────────────────────────────────────────────────────┤
-│  mention_checks     │  geo_scores      │  geo_suggestions   │
-│  (引用检测表)        │  (评分表)         │  (建议表)           │
+│  content_analyses   │  geo_scores      │  geo_suggestions   │
+│  (内容分析表)        │  (GEO评分表)      │  (优化建议表)       │
 └─────────────────────────────────────────────────────────────┘
                                 │
                                 ▼
 ┌─────────────────────────────────────────────────────────────┐
 │                        系统与配置                              │
 ├─────────────────────────────────────────────────────────────┤
-│  ai_platforms       │  prompt_templates │  system_configs   │
-│  (AI平台表)          │  (提示模板表)      │  (系统配置表)       │
+│  ai_providers       │  analysis_templates │  system_configs │
+│  (AI服务商表)        │  (分析模板表)        │  (系统配置表)     │
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -103,11 +103,11 @@ CREATE INDEX idx_projects_domain ON projects(domain);
 CREATE INDEX idx_projects_active ON projects(is_active, created_at);
 ```
 
-### 3. AI平台表 (ai_platforms)
+### 3. AI服务商表 (ai_providers)
 ```sql
-CREATE TABLE ai_platforms (
+CREATE TABLE ai_providers (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    name VARCHAR(50) UNIQUE NOT NULL, -- 'ChatGPT', 'Gemini', 'Perplexity'
+    name VARCHAR(50) UNIQUE NOT NULL, -- 'openai', 'doubao', 'deepseek'
     display_name VARCHAR(100) NOT NULL,
     api_endpoint TEXT,
     is_active BOOLEAN DEFAULT TRUE,
@@ -116,31 +116,42 @@ CREATE TABLE ai_platforms (
 );
 
 -- 初始数据
-INSERT INTO ai_platforms (name, display_name, api_endpoint) VALUES
-('chatgpt', 'ChatGPT', 'https://api.openai.com/v1/chat/completions'),
-('gemini', 'Google Gemini', 'https://generativelanguage.googleapis.com/v1/models'),
-('perplexity', 'Perplexity AI', 'https://api.perplexity.ai/chat/completions');
+INSERT INTO ai_providers (name, display_name, api_endpoint) VALUES
+('openai', 'OpenAI GPT-4', 'https://api.openai.com/v1/chat/completions'),
+('doubao', '豆包AI', 'https://ark.cn-beijing.volces.com/api/v3/chat/completions'),
+('deepseek', 'DeepSeek', 'https://api.deepseek.com/v1/chat/completions');
 ```
 
-### 4. 引用检测表 (mention_checks)
+### 4. 内容分析表 (content_analyses)
 ```sql
-CREATE TABLE mention_checks (
+CREATE TABLE content_analyses (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     project_id UUID NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
-    platform_id UUID NOT NULL REFERENCES ai_platforms(id),
-    prompt TEXT NOT NULL,
-    response_text TEXT,
-    mentioned BOOLEAN DEFAULT FALSE,
-    confidence_score DECIMAL(3,2), -- 0.00-1.00
-    context_snippet TEXT,
+    content_text TEXT NOT NULL,
+    content_url TEXT,
+    title TEXT,
+    meta_description TEXT,
+
+    -- 分析结果
+    word_count INTEGER,
+    reading_time INTEGER, -- 分钟
+    readability_score DECIMAL(5,2),
+    structure_score DECIMAL(5,2),
+    keyword_relevance_score DECIMAL(5,2),
+    entity_count INTEGER,
+
+    -- 详细分析数据
+    headings JSONB,
+    keywords_found JSONB,
+    entities_found JSONB,
+
     processing_time_ms INTEGER,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
 -- 索引
-CREATE INDEX idx_mention_checks_project ON mention_checks(project_id, created_at DESC);
-CREATE INDEX idx_mention_checks_platform ON mention_checks(platform_id);
-CREATE INDEX idx_mention_checks_mentioned ON mention_checks(mentioned, created_at);
+CREATE INDEX idx_content_analyses_project ON content_analyses(project_id, created_at DESC);
+CREATE INDEX idx_content_analyses_url ON content_analyses(content_url);
 ```
 
 ### 5. GEO评分表 (geo_scores)
@@ -368,5 +379,5 @@ WHERE created_at < NOW() - INTERVAL '1 year';
 
 ---
 
-*最后更新: 2024-05-30*
-*数据库版本: v1.0*
+*最后更新: 2024-06-03*
+*数据库版本: v2.0 - GEO专注版本*

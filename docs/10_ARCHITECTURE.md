@@ -1,8 +1,8 @@
-# 🏗️ GEO Insight - 系统架构设计
+# 🏗️ GeoLens - 系统架构设计
 
 ## 📋 架构概述
 
-GEO Insight 采用现代化的微服务架构，支持高并发、高可用的SaaS服务。系统主要由前端应用、后端API服务、AI处理服务、数据存储和外部集成组成。
+GeoLens 是专注于GEO (Generative Engine Optimization) 的智能分析平台，采用现代化的微服务架构。系统专注于内容AI友好度分析和GEO评分，帮助用户优化内容以适应生成式AI的理解和推荐机制。
 
 ---
 
@@ -43,8 +43,8 @@ GEO Insight 采用现代化的微服务架构，支持高并发、高可用的Sa
 ┌─────────────────────────────────────────────────────────────┐
 │                        应用服务层                              │
 ├─────────────────────────────────────────────────────────────┤
-│  Auth Service  │  Project Service  │  Analysis Service      │
-│  (Supabase)    │  (FastAPI)        │  (FastAPI + Celery)    │
+│  Auth Service  │  Project Service  │  GEO Analysis Service  │
+│  (Supabase)    │  (FastAPI)        │  (FastAPI)             │
 └─────────────────────────────────────────────────────────────┘
                                 │
                                 ▼
@@ -52,15 +52,15 @@ GEO Insight 采用现代化的微服务架构，支持高并发、高可用的Sa
 │                        数据存储层                              │
 ├─────────────────────────────────────────────────────────────┤
 │  PostgreSQL    │  Redis Cache     │  File Storage           │
-│  (Supabase)    │  (缓存+队列)      │  (Supabase Storage)     │
+│  (Supabase)    │  (缓存)          │  (Supabase Storage)     │
 └─────────────────────────────────────────────────────────────┘
                                 │
                                 ▼
 ┌─────────────────────────────────────────────────────────────┐
 │                        外部集成层                              │
 ├─────────────────────────────────────────────────────────────┤
-│  OpenAI API    │  Perplexity API  │  Web Scraping          │
-│  (GPT-4)       │  (AI搜索)         │  (BeautifulSoup)       │
+│  OpenAI API    │  豆包API         │  DeepSeek API           │
+│  (GPT-4)       │  (字节跳动)       │  (深度求索)              │
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -88,12 +88,12 @@ GEO Insight 采用现代化的微服务架构，支持高并发、高可用的Sa
 部署: Railway / Render
 ```
 
-### AI & 数据处理
+### GEO分析 & AI处理
 ```yaml
-LLM: OpenAI GPT-4 API
-NLP: spaCy + NLTK
-爬虫: BeautifulSoup + Scrapy
-异步: asyncio + aiohttp
+LLM: OpenAI GPT-4 API + 豆包API + DeepSeek API
+内容处理: BeautifulSoup + lxml
+GEO算法: 自研多维度评分算法
+异步: asyncio + httpx
 ```
 
 ---
@@ -128,34 +128,35 @@ NLP: spaCy + NLTK
 - RESTful API设计
 ```
 
-### 3. AI分析模块 (Analysis Service)
+### 3. GEO分析模块 (GEO Analysis Service)
 ```python
 # 功能职责
-- AI引用检测
-- 内容评分算法
+- 内容AI友好度分析
+- GEO评分算法
+- 关键词相关性分析
+- 实体提取和识别
 - 优化建议生成
-- 异步任务处理
 
 # 技术实现
-- Celery异步任务队列
-- OpenAI API集成
-- 自定义NLP算法
+- 多维度GEO评分算法
+- 自研内容分析算法
+- 多AI服务集成
 - Redis结果缓存
 ```
 
-### 4. 数据采集模块 (Scraping Service)
+### 4. 内容处理模块 (Content Processing Service)
 ```python
 # 功能职责
-- 网页内容抓取
+- 多种内容输入处理
+- 内容解析和清洗
+- 格式标准化
 - 结构化数据提取
-- 反爬虫策略
-- 数据清洗处理
 
 # 技术实现
-- Scrapy框架
-- 代理池管理
-- 请求频率控制
-- 数据验证机制
+- BeautifulSoup内容解析
+- 多格式内容支持
+- 智能文本清洗
+- 内容质量验证
 ```
 
 ---
@@ -178,23 +179,24 @@ sequenceDiagram
     F-->>U: 注册成功，跳转首页
 ```
 
-### 2. AI检测流程
+### 2. GEO分析流程
 ```mermaid
 sequenceDiagram
     participant U as 用户
     participant F as 前端
     participant API as API服务
-    participant Q as 任务队列
-    participant AI as AI服务
+    participant GEO as GEO分析引擎
     participant D as 数据库
-    
-    U->>F: 提交检测请求
-    F->>API: 发送检测参数
-    API->>Q: 创建异步任务
-    Q->>AI: 执行AI分析
-    AI->>D: 保存检测结果
-    D-->>F: 推送结果通知
-    F-->>U: 显示检测结果
+
+    U->>F: 提交内容分析请求
+    F->>API: 发送内容和参数
+    API->>GEO: 执行GEO分析
+    GEO->>GEO: 内容处理和AI友好度分析
+    GEO->>GEO: 计算GEO评分
+    GEO->>D: 保存分析结果
+    D-->>API: 返回分析结果
+    API-->>F: 返回GEO评分和建议
+    F-->>U: 显示分析结果和优化建议
 ```
 
 ---
@@ -291,5 +293,5 @@ sequenceDiagram
 
 ---
 
-*最后更新: 2024-05-30*
-*架构版本: v1.0*
+*最后更新: 2024-06-03*
+*架构版本: v2.0 - GEO专注版本*

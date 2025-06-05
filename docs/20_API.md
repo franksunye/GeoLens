@@ -1,8 +1,8 @@
-# 🔌 GEO Insight - API接口文档
+# 🔌 GeoLens - API接口文档
 
 ## 📋 API概述
 
-GEO Insight 提供 RESTful API 服务，支持用户管理、项目管理、AI检测和内容分析等核心功能。所有API遵循REST设计原则，使用JSON格式进行数据交换。
+GeoLens 提供专注于GEO (Generative Engine Optimization) 的 RESTful API 服务，支持用户管理、项目管理、内容分析和GEO评分等核心功能。所有API遵循REST设计原则，使用JSON格式进行数据交换。
 
 ---
 
@@ -210,19 +210,22 @@ DELETE /projects/{project_id}
 
 ---
 
-## 🔍 AI引用检测
+## 📊 内容分析
 
-### 执行检测
+### 执行内容分析
 ```http
-POST /mentions/check
+POST /analysis/analyze
 ```
 
 **请求体:**
 ```json
 {
   "project_id": "project-uuid",
-  "prompt": "推荐几个适合团队协作的知识管理工具",
-  "platforms": ["chatgpt", "gemini", "perplexity"]
+  "content": "生成式引擎优化(GEO)是一种新型的优化方式，旨在提升品牌在生成式AI中被推荐、被引用的可见性...",
+  "title": "GEO优化指南",
+  "meta_description": "学习如何优化内容以适应生成式AI",
+  "target_keywords": ["GEO", "生成式引擎优化", "AI优化"],
+  "brand_keywords": ["GeoLens"]
 }
 ```
 
@@ -231,68 +234,73 @@ POST /mentions/check
 {
   "success": true,
   "data": {
-    "check_id": "check-uuid",
-    "status": "processing",
-    "estimated_completion": "2024-05-30T10:05:00Z"
-  }
-}
-```
-
-### 获取检测结果
-```http
-GET /mentions/check/{check_id}
-```
-
-**响应:**
-```json
-{
-  "success": true,
-  "data": {
-    "id": "check-uuid",
+    "id": "analysis-uuid",
     "project_id": "project-uuid",
-    "prompt": "推荐几个适合团队协作的知识管理工具",
-    "status": "completed",
-    "results": [
-      {
-        "platform": "chatgpt",
-        "mentioned": true,
-        "confidence_score": 0.95,
-        "response_text": "Notion是一款非常流行的协作工具...",
-        "context_snippet": "...Notion是一款非常流行的协作工具，它结合了笔记、数据库、看板等功能..."
+    "content_analysis": {
+      "seo_analysis": {
+        "title_score": 0.85,
+        "meta_description_score": 0.90,
+        "heading_structure_score": 0.88,
+        "overall_score": 0.87
       },
-      {
-        "platform": "gemini",
-        "mentioned": false,
-        "confidence_score": 0.12,
-        "response_text": "推荐使用Asana、Trello等工具...",
-        "context_snippet": null
-      }
-    ],
-    "created_at": "2024-05-30T10:00:00Z",
-    "completed_at": "2024-05-30T10:03:00Z"
+      "readability_analysis": {
+        "flesch_reading_ease": 65.2,
+        "readability_score": 0.75,
+        "reading_level": "适中"
+      },
+      "structure_analysis": {
+        "structure_score": 0.82,
+        "heading_hierarchy": ["H1", "H2", "H3"],
+        "content_sections": 5
+      },
+      "content_quality_score": 0.84,
+      "recommendations": [
+        "建议增加更多相关关键词",
+        "优化段落结构以提高可读性"
+      ]
+    },
+    "keyword_analysis": {
+      "target_keywords": [
+        {
+          "keyword": "GEO",
+          "frequency": 8,
+          "density": 2.1,
+          "prominence_score": 8.5
+        }
+      ],
+      "overall_keyword_score": 0.78
+    },
+    "entity_analysis": {
+      "brands": ["GeoLens"],
+      "technologies": ["AI", "生成式AI"],
+      "total_entities": 5
+    },
+    "extracted_content": {
+      "title": "GEO优化指南",
+      "word_count": 380,
+      "reading_time": 2
+    }
   }
 }
-```
-
-### 获取检测历史
-```http
-GET /mentions/history?project_id={project_id}&page=1&limit=20
 ```
 
 ---
 
-## 📊 GEO评分
+## 🎯 GEO评分
 
-### 执行网页评分
+### 计算GEO评分
 ```http
-POST /geo/score
+POST /analysis/geo-score
 ```
 
 **请求体:**
 ```json
 {
   "project_id": "project-uuid",
-  "url": "https://notion.so/product"
+  "content": "生成式引擎优化(GEO)是一种新型的优化方式...",
+  "title": "GEO优化指南",
+  "target_keywords": ["GEO", "生成式引擎优化"],
+  "brand_keywords": ["GeoLens"]
 }
 ```
 
@@ -301,31 +309,39 @@ POST /geo/score
 {
   "success": true,
   "data": {
-    "id": "score-uuid",
+    "score_id": "score-uuid",
     "project_id": "project-uuid",
-    "url": "https://notion.so/product",
-    "total_score": 76,
-    "structure_score": 80,
-    "content_score": 75,
-    "entity_score": 72,
-    "keyword_score": 78,
-    "analysis": {
-      "page_title": "Notion – The all-in-one workspace",
-      "meta_description": "A new tool that blends your everyday work apps...",
-      "h1_tags": ["The all-in-one workspace"],
-      "h2_tags": ["For teams", "For personal use"],
-      "keywords_found": ["workspace", "collaboration", "productivity"],
-      "entities_found": {
-        "PRODUCT": ["Notion"],
-        "FEATURE": ["workspace", "collaboration", "database"]
+    "geo_score": {
+      "overall_score": 78.5,
+      "grade": "B+",
+      "visibility_estimate": "良好 - 中高AI推荐概率",
+      "category_scores": {
+        "content_quality": 82.0,
+        "technical_optimization": 75.0,
+        "keyword_relevance": 80.0,
+        "user_experience": 77.0
       },
-      "word_count": 1250,
-      "schema_markup": {
-        "type": "SoftwareApplication",
-        "name": "Notion"
-      }
+      "factors": {
+        "content_quality": 0.82,
+        "content_length": 0.75,
+        "readability": 0.80,
+        "title_optimization": 0.85,
+        "keyword_relevance": 0.80,
+        "ai_friendliness": 0.78
+      },
+      "recommendations": [
+        "优化内容结构以提高AI理解度",
+        "增加相关概念的明确定义",
+        "改进关键词的上下文相关性"
+      ],
+      "last_updated": "2024-06-03T10:00:00Z"
     },
-    "created_at": "2024-05-30T10:00:00Z"
+    "analysis_summary": {
+      "content_quality": 0.82,
+      "ai_friendliness": 0.78,
+      "keyword_relevance": 0.80,
+      "entity_count": 5
+    }
   }
 }
 ```
@@ -485,5 +501,5 @@ GET /health
 
 ---
 
-*最后更新: 2024-05-30*
-*API版本: v1.0*
+*最后更新: 2024-06-03*
+*API版本: v2.0 - GEO专注版本*
