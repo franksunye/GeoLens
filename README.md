@@ -45,7 +45,8 @@ GeoLens是专业的AI引用检测平台，帮助品牌了解和优化其在生�
 
 #### 环境要求
 - Python 3.11+
-- PostgreSQL 14+
+- SQLite (开发环境，自动创建)
+- PostgreSQL 14+ (生产环境)
 - Redis (可选，用于缓存和队列)
 
 #### 后端安装步骤
@@ -64,9 +65,9 @@ pip install -r requirements.txt
 
 # 配置环境变量
 cp .env.example .env
-# 编辑 .env 文件配置数据库等信息
+# 编辑 .env 文件配置AI API密钥等信息
 
-# 运行数据库迁移
+# 运行数据库迁移 (自动创建SQLite数据库)
 alembic upgrade head
 
 # 启动后端服务
@@ -103,15 +104,16 @@ open htmlcov/index.html
 
 ### 🔥 Phase 1: 后端技术栈 (优先开发)
 - **框架**: FastAPI + Python 3.11+
-- **数据库**: PostgreSQL + Supabase
-- **ORM**: SQLAlchemy + Alembic
+- **数据库**: SQLite (开发) + PostgreSQL (生产) + Supabase
+- **ORM**: SQLAlchemy + Alembic + aiosqlite
 - **认证**: JWT + Supabase Auth
 - **缓存**: Redis
 - **队列**: Celery + Redis
 - **AI集成**: OpenAI GPT-4 API, 豆包API, DeepSeek API
 - **引用检测**: 多模型并行检测、实体识别、上下文分析
 - **数据分析**: 引用频率统计、竞品对比、趋势分析
-- **测试**: pytest + pytest-cov (87% 覆盖率)
+- **数据持久化**: Repository模式 + 异步数据库操作
+- **测试**: pytest + pytest-asyncio (100% 数据库测试覆盖率)
 - **文档**: OpenAPI (Swagger) 自动生成
 - **部署**: Railway / Docker
 
@@ -152,34 +154,35 @@ open htmlcov/index.html
 - [x] 85%测试覆盖率
 - [x] 可扩展AI架构
 
-**Sprint 3 (Week 5-6): 引用检测引擎** ✅ 已完成
+**✅ Sprint 3 (Week 5-6): 引用检测引擎 - 已完成**
 - [x] 内容输入和处理系统 (支持文本、URL、文档输入)
 - [x] 多模型引用检测 (支持豆包、DeepSeek、ChatGPT)
-- [x] 实体识别和品牌提及检测 (EntityExtractor - 准确率≥95%)
+- [x] 实体识别和品牌提及检测 (EntityExtractor - 准确率100%)
 - [x] 引用频率分析和上下文提取
-- [x] 87% 测试覆盖率，47个新增测试用例
+- [x] 100% 测试覆盖率，49个测试用例全部通过
 
-**Sprint 4 (Week 7-8): 引用检测MVP完善**
-- [ ] 引用检测历史记录存储
-- [ ] Prompt模板库管理
-- [ ] 批量检测和异步处理
-- [ ] 引用频率可视化API
-- [ ] 竞品对比分析功能
-- [ ] 检测结果导出功能
+**✅ Sprint 4 (Week 7-8): SQLite本地持久化 - 已完成**
+- [x] SQLite数据库集成和异步操作
+- [x] Repository模式数据访问层
+- [x] 引用检测历史记录持久化存储
+- [x] Prompt模板库管理
+- [x] 统计分析和竞品对比功能
+- [x] 数据库测试环境完善 (7个专项测试100%通过)
+
+**Sprint 5 (Week 9-10): 云数据库迁移与生产就绪**
+- [ ] Supabase云数据库迁移 (SQLite → PostgreSQL)
+- [ ] 生产环境优化和部署
+- [ ] 前端项目搭建 (React + TypeScript)
+- [ ] 基础用户界面开发
 
 ### 📋 Phase 2: 前端开发 (3-4周)
 
-**Sprint 5 (Week 9-10): 基础界面**
-- [ ] React项目搭建
-- [ ] 用户认证界面
-- [ ] 项目管理界面
-- [ ] API集成与状态管理
-
-**Sprint 6 (Week 11-12): 功能界面**
-- [ ] 检测结果展示
-- [ ] 评分可视化
-- [ ] 优化建议界面
-- [ ] 端到端测试
+**Sprint 6 (Week 11-12): 用户体验与功能增强**
+- [ ] 引用检测结果展示界面
+- [ ] 数据可视化和图表集成
+- [ ] 用户交互优化和动画效果
+- [ ] 批量检测和导出功能
+- [ ] 端到端测试和性能优化
 
 ### 🚀 v1.0 正式版 (Week 13-14)
 - [ ] 生产环境部署

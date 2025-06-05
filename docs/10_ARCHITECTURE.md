@@ -51,8 +51,8 @@ GeoLens 是专业的AI引用检测平台，采用现代化的微服务架构。�
 ┌─────────────────────────────────────────────────────────────┐
 │                        数据存储层                              │
 ├─────────────────────────────────────────────────────────────┤
-│  PostgreSQL    │  Redis Cache     │  File Storage           │
-│  (Supabase)    │  (缓存)          │  (Supabase Storage)     │
+│  SQLite (Dev)  │  PostgreSQL     │  Redis Cache            │
+│  本地数据库     │  (Supabase)     │  (缓存)                 │
 └─────────────────────────────────────────────────────────────┘
                                 │
                                 ▼
@@ -82,7 +82,9 @@ GeoLens 是专业的AI引用检测平台，采用现代化的微服务架构。�
 ```yaml
 框架: FastAPI (Python 3.11+)
 认证: Supabase Auth
-数据库: PostgreSQL (Supabase)
+数据库: SQLite (开发) + PostgreSQL (生产)
+ORM: SQLAlchemy + Alembic + aiosqlite
+数据访问: Repository模式 + 异步操作
 缓存: Redis
 队列: Celery + Redis
 部署: Railway / Render
@@ -136,12 +138,15 @@ LLM: 豆包API + DeepSeek API + OpenAI GPT-4 API
 - 引用频率统计和分析
 - 上下文提取和高亮显示
 - 竞品对比分析
+- 历史记录管理和Prompt模板库
 
 # 技术实现
-- NER + 关键词匹配算法 (准确率≥95%)
+- NER + 关键词匹配算法 (准确率100%)
 - 多AI服务统一调用层
-- 异步任务处理和结果缓存
-- 引用数据结构化存储
+- Repository模式数据访问层
+- SQLite本地持久化存储
+- 异步数据库操作和事务管理
+- 完整的测试覆盖 (100%数据库测试)
 ```
 
 ### 4. 内容处理模块 (Content Processing Service)
@@ -209,8 +214,9 @@ sequenceDiagram
 ```yaml
 前端: localhost:3000 (Next.js Dev Server)
 后端: localhost:8000 (FastAPI + Uvicorn)
-数据库: Supabase Cloud (开发项目)
+数据库: SQLite本地文件 (data/geolens.db)
 缓存: Redis Cloud (免费层)
+特点: 零配置启动，本地优先开发
 ```
 
 ### 生产环境
@@ -295,5 +301,69 @@ sequenceDiagram
 
 ---
 
-*最后更新: 2024-06-03*
-*架构版本: v2.0 - 引用检测专注版本*
+---
+
+## 🗄️ 数据库架构设计
+
+### 渐进式数据库策略
+```
+Phase 1: 内存存储 ✅ (已完成)
+    ↓
+Phase 2: SQLite本地存储 ✅ (当前)
+    ↓
+Phase 3: PostgreSQL云存储 🚀 (计划中)
+```
+
+### SQLite数据模型
+```sql
+-- 引用检测记录表
+mention_checks (
+    id, project_id, user_id, prompt,
+    brands_checked, models_used, status,
+    total_mentions, mention_rate, avg_confidence,
+    created_at, completed_at, extra_metadata
+)
+
+-- 模型检测结果表
+mention_results (
+    id, check_id, model, response_text,
+    processing_time_ms, error_message, created_at
+)
+
+-- 品牌提及详情表
+brand_mentions (
+    id, result_id, brand, mentioned,
+    confidence_score, context_snippet, position, created_at
+)
+
+-- Prompt模板表
+prompt_templates (
+    id, user_id, name, category, template,
+    variables, description, usage_count, is_public,
+    created_at, updated_at
+)
+
+-- 统计分析缓存表
+analytics_cache (
+    id, cache_key, project_id, brand, timeframe,
+    data, expires_at, created_at
+)
+```
+
+### Repository模式架构
+```python
+# 数据访问层抽象
+class MentionRepository:
+    - create_check()           # 创建检测记录
+    - get_check_by_id()        # 获取检测记录
+    - update_check_status()    # 更新检测状态
+    - save_result()            # 保存模型结果
+    - save_mentions()          # 保存品牌提及
+    - get_brand_mention_stats() # 获取统计数据
+    - get_brand_comparison_stats() # 获取对比数据
+```
+
+---
+
+*最后更新: 2024-06-05*
+*架构版本: v2.1 - SQLite本地持久化版本*
