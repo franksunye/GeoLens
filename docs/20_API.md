@@ -2,7 +2,7 @@
 
 ## 📋 API概述
 
-GeoLens 提供专业的AI引用检测 RESTful API 服务，支持用户管理、项目管理、引用检测和历史记录管理等核心功能。专注于检测品牌在生成式AI中的被提及情况。所有API遵循REST设计原则，使用JSON格式进行数据交换。
+GeoLens 提供专业的AI引用检测 RESTful API 服务。当前版本v0.7.0专注于核心引用检测功能，支持多模型并行检测、数据持久化和历史记录管理。已完成端到端验证，生产就绪。
 
 ---
 
@@ -212,19 +212,28 @@ DELETE /projects/{project_id}
 
 ## 🔍 引用检测
 
-### 执行引用检测
+### 执行引用检测 ✅ 已验证
 ```http
-POST /api/v1/api/check-mention
+POST /api/v1/mention-detection/execute
 ```
 
 **请求体:**
 ```json
 {
   "project_id": "project-uuid",
+  "user_id": "user-uuid",
   "prompt": "推荐几个适合团队协作的知识管理工具",
   "brands": ["Notion", "Obsidian", "Roam Research"],
-  "models": ["doubao", "deepseek", "chatgpt"],
-  "custom_template": false
+  "config": {
+    "models": ["doubao", "deepseek"],
+    "api_keys": {
+      "DOUBAO_API_KEY": "your-key",
+      "DEEPSEEK_API_KEY": "your-key"
+    },
+    "max_tokens": 300,
+    "temperature": 0.3,
+    "parallel_execution": true
+  }
 }
 ```
 

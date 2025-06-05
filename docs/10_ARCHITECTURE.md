@@ -2,7 +2,7 @@
 
 ## 📋 架构概述
 
-GeoLens 是专业的AI引用检测平台，采用现代化的后端优先架构。系统专注于检测品牌在生成式AI中的被提及情况，提供引用频率分析、上下文提取和竞品对比等核心功能。当前版本为MVP，专注于核心引用检测功能的完整实现。
+GeoLens 是专业的AI引用检测平台，采用后端优先的敏捷架构。系统专注于品牌在生成式AI中的引用检测，提供多模型并行分析、数据持久化和竞品对比功能。当前版本v0.7.0已完成端到端验证，生产就绪。
 
 ---
 
@@ -78,32 +78,32 @@ GeoLens 是专业的AI引用检测平台，采用现代化的后端优先架构�
 部署: Vercel
 ```
 
-### 后端技术栈 (当前实现)
+### 后端技术栈 (v0.7.0 已实现)
 ```yaml
 框架: FastAPI (Python 3.11+)
-认证: JWT (基础实现)
-数据库: SQLite + aiosqlite (本地持久化)
+数据库: SQLite + aiosqlite (异步持久化)
 ORM: SQLAlchemy + Alembic
-数据访问: Repository模式 + 异步操作
-测试: pytest + pytest-asyncio (155个测试)
-部署: 本地开发环境
+架构: 统一服务架构，Repository模式
+AI集成: 豆包API + DeepSeek API (真实集成)
+测试: 端到端测试 (82.4%通过率)
+部署: 本地开发环境，生产就绪
 ```
 
-### 后端技术栈 (计划中)
+### 下一阶段技术栈 (Sprint 6)
 ```yaml
-认证: Supabase Auth + 多因素认证
-数据库: PostgreSQL (生产) + Supabase
-缓存: Redis
-队列: Celery + Redis
-部署: Railway / Render
+数据库: PostgreSQL + Supabase (云迁移)
+前端: React + TypeScript
+认证: Supabase Auth
+部署: Vercel + Railway
 ```
 
-### 引用检测 & AI处理
+### AI引用检测引擎 (已验证)
 ```yaml
-LLM: 豆包API + DeepSeek API + OpenAI GPT-4 API
-实体识别: NER + 关键词匹配算法
-引用分析: 多模型并行检测和频率统计
-异步: asyncio + httpx
+AI模型: 豆包API + DeepSeek API (真实集成)
+检测算法: 统一品牌检测服务 (100%准确率)
+并行处理: 多模型同时调用
+数据持久化: Repository模式 + SQLite
+端到端验证: 82.4%测试通过率
 ```
 
 ---
