@@ -17,20 +17,20 @@ from app.services.mention_detection import MentionDetectionService
 def e2e_config() -> Dict[str, Any]:
     """端到端测试配置"""
     return {
-        "doubao_api_key": "fb429f70-7037-4e2b-bc44-e98b14685cc0",
-        "deepseek_api_key": "sk-b3e19280c908402e90ed28b986fbc2f5",
-        "doubao_model": "Doubao-1.5-lite-32k",
-        "deepseek_model": "DeepSeek-R1",
-        "test_timeout": 30,  # 真实API调用超时时间
-        "retry_attempts": 2   # 重试次数
+        "doubao_api_key": os.getenv("DOUBAO_API_KEY", ""),
+        "deepseek_api_key": os.getenv("DEEPSEEK_API_KEY", ""),
+        "doubao_model": os.getenv("DOUBAO_MODEL", "doubao-1-5-lite-32k-250115"),
+        "deepseek_model": os.getenv("DEEPSEEK_MODEL", "deepseek-reasoner"),
+        "test_timeout": int(os.getenv("E2E_TEST_TIMEOUT", "60")),
+        "retry_attempts": int(os.getenv("E2E_RETRY_ATTEMPTS", "2"))
     }
 
 
 @pytest.fixture
 def skip_if_no_api_keys(e2e_config):
     """如果没有API密钥则跳过测试"""
-    # API密钥已经在配置中硬编码，所以不需要跳过
-    pass
+    if not e2e_config["doubao_api_key"] or not e2e_config["deepseek_api_key"]:
+        pytest.skip("API keys not provided. Please set DOUBAO_API_KEY and DEEPSEEK_API_KEY environment variables.")
 
 
 @pytest.fixture
@@ -85,14 +85,17 @@ def test_project_data() -> Dict[str, Any]:
 @pytest.fixture(scope="session", autouse=True)
 def setup_e2e_environment(e2e_config):
     """设置端到端测试环境变量"""
-    os.environ["DOUBAO_API_KEY"] = e2e_config["doubao_api_key"]
-    os.environ["DEEPSEEK_API_KEY"] = e2e_config["deepseek_api_key"]
-    
+    # 只有在环境变量不存在时才设置（避免覆盖已有配置）
+    if not os.getenv("DOUBAO_API_KEY") and e2e_config["doubao_api_key"]:
+        os.environ["DOUBAO_API_KEY"] = e2e_config["doubao_api_key"]
+    if not os.getenv("DEEPSEEK_API_KEY") and e2e_config["deepseek_api_key"]:
+        os.environ["DEEPSEEK_API_KEY"] = e2e_config["deepseek_api_key"]
+
     # 设置测试标志
     os.environ["E2E_TESTING"] = "true"
-    
+
     yield
-    
+
     # 清理环境变量
     os.environ.pop("E2E_TESTING", None)
 

@@ -14,9 +14,20 @@ if [ ! -f "app/main.py" ]; then
     exit 1
 fi
 
-# 设置API密钥
-export DOUBAO_API_KEY="fb429f70-7037-4e2b-bc44-e98b14685cc0"
-export DEEPSEEK_API_KEY="sk-b3e19280c908402e90ed28b986fbc2f5"
+# 加载环境变量配置
+if [ -f ".env.e2e" ]; then
+    export $(cat .env.e2e | grep -v '^#' | xargs)
+    echo "📁 已加载 .env.e2e 配置"
+else
+    echo "⚠️ 未找到 .env.e2e，请确保已设置环境变量"
+fi
+
+# 检查API密钥
+if [ -z "$DOUBAO_API_KEY" ] || [ -z "$DEEPSEEK_API_KEY" ]; then
+    echo "❌ 缺少API密钥，请设置环境变量或创建 .env.e2e 文件"
+    exit 1
+fi
+
 export E2E_TESTING=true
 export PYTHONPATH="${PYTHONPATH}:$(pwd)"
 

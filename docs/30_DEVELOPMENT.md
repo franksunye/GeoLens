@@ -73,12 +73,82 @@ uvicorn app.main:app --reload --port 8000
 # 运行所有测试
 pytest
 
+# 运行特定测试类型
+pytest tests/unit/          # 单元测试
+pytest tests/integration/   # 集成测试
+pytest tests/accuracy/      # 算法准确率测试
+pytest tests/e2e/          # 端到端测试 (需要API密钥)
+
+# 运行端到端测试 (真实AI模型)
+./scripts/quick_e2e_test.sh    # 快速验证
+./scripts/run_e2e_tests.sh     # 完整E2E测试
+
 # 运行测试并生成覆盖率报告
 pytest --cov=app --cov-report=html
 
 # 查看覆盖率报告
 open htmlcov/index.html
 ```
+
+#### 6. 端到端测试配置 ✨ 新增
+端到端测试需要真实的AI API密钥。请按以下步骤配置：
+
+##### 创建环境配置文件
+```bash
+# 复制示例配置文件
+cp .env.e2e.example .env.e2e
+
+# 编辑配置文件，填入真实的API密钥
+nano .env.e2e
+```
+
+##### 配置API密钥
+在 `.env.e2e` 文件中设置：
+```bash
+# 豆包API配置
+DOUBAO_API_KEY=your_doubao_api_key_here
+DOUBAO_MODEL=doubao-1-5-lite-32k-250115
+
+# DeepSeek API配置
+DEEPSEEK_API_KEY=your_deepseek_api_key_here
+DEEPSEEK_MODEL=deepseek-reasoner
+
+# 测试配置
+E2E_TEST_TIMEOUT=60
+E2E_MAX_CONCURRENT=3
+```
+
+##### 运行端到端测试
+```bash
+# 快速验证 (推荐首次使用)
+./scripts/quick_e2e_test.sh
+
+# 完整测试套件
+./scripts/run_e2e_tests.sh
+
+# 运行特定测试
+pytest tests/e2e/test_real_ai_connectivity.py -v
+pytest tests/e2e/test_full_mention_detection.py -v
+```
+
+##### 替代方案：环境变量
+如果不想使用配置文件，也可以直接设置环境变量：
+```bash
+export DOUBAO_API_KEY=your_doubao_key
+export DEEPSEEK_API_KEY=your_deepseek_key
+./scripts/quick_e2e_test.sh
+```
+
+##### 测试覆盖情况
+当前端到端测试覆盖：
+- ✅ AI模型集成 (豆包 + DeepSeek)
+- ✅ 引用检测核心功能
+- ✅ 数据持久化
+- ✅ 业务场景验证
+- ⚠️ 认证授权 (计划中)
+- ⚠️ 项目管理 (计划中)
+
+详细覆盖情况请查看：`backend/E2E_COVERAGE_ANALYSIS.md`
 
 ---
 

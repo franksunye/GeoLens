@@ -14,16 +14,26 @@ if [ ! -f "app/main.py" ]; then
     exit 1
 fi
 
-# 设置API密钥（如果未设置）
-if [ -z "$DOUBAO_API_KEY" ]; then
-    export DOUBAO_API_KEY="fb429f70-7037-4e2b-bc44-e98b14685cc0"
-    echo "✅ 设置豆包API密钥"
+# 加载环境变量配置
+if [ -f ".env.e2e" ]; then
+    echo "📁 加载 .env.e2e 配置文件"
+    export $(cat .env.e2e | grep -v '^#' | xargs)
+else
+    echo "⚠️ 未找到 .env.e2e 配置文件"
+    echo "   请复制 .env.e2e.example 为 .env.e2e 并配置API密钥"
 fi
 
-if [ -z "$DEEPSEEK_API_KEY" ]; then
-    export DEEPSEEK_API_KEY="sk-b3e19280c908402e90ed28b986fbc2f5"
-    echo "✅ 设置DeepSeek API密钥"
+# 检查必需的API密钥
+if [ -z "$DOUBAO_API_KEY" ] || [ -z "$DEEPSEEK_API_KEY" ]; then
+    echo "❌ 错误: 缺少API密钥"
+    echo "   请在 .env.e2e 文件中设置 DOUBAO_API_KEY 和 DEEPSEEK_API_KEY"
+    echo "   或者设置环境变量:"
+    echo "   export DOUBAO_API_KEY=your_doubao_key"
+    echo "   export DEEPSEEK_API_KEY=your_deepseek_key"
+    exit 1
 fi
+
+echo "✅ API密钥配置检查通过"
 
 # 设置测试环境变量
 export E2E_TESTING=true
@@ -31,9 +41,9 @@ export PYTHONPATH="${PYTHONPATH}:$(pwd)"
 
 echo ""
 echo "🔧 测试环境配置"
-echo "   豆包模型: Doubao-1.5-lite-32k"
-echo "   DeepSeek模型: DeepSeek-R1"
-echo "   测试超时: 30秒"
+echo "   豆包模型: ${DOUBAO_MODEL:-doubao-1-5-lite-32k-250115}"
+echo "   DeepSeek模型: ${DEEPSEEK_MODEL:-deepseek-reasoner}"
+echo "   测试超时: ${E2E_TEST_TIMEOUT:-60}秒"
 echo ""
 
 # 检查依赖
