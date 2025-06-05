@@ -3,7 +3,7 @@ API v1 package initialization.
 """
 from fastapi import APIRouter
 
-from app.api.v1 import auth, projects, ai, analysis
+from app.api.v1 import auth, projects, ai, analysis, mention_detection
 
 api_router = APIRouter()
 
@@ -30,4 +30,10 @@ api_router.include_router(
     analysis.router,
     prefix="/analysis",
     tags=["content-analysis"]
+)
+
+api_router.include_router(
+    mention_detection.router,
+    prefix="/api",
+    tags=["mention-detection"]
 )
