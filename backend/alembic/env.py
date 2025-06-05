@@ -11,8 +11,8 @@ from alembic import context
 sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 
 from app.core.config import settings
-from app.core.database import Base
-from app.models import user, project  # Import all models
+from app.core.database import Base, get_database_url
+from app.models import user, project, mention  # Import all models
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -35,7 +35,7 @@ target_metadata = Base.metadata
 
 def get_url():
     """Get database URL from environment or config."""
-    return os.getenv("DATABASE_URL", settings.database_url)
+    return os.getenv("DATABASE_URL", get_database_url())
 
 
 def run_migrations_offline() -> None:
