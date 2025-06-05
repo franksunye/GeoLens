@@ -48,12 +48,14 @@ nano backend/.env
 
 #### 3. 数据库设置
 ```bash
-# 使用Supabase或本地PostgreSQL
-# 在.env中配置数据库连接
+# 当前使用SQLite本地数据库 (自动创建)
+# 无需额外配置，数据库文件将自动创建在 data/ 目录
 
-# 运行数据库迁移
+# 运行数据库迁移 (可选，数据库会自动初始化)
 cd backend
 alembic upgrade head
+
+# 注意：Supabase/PostgreSQL集成计划在未来版本实现
 ```
 
 #### 4. 启动后端服务
@@ -496,5 +498,5 @@ logger.info(f"Execution time: {execution_time:.2f}s")
 
 ---
 
-*最后更新: 2024-05-30*
-*开发指南版本: v1.0*
+*最后更新: 2024-12-19*
+*开发指南版本: v1.1 - MVP引用检测平台*

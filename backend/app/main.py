@@ -183,7 +183,7 @@ app.include_router(
 async def root():
     """Root endpoint."""
     return {
-        "message": "GEO Insight API",
+        "message": "GeoLens - AI引用检测平台 API",
         "version": settings.app_version,
         "docs": "/docs",
         "health": "/health"

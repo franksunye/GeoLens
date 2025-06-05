@@ -214,7 +214,7 @@ DELETE /projects/{project_id}
 
 ### 执行引用检测
 ```http
-POST /api/check-mention
+POST /api/v1/api/check-mention
 ```
 
 **请求体:**
@@ -295,7 +295,7 @@ POST /api/check-mention
 
 ### 获取检测历史
 ```http
-GET /api/get-history?project_id={project_id}&page=1&limit=20
+GET /api/v1/api/get-history?project_id={project_id}&page=1&limit=20
 ```
 
 **查询参数:**
@@ -337,7 +337,7 @@ GET /api/get-history?project_id={project_id}&page=1&limit=20
 
 ### 保存自定义Prompt模板
 ```http
-POST /api/save-prompt
+POST /api/v1/api/save-prompt
 ```
 
 **请求体:**
@@ -379,7 +379,7 @@ POST /api/save-prompt
 
 ### 获取品牌引用统计
 ```http
-GET /api/analytics/mentions?project_id={project_id}&brand={brand}&timeframe=30d
+GET /api/v1/api/analytics/mentions?project_id={project_id}&brand={brand}&timeframe=30d
 ```
 
 **查询参数:**
@@ -434,7 +434,7 @@ GET /api/analytics/mentions?project_id={project_id}&brand={brand}&timeframe=30d
 
 ### 竞品对比分析
 ```http
-GET /api/analytics/compare?project_id={project_id}&brands=Notion,Obsidian,Roam
+GET /api/v1/api/analytics/compare?project_id={project_id}&brands=Notion,Obsidian,Roam
 ```
 
 **响应:**
@@ -472,32 +472,20 @@ GET /api/analytics/compare?project_id={project_id}&brands=Notion,Obsidian,Roam
 
 ---
 
-## 💡 优化建议
+## 🚧 计划中功能
 
-### 生成建议
+### 优化建议 (未来版本)
 ```http
 POST /suggestions/generate
 ```
 
-**请求体:**
-```json
-{
-  "project_id": "project-uuid",
-  "url": "https://notion.so/product",
-  "geo_score_id": "score-uuid"
-}
-```
+> **注意**: 此功能计划在未来版本中实现，当前MVP专注于核心引用检测功能。
 
-**响应:**
-```json
-{
-  "success": true,
-  "data": {
-    "suggestions": [
-      {
-        "id": "suggestion-uuid",
-        "type": "structure",
-        "title": "添加FAQ结构化数据",
+**计划功能:**
+- 基于引用检测结果的优化建议
+- 品牌可见性提升策略
+- 竞品分析洞察
+- 内容优化建议
         "description": "建议在页面中添加FAQ模块，便于AI识别和引用",
         "priority": "high",
         "estimated_impact": 8,
