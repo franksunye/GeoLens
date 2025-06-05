@@ -8,7 +8,6 @@ from typing import List, Dict, Any
 
 from app.services.mention_detection import MentionDetectionService
 from app.repositories.mention_repository import MentionRepository
-from app.repositories.prompt_repository import PromptRepository
 
 
 @pytest.mark.e2e
@@ -16,11 +15,12 @@ class TestBusinessScenarios:
     """业务场景测试"""
 
     async def test_brand_monitoring_scenario(
-        self, 
-        skip_if_no_api_keys, 
+        self,
+        skip_if_no_api_keys,
         mention_service,
         test_project_data,
-        e2e_db_session
+        e2e_db_session,
+        e2e_config
     ):
         """品牌监控场景测试"""
         print(f"🏢 开始品牌监控场景测试")
@@ -40,13 +40,26 @@ class TestBusinessScenarios:
         # 对每个查询进行监控
         for i, query in enumerate(monitoring_queries):
             print(f"   监控查询 {i+1}/{len(monitoring_queries)}: {query}")
-            
-            result = await mention_service.check_mentions(
+
+            # 创建检测配置
+            from app.services.mention_detection import MentionDetectionConfig
+            config = MentionDetectionConfig(
+                models=["doubao", "deepseek"],
+                api_keys={
+                    "DOUBAO_API_KEY": e2e_config["doubao_api_key"],
+                    "DEEPSEEK_API_KEY": e2e_config["deepseek_api_key"]
+                },
+                max_tokens=300,
+                temperature=0.3,
+                parallel_execution=False
+            )
+
+            result = await mention_service.execute_detection(
+                project_id=test_project_data["project_id"],
+                user_id=test_project_data["user_id"],
                 prompt=query,
                 brands=[brand_to_monitor],
-                models=["doubao", "deepseek"],
-                project_id=test_project_data["project_id"],
-                user_id=test_project_data["user_id"]
+                config=config
             )
             
             assert result.status == "completed"
@@ -101,11 +114,12 @@ class TestBusinessScenarios:
         print(f"   平均置信度: {avg_confidence:.2f}")
 
     async def test_competitor_analysis_scenario(
-        self, 
-        skip_if_no_api_keys, 
+        self,
+        skip_if_no_api_keys,
         mention_service,
         test_project_data,
-        e2e_db_session
+        e2e_db_session,
+        e2e_config
     ):
         """竞品分析场景测试"""
         print(f"🔍 开始竞品分析场景测试")
@@ -124,13 +138,23 @@ class TestBusinessScenarios:
         # 对每个查询进行竞品分析
         for i, query in enumerate(analysis_queries):
             print(f"   分析查询 {i+1}/{len(analysis_queries)}: {query}")
-            
-            result = await mention_service.check_mentions(
+
+            # 创建检测配置
+            from app.services.mention_detection import MentionDetectionConfig
+            config = MentionDetectionConfig(
+                models=["doubao"],  # 使用单个模型减少API调用
+                api_keys={"DOUBAO_API_KEY": e2e_config["doubao_api_key"]},
+                max_tokens=300,
+                temperature=0.3,
+                parallel_execution=False
+            )
+
+            result = await mention_service.execute_detection(
+                project_id=test_project_data["project_id"],
+                user_id=test_project_data["user_id"],
                 prompt=query,
                 brands=competitors,
-                models=["doubao"],  # 使用单个模型减少API调用
-                project_id=test_project_data["project_id"],
-                user_id=test_project_data["user_id"]
+                config=config
             )
             
             assert result.status == "completed"
@@ -182,11 +206,12 @@ class TestBusinessScenarios:
                   f"置信度 {summary['avg_confidence']:.2f}")
 
     async def test_prompt_optimization_scenario(
-        self, 
-        skip_if_no_api_keys, 
+        self,
+        skip_if_no_api_keys,
         mention_service,
         test_project_data,
-        e2e_db_session
+        e2e_db_session,
+        e2e_config
     ):
         """Prompt优化场景测试"""
         print(f"🎯 开始Prompt优化场景测试")
@@ -206,13 +231,23 @@ class TestBusinessScenarios:
         # 测试每个Prompt变体
         for i, prompt in enumerate(prompt_variations):
             print(f"   测试Prompt {i+1}/{len(prompt_variations)}")
-            
-            result = await mention_service.check_mentions(
+
+            # 创建检测配置
+            from app.services.mention_detection import MentionDetectionConfig
+            config = MentionDetectionConfig(
+                models=["doubao"],
+                api_keys={"DOUBAO_API_KEY": e2e_config["doubao_api_key"]},
+                max_tokens=300,
+                temperature=0.3,
+                parallel_execution=False
+            )
+
+            result = await mention_service.execute_detection(
+                project_id=test_project_data["project_id"],
+                user_id=test_project_data["user_id"],
                 prompt=prompt,
                 brands=[brand],
-                models=["doubao"],
-                project_id=test_project_data["project_id"],
-                user_id=test_project_data["user_id"]
+                config=config
             )
             
             assert result.status == "completed"
@@ -261,10 +296,11 @@ class TestBusinessScenarios:
             print(f"   Prompt {i+1} {status}: 置信度 {result['confidence']:.2f} - {result['prompt'][:50]}...")
 
     async def test_multi_model_consistency_scenario(
-        self, 
-        skip_if_no_api_keys, 
+        self,
+        skip_if_no_api_keys,
         mention_service,
-        test_project_data
+        test_project_data,
+        e2e_config
     ):
         """多模型一致性场景测试"""
         print(f"🤖 开始多模型一致性场景测试")
@@ -282,13 +318,26 @@ class TestBusinessScenarios:
         
         for query in test_queries:
             print(f"   测试查询: {query}")
-            
-            result = await mention_service.check_mentions(
+
+            # 创建检测配置
+            from app.services.mention_detection import MentionDetectionConfig
+            config = MentionDetectionConfig(
+                models=models,
+                api_keys={
+                    "DOUBAO_API_KEY": e2e_config["doubao_api_key"],
+                    "DEEPSEEK_API_KEY": e2e_config["deepseek_api_key"]
+                },
+                max_tokens=300,
+                temperature=0.3,
+                parallel_execution=False
+            )
+
+            result = await mention_service.execute_detection(
+                project_id=test_project_data["project_id"],
+                user_id=test_project_data["user_id"],
                 prompt=query,
                 brands=brands,
-                models=models,
-                project_id=test_project_data["project_id"],
-                user_id=test_project_data["user_id"]
+                config=config
             )
             
             assert result.status == "completed"

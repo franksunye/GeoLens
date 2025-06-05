@@ -8,9 +8,10 @@ import asyncio
 from typing import Dict, Any
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.database import AsyncSessionLocal
+from app.core.database import AsyncSessionLocal, async_engine
 from app.services.ai import AIServiceFactory
 from app.services.mention_detection import MentionDetectionService
+from app.models import Base
 
 
 @pytest.fixture(scope="session")
@@ -33,8 +34,22 @@ def skip_if_no_api_keys(e2e_config):
         pytest.skip("API keys not provided. Please set DOUBAO_API_KEY and DEEPSEEK_API_KEY environment variables.")
 
 
+@pytest.fixture(scope="session")
+async def setup_e2e_database():
+    """设置端到端测试数据库"""
+    # 创建所有表
+    async with async_engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+
+    yield
+
+    # 清理数据库
+    async with async_engine.begin() as conn:
+        await conn.run_sync(Base.metadata.drop_all)
+
+
 @pytest.fixture
-async def e2e_db_session() -> AsyncSession:
+async def e2e_db_session(setup_e2e_database) -> AsyncSession:
     """端到端测试专用数据库会话"""
     async with AsyncSessionLocal() as session:
         try:
@@ -50,9 +65,9 @@ def ai_factory() -> AIServiceFactory:
 
 
 @pytest.fixture
-def mention_service() -> MentionDetectionService:
+async def mention_service(e2e_db_session) -> MentionDetectionService:
     """引用检测服务"""
-    return MentionDetectionService()
+    return MentionDetectionService(db=e2e_db_session)
 
 
 @pytest.fixture
@@ -75,9 +90,10 @@ def test_prompts() -> Dict[str, str]:
 @pytest.fixture
 def test_project_data() -> Dict[str, Any]:
     """测试项目数据"""
+    import uuid
     return {
-        "project_id": "e2e-test-project",
-        "user_id": "e2e-test-user"
+        "project_id": str(uuid.uuid4()),
+        "user_id": str(uuid.uuid4())
     }
 
 
@@ -100,7 +116,7 @@ def setup_e2e_environment(e2e_config):
     os.environ.pop("E2E_TESTING", None)
 
 
-@pytest.fixture
+@pytest.fixture(scope="session")
 def event_loop():
     """创建事件循环"""
     loop = asyncio.new_event_loop()
