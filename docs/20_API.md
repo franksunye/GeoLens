@@ -49,7 +49,7 @@ Content-Type: application/json
 
 ### 用户注册
 ```http
-POST /auth/register
+POST /api/v1/auth/register
 ```
 
 **请求体:**
@@ -80,7 +80,7 @@ POST /auth/register
 
 ### 用户登录
 ```http
-POST /auth/login
+POST /api/v1/auth/login
 ```
 
 **请求体:**
@@ -91,9 +91,9 @@ POST /auth/login
 }
 ```
 
-### 刷新令牌
+### 刷新Token
 ```http
-POST /auth/refresh
+POST /api/v1/auth/refresh
 ```
 
 **请求体:**
@@ -103,18 +103,13 @@ POST /auth/refresh
 }
 ```
 
-### 退出登录
-```http
-POST /auth/logout
-```
-
 ---
 
 ## 👤 用户管理
 
 ### 获取用户信息
 ```http
-GET /users/me
+GET /api/v1/auth/me
 ```
 
 **响应:**
@@ -134,7 +129,7 @@ GET /users/me
 
 ### 更新用户信息
 ```http
-PUT /users/me
+PUT /api/v1/auth/me
 ```
 
 **请求体:**
@@ -151,7 +146,7 @@ PUT /users/me
 
 ### 创建项目
 ```http
-POST /projects
+POST /api/v1/projects/
 ```
 
 **请求体:**
@@ -184,7 +179,7 @@ POST /projects
 
 ### 获取项目列表
 ```http
-GET /projects?page=1&limit=10&is_active=true
+GET /api/v1/projects/?page=1&limit=10&is_active=true
 ```
 
 **查询参数:**
@@ -195,17 +190,17 @@ GET /projects?page=1&limit=10&is_active=true
 
 ### 获取项目详情
 ```http
-GET /projects/{project_id}
+GET /api/v1/projects/{project_id}
 ```
 
 ### 更新项目
 ```http
-PUT /projects/{project_id}
+PUT /api/v1/projects/{project_id}
 ```
 
 ### 删除项目
 ```http
-DELETE /projects/{project_id}
+DELETE /api/v1/projects/{project_id}
 ```
 
 ---
@@ -214,26 +209,24 @@ DELETE /projects/{project_id}
 
 ### 执行引用检测 ✅ 已验证
 ```http
-POST /api/v1/mention-detection/execute
+POST /api/v1/api/check-mention
 ```
 
 **请求体:**
 ```json
 {
   "project_id": "project-uuid",
-  "user_id": "user-uuid",
   "prompt": "推荐几个适合团队协作的知识管理工具",
   "brands": ["Notion", "Obsidian", "Roam Research"],
-  "config": {
-    "models": ["doubao", "deepseek"],
-    "api_keys": {
-      "DOUBAO_API_KEY": "your-key",
-      "DEEPSEEK_API_KEY": "your-key"
-    },
-    "max_tokens": 300,
-    "temperature": 0.3,
-    "parallel_execution": true
-  }
+  "models": ["doubao", "deepseek"],
+  "api_keys": {
+    "DOUBAO_API_KEY": "your-key",
+    "DEEPSEEK_API_KEY": "your-key"
+  },
+  "max_tokens": 300,
+  "temperature": 0.3,
+  "parallel_execution": true,
+  "metadata": {}
 }
 ```
 
@@ -244,7 +237,9 @@ POST /api/v1/mention-detection/execute
   "data": {
     "check_id": "check-uuid",
     "project_id": "project-uuid",
+    "user_id": "user-uuid",
     "prompt": "推荐几个适合团队协作的知识管理工具",
+    "brands": ["Notion", "Obsidian", "Roam Research"],
     "status": "completed",
     "results": [
       {
@@ -254,51 +249,33 @@ POST /api/v1/mention-detection/execute
           {
             "brand": "Notion",
             "mentioned": true,
-            "confidence_score": 0.95,
-            "context_snippet": "Notion - 功能全面的工作空间，支持文档、数据库、看板等多种功能",
+            "confidence": 0.95,
+            "context": "Notion - 功能全面的工作空间，支持文档、数据库、看板等多种功能",
             "position": 1
           },
           {
             "brand": "Obsidian",
             "mentioned": false,
-            "confidence_score": 0.05,
-            "context_snippet": null,
+            "confidence": 0.05,
+            "context": null,
             "position": null
           }
         ],
-        "processing_time_ms": 1250
-      },
-      {
-        "model": "deepseek",
-        "response_text": "对于团队协作的知识管理，我建议考虑：Notion、Obsidian和Roam Research...",
-        "mentions": [
-          {
-            "brand": "Notion",
-            "mentioned": true,
-            "confidence_score": 0.92,
-            "context_snippet": "Notion、Obsidian和Roam Research都是优秀的选择",
-            "position": 1
-          },
-          {
-            "brand": "Obsidian",
-            "mentioned": true,
-            "confidence_score": 0.90,
-            "context_snippet": "Obsidian适合个人知识管理和团队协作",
-            "position": 2
-          }
-        ],
-        "processing_time_ms": 980
+        "processing_time_ms": 1250,
+        "error": null
       }
     ],
     "summary": {
-      "total_mentions": 3,
-      "brands_mentioned": ["Notion", "Obsidian"],
-      "mention_rate": 0.75,
-      "avg_confidence": 0.92
+      "total_mentions": 1,
+      "mention_rate": 0.33,
+      "avg_confidence": 0.95,
+      "models_used": ["doubao"],
+      "brands_checked": ["Notion", "Obsidian", "Roam Research"]
     },
     "created_at": "2024-06-03T10:00:00Z",
     "completed_at": "2024-06-03T10:02:30Z"
-  }
+  },
+  "message": "引用检测完成"
 }
 ```
 
@@ -481,50 +458,129 @@ GET /api/v1/api/analytics/compare?project_id={project_id}&brands=Notion,Obsidian
 
 ---
 
-## 🚧 计划中功能
+## 🎯 品牌检测专用API
 
-### 优化建议 (未来版本)
+### 仅执行品牌检测 ✅ 已实现
 ```http
-POST /suggestions/generate
-```
-
-> **注意**: 此功能计划在未来版本中实现，当前MVP专注于核心引用检测功能。
-
-**计划功能:**
-- 基于引用检测结果的优化建议
-- 品牌可见性提升策略
-- 竞品分析洞察
-- 内容优化建议
-        "description": "建议在页面中添加FAQ模块，便于AI识别和引用",
-        "priority": "high",
-        "estimated_impact": 8,
-        "detailed_suggestion": "在页面底部添加常见问题解答部分...",
-        "example_implementation": "<script type=\"application/ld+json\">..."
-      }
-    ]
-  }
-}
-```
-
-### 更新建议状态
-```http
-PATCH /suggestions/{suggestion_id}
+POST /api/v1/api/detect-brands-only
 ```
 
 **请求体:**
 ```json
 {
-  "status": "completed"
+  "text": "我推荐使用Notion来管理团队知识，它比Obsidian更适合协作",
+  "brands": ["Notion", "Obsidian", "Roam Research"],
+  "strategy": "improved"
+}
+```
+
+**响应:**
+```json
+{
+  "success": true,
+  "data": {
+    "results": {
+      "Notion": {
+        "mentioned": true,
+        "confidence": 0.95,
+        "contexts": ["我推荐使用Notion来管理团队知识"],
+        "positions": [6],
+        "detection_method": "exact_match"
+      },
+      "Obsidian": {
+        "mentioned": true,
+        "confidence": 0.90,
+        "contexts": ["它比Obsidian更适合协作"],
+        "positions": [25],
+        "detection_method": "exact_match"
+      }
+    },
+    "statistics": {
+      "total_brands": 3,
+      "mentioned_brands": 2,
+      "mention_rate": 0.67
+    },
+    "strategy_used": "improved"
+  },
+  "message": "品牌检测完成"
+}
+```
+
+### 比较检测策略 ✅ 已实现
+```http
+POST /api/v1/api/compare-strategies
+```
+
+**请求体:**
+```json
+{
+  "text": "我推荐使用Notion来管理团队知识",
+  "brands": ["Notion", "Obsidian"],
+  "strategy": "improved"
+}
+```
+
+### 获取可用策略 ✅ 已实现
+```http
+GET /api/v1/api/strategies
+```
+
+**响应:**
+```json
+{
+  "success": true,
+  "data": {
+    "strategies": ["simple", "improved", "hybrid"],
+    "default_strategy": "improved",
+    "descriptions": {
+      "simple": "简单字符串匹配",
+      "improved": "改进的检测算法（推荐）",
+      "hybrid": "混合策略"
+    }
+  },
+  "message": "获取策略列表成功"
 }
 ```
 
 ---
 
-## 📈 统计分析
+## 🚧 计划中功能
 
-### 项目统计
+### 计划中功能 (未来版本)
+
+**优化建议系统**
+- 基于引用检测结果的优化建议
+- 品牌可见性提升策略
+- 竞品分析洞察
+- 内容优化建议
+
+**高级分析功能**
+- 项目统计仪表板
+- 趋势预测分析
+- 自定义报告生成
+
+---
+
+## 🔌 AI服务API
+
+### 获取AI提供商列表
 ```http
-GET /analytics/project/{project_id}/stats
+GET /api/v1/ai/providers
+```
+
+### AI聊天完成
+```http
+POST /api/v1/ai/chat
+```
+
+### 品牌分析
+```http
+POST /api/v1/ai/analyze/brand
+```
+
+### AI服务健康检查
+```http
+GET /api/v1/ai/health
 ```
 
 **响应:**
@@ -554,9 +610,9 @@ GET /analytics/project/{project_id}/stats
 
 ## 🔧 系统接口
 
-### 获取AI模型列表
+### 引用检测服务健康检查
 ```http
-GET /api/models
+GET /api/v1/api/health
 ```
 
 **响应:**
@@ -586,7 +642,7 @@ GET /api/models
 
 ### 获取Prompt模板列表
 ```http
-GET /api/prompts/templates?category=productivity&page=1&limit=10
+GET /api/v1/api/prompts/templates?category=productivity&page=1&limit=10
 ```
 
 **响应:**
@@ -614,9 +670,9 @@ GET /api/prompts/templates?category=productivity&page=1&limit=10
 }
 ```
 
-### 系统健康检查
+### 获取项目统计
 ```http
-GET /health
+GET /api/v1/projects/stats
 ```
 
 **响应:**

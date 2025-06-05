@@ -35,7 +35,7 @@
 - [x] **AI集成**: 豆包+DeepSeek真实API集成
 - [x] **数据库**: SQLite本地持久化完成
 - [x] **测试覆盖**: 端到端测试82.4%通过率
-- [x] **API接口**: 统一服务架构，execute_detection
+- [x] **API接口**: 统一服务架构，check-mention端点
 - [x] **下一步计划**: Sprint 6云迁移和前端开发
 
 ---

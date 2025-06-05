@@ -335,10 +335,9 @@
   - 可见性预测和优化建议生成
   - 评分历史追踪
 
-- 🌐 **分析API端点**
-  - `GET /api/v1/analysis/health` - 分析服务健康检查
-  - `POST /api/v1/analysis/analyze` - 综合内容分析
-  - `POST /api/v1/analysis/geo-score` - GEO评分计算
+- 🌐 **分析API端点** (历史版本，已重构)
+  - 内容分析功能已整合到引用检测服务中
+  - GEO评分功能计划在未来版本实现
 
 ### 技术特性
 - **异步架构**: 全异步内容处理和GEO分析系统
