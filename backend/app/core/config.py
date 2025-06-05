@@ -20,8 +20,8 @@ class Settings(BaseSettings):
     port: int = Field(default=8000, env="PORT")
     
     # Database
-    database_url: str = Field(..., env="DATABASE_URL")
-    database_test_url: Optional[str] = Field(default=None, env="DATABASE_TEST_URL")
+    database_url: str = Field(default="sqlite:///./data/geolens.db", env="DATABASE_URL")
+    database_test_url: Optional[str] = Field(default="sqlite:///./data/test.db", env="DATABASE_TEST_URL")
     
     # Supabase (Alternative)
     supabase_url: Optional[str] = Field(default=None, env="SUPABASE_URL")

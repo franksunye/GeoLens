@@ -126,9 +126,32 @@ def create_test_session():
 def init_db() -> None:
     """Initialize database tables (sync version)."""
     # Import all models here to ensure they are registered
-    from app.models import user, project  # noqa
+    from app.models import user, project, mention  # noqa
+    from app.models.mention import (
+        MentionCheck, MentionResult, BrandMention,
+        PromptTemplate, AnalyticsCache
+    )  # noqa
 
+    print("🔧 Initializing database tables...")
+    print(f"Database URL: {engine.url}")
+
+    # Create all tables
     Base.metadata.create_all(bind=engine)
+
+    # Verify tables were created
+    from sqlalchemy import inspect
+    inspector = inspect(engine)
+    tables = inspector.get_table_names()
+    print(f"✅ Created tables: {tables}")
+
+    # Verify mention-related tables
+    required_tables = ['mention_checks', 'mention_results', 'brand_mentions', 'prompt_templates']
+    missing_tables = [table for table in required_tables if table not in tables]
+
+    if missing_tables:
+        print(f"⚠️ Missing tables: {missing_tables}")
+    else:
+        print("✅ All required tables created successfully")
 
 
 async def async_init_db() -> None:
