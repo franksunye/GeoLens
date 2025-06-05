@@ -88,6 +88,16 @@ uvicorn app.main:app --reload --port 8000
 # 运行所有测试
 pytest
 
+# 运行特定测试类型
+pytest tests/unit/          # 单元测试
+pytest tests/integration/   # 集成测试
+pytest tests/accuracy/      # 算法准确率测试
+pytest tests/e2e/          # 端到端测试 (需要API密钥)
+
+# 运行端到端测试 (真实AI模型)
+./scripts/quick_e2e_test.sh    # 快速验证
+./scripts/run_e2e_tests.sh     # 完整E2E测试
+
 # 运行测试并查看覆盖率
 pytest --cov=app --cov-report=html
 open htmlcov/index.html

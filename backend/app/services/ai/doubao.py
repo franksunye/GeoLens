@@ -30,7 +30,7 @@ class DoubaoProvider(AIProvider):
     def supported_models(self) -> List[str]:
         return [
             "doubao-pro-32k",
-            "doubao-pro-256k", 
+            "doubao-pro-256k",
             "doubao-lite-32k",
             "doubao-lite-128k",
             "doubao-lite-4k",
@@ -38,6 +38,7 @@ class DoubaoProvider(AIProvider):
             "doubao-vision-lite",
             "doubao-1.5-pro-32k",
             "doubao-1.5-lite",
+            "doubao-1-5-lite-32k-250115",  # 正确的模型ID格式
         ]
     
     def _validate_config(self) -> None:
