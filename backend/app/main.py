@@ -11,6 +11,7 @@ import structlog
 
 from app.core.config import settings
 from app.core.database import init_db
+from app.core.json_encoder import json_response_with_encoder
 from app.api.v1 import api_router
 from app.schemas.common import ErrorResponse, ErrorDetail, HealthCheck
 
@@ -121,14 +122,16 @@ async def http_exception_handler(request: Request, exc: HTTPException):
         url=str(request.url)
     )
     
+    error_content = ErrorResponse(
+        error=ErrorDetail(
+            code=f"HTTP_{exc.status_code}",
+            message=exc.detail
+        )
+    ).model_dump()
+
     return JSONResponse(
         status_code=exc.status_code,
-        content=ErrorResponse(
-            error=ErrorDetail(
-                code=f"HTTP_{exc.status_code}",
-                message=exc.detail
-            )
-        ).model_dump()
+        content=json_response_with_encoder(error_content)
     )
 
 
@@ -141,14 +144,16 @@ async def general_exception_handler(request: Request, exc: Exception):
         url=str(request.url)
     )
     
+    error_content = ErrorResponse(
+        error=ErrorDetail(
+            code="INTERNAL_SERVER_ERROR",
+            message="An internal server error occurred"
+        )
+    ).model_dump()
+
     return JSONResponse(
         status_code=500,
-        content=ErrorResponse(
-            error=ErrorDetail(
-                code="INTERNAL_SERVER_ERROR",
-                message="An internal server error occurred"
-            )
-        ).model_dump()
+        content=json_response_with_encoder(error_content)
     )
 
 

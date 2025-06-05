@@ -347,7 +347,10 @@ class TestMentionDetectionAPIErrorHandling:
         
         assert response.status_code == 500
         data = response.json()
-        assert "Mention detection failed" in data["detail"]
+        # 检查错误响应格式
+        assert "error" in data
+        assert data["error"]["code"] == "HTTP_500"
+        assert "Mention detection failed" in data["error"]["message"]
     
     @patch('app.services.mention_detection.MentionDetectionService.get_history')
     def test_get_history_service_error(self, mock_get_history):
@@ -361,7 +364,10 @@ class TestMentionDetectionAPIErrorHandling:
         
         assert response.status_code == 500
         data = response.json()
-        assert "Failed to get history" in data["detail"]
+        # 检查错误响应格式
+        assert "error" in data
+        assert data["error"]["code"] == "HTTP_500"
+        assert "Failed to get history" in data["error"]["message"]
     
     def test_invalid_json_request(self):
         """测试无效JSON请求"""
