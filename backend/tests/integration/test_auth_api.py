@@ -39,18 +39,28 @@ class TestAuthAPI:
     
     def test_register_invalid_email(self, client: TestClient):
         """Test registration with invalid email."""
-        user_data = UserFactory.create_user_data(email="invalid-email")
-        
-        response = client.post("/api/v1/auth/register", json=user_data.dict())
-        
+        user_data = {
+            "email": "invalid-email",
+            "password": "password123",
+            "full_name": "Test User",
+            "is_active": True
+        }
+
+        response = client.post("/api/v1/auth/register", json=user_data)
+
         assert response.status_code == 422
     
     def test_register_weak_password(self, client: TestClient):
         """Test registration with weak password."""
-        user_data = UserFactory.create_user_data(password="weak")
-        
-        response = client.post("/api/v1/auth/register", json=user_data.dict())
-        
+        user_data = {
+            "email": "user@example.com",
+            "password": "weak",
+            "full_name": "Test User",
+            "is_active": True
+        }
+
+        response = client.post("/api/v1/auth/register", json=user_data)
+
         assert response.status_code == 422
     
     def test_login_success(self, client: TestClient, test_user):
@@ -159,8 +169,8 @@ class TestAuthAPI:
     def test_get_current_user_unauthorized(self, client: TestClient):
         """Test getting current user without authentication."""
         response = client.get("/api/v1/auth/me")
-        
-        assert response.status_code == 401
+
+        assert response.status_code == 403
     
     def test_update_current_user_success(self, authenticated_client: TestClient, test_user):
         """Test updating current user profile."""

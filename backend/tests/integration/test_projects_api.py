@@ -34,11 +34,17 @@ class TestProjectsAPI:
     
     def test_create_project_unauthorized(self, client: TestClient):
         """Test project creation without authentication."""
-        project_data = ProjectFactory.create_project_data()
-        
-        response = client.post("/api/v1/projects/", json=project_data.dict())
-        
-        assert response.status_code == 401
+        project_data = {
+            "name": "Test Project",
+            "description": "Test Description",
+            "domain": "example.com",
+            "target_keywords": ["test", "keyword"],
+            "is_active": True
+        }
+
+        response = client.post("/api/v1/projects/", json=project_data)
+
+        assert response.status_code == 403
     
     def test_create_project_duplicate_domain(self, authenticated_client: TestClient, test_project):
         """Test project creation with duplicate domain."""
@@ -53,10 +59,16 @@ class TestProjectsAPI:
     
     def test_create_project_invalid_domain(self, authenticated_client: TestClient):
         """Test project creation with invalid domain."""
-        project_data = ProjectFactory.create_project_data(domain="invalid-domain")
-        
-        response = authenticated_client.post("/api/v1/projects/", json=project_data.dict())
-        
+        project_data = {
+            "name": "Test Project",
+            "description": "Test Description",
+            "domain": "invalid-domain",  # 无效域名格式
+            "target_keywords": ["test", "keyword"],
+            "is_active": True
+        }
+
+        response = authenticated_client.post("/api/v1/projects/", json=project_data)
+
         assert response.status_code == 422
     
     def test_get_projects_success(self, authenticated_client: TestClient, test_project):

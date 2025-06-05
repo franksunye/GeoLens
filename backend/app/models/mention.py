@@ -11,6 +11,7 @@ from sqlalchemy import Column, String, Integer, Float, Boolean, Text, DateTime, 
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from app.core.database import Base
+from app.models.user import GUID
 
 
 class MentionCheck(Base):
@@ -19,7 +20,7 @@ class MentionCheck(Base):
     
     id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
     project_id = Column(String, nullable=False, index=True)
-    user_id = Column(String, nullable=False, index=True)
+    user_id = Column(GUID(), nullable=False, index=True)
     prompt = Column(Text, nullable=False)
     brands_checked = Column(Text, nullable=False)  # JSON数组: ["Notion", "Obsidian"]
     models_used = Column(Text, nullable=False)     # JSON数组: ["doubao", "deepseek"]
@@ -83,7 +84,7 @@ class PromptTemplate(Base):
     __tablename__ = "prompt_templates"
     
     id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
-    user_id = Column(String, nullable=False, index=True)
+    user_id = Column(GUID(), nullable=False, index=True)
     name = Column(String, nullable=False)
     category = Column(String, nullable=False, index=True)  # productivity/comparison/recommendation
     template = Column(Text, nullable=False)

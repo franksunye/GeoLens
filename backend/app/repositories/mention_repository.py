@@ -29,8 +29,7 @@ class MentionRepository:
         """创建引用检测记录"""
         check = MentionCheck(**check_data)
         self.db.add(check)
-        await self.db.commit()
-        await self.db.refresh(check)
+        await self.db.flush()  # 只flush，不commit
         return check
     
     async def get_check_by_id(self, check_id: str) -> Optional[MentionCheck]:
@@ -114,8 +113,7 @@ class MentionRepository:
         """保存模型检测结果"""
         result = MentionResult(**result_data)
         self.db.add(result)
-        await self.db.commit()
-        await self.db.refresh(result)
+        await self.db.flush()  # 只flush，不commit
         return result
     
     async def get_results_by_check(self, check_id: str) -> List[MentionResult]:
@@ -133,7 +131,7 @@ class MentionRepository:
         """批量保存品牌提及"""
         mentions = [BrandMention(**data) for data in mentions_data]
         self.db.add_all(mentions)
-        await self.db.commit()
+        await self.db.flush()  # 只flush，不commit
         return mentions
     
     async def get_mentions_by_result(self, result_id: str) -> List[BrandMention]:

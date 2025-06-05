@@ -12,6 +12,7 @@ from datetime import datetime
 
 from app.core.deps import get_current_user
 from app.models.user import User
+from app.schemas.common import APIResponse
 from pydantic import BaseModel
 
 # 引用检测相关的数据模型
@@ -98,6 +99,28 @@ class SavePromptResponse(BaseModel):
     usage_count: int
     created_at: datetime
 
+class TemplateListResponse(BaseModel):
+    """模板列表响应"""
+    templates: List[SavePromptResponse]
+    pagination: Dict[str, Any]
+
+class AnalyticsResponse(BaseModel):
+    """引用统计响应"""
+    brand: str
+    timeframe: str
+    total_checks: int
+    total_mentions: int
+    mention_rate: float
+    model_performance: Dict[str, Any]
+    trend_data: List[Dict[str, Any]]
+    top_contexts: List[str]
+
+class ComparisonResponse(BaseModel):
+    """品牌对比响应"""
+    brands: List[str]
+    comparison_data: Dict[str, Any]
+    summary: Dict[str, Any]
+
 router = APIRouter()
 
 # 初始化引用检测服务
@@ -144,14 +167,14 @@ async def health_check():
         )
 
 
-@router.post("/check-mention", response_model=MentionCheckResponse)
+@router.post("/check-mention", response_model=APIResponse[MentionCheckResponse])
 async def check_mention(
     request: MentionCheckRequest,
     current_user: User = Depends(get_current_user)
 ):
     """
     执行引用检测
-    
+
     检测品牌在指定AI模型中的被提及情况。
     """
     try:
@@ -163,9 +186,13 @@ async def check_mention(
             project_id=request.project_id,
             user_id=current_user.id
         )
-        
-        return result
-        
+
+        return APIResponse(
+            success=True,
+            data=result,
+            message="引用检测完成"
+        )
+
     except Exception as e:
         raise HTTPException(
             status_code=500,
@@ -173,7 +200,7 @@ async def check_mention(
         )
 
 
-@router.get("/get-history", response_model=HistoryResponse)
+@router.get("/get-history", response_model=APIResponse[HistoryResponse])
 async def get_history(
     project_id: str,
     page: int = 1,
@@ -184,7 +211,7 @@ async def get_history(
 ):
     """
     获取检测历史记录
-    
+
     查询指定项目的历史检测记录。
     """
     try:
@@ -196,9 +223,13 @@ async def get_history(
             brand_filter=brand,
             model_filter=model
         )
-        
-        return history
-        
+
+        return APIResponse(
+            success=True,
+            data=history,
+            message="获取历史记录成功"
+        )
+
     except Exception as e:
         raise HTTPException(
             status_code=500,
@@ -206,14 +237,14 @@ async def get_history(
         )
 
 
-@router.post("/save-prompt", response_model=SavePromptResponse)
+@router.post("/save-prompt", response_model=APIResponse[SavePromptResponse])
 async def save_prompt(
     request: SavePromptRequest,
     current_user: User = Depends(get_current_user)
 ):
     """
     保存自定义Prompt模板
-    
+
     保存用户自定义的Prompt模板供后续使用。
     """
     try:
@@ -226,9 +257,13 @@ async def save_prompt(
             description=request.description,
             user_id=current_user.id
         )
-        
-        return template
-        
+
+        return APIResponse(
+            success=True,
+            data=template,
+            message="Prompt模板保存成功"
+        )
+
     except Exception as e:
         raise HTTPException(
             status_code=500,
@@ -236,7 +271,7 @@ async def save_prompt(
         )
 
 
-@router.get("/prompts/templates")
+@router.get("/prompts/templates", response_model=APIResponse[TemplateListResponse])
 async def get_prompt_templates(
     category: Optional[str] = None,
     page: int = 1,
@@ -245,7 +280,7 @@ async def get_prompt_templates(
 ):
     """
     获取Prompt模板列表
-    
+
     获取可用的Prompt模板列表。
     """
     try:
@@ -256,9 +291,13 @@ async def get_prompt_templates(
             limit=limit,
             user_id=current_user.id
         )
-        
-        return templates
-        
+
+        return APIResponse(
+            success=True,
+            data=templates,
+            message="获取模板列表成功"
+        )
+
     except Exception as e:
         raise HTTPException(
             status_code=500,
@@ -266,7 +305,7 @@ async def get_prompt_templates(
         )
 
 
-@router.get("/analytics/mentions")
+@router.get("/analytics/mentions", response_model=APIResponse[AnalyticsResponse])
 async def get_mention_analytics(
     project_id: str,
     brand: Optional[str] = None,
@@ -276,7 +315,7 @@ async def get_mention_analytics(
 ):
     """
     获取品牌引用统计
-    
+
     获取指定品牌的引用频率和趋势分析。
     """
     try:
@@ -287,9 +326,13 @@ async def get_mention_analytics(
             timeframe=timeframe,
             model=model
         )
-        
-        return analytics
-        
+
+        return APIResponse(
+            success=True,
+            data=analytics,
+            message="获取引用统计成功"
+        )
+
     except Exception as e:
         raise HTTPException(
             status_code=500,
@@ -297,7 +340,7 @@ async def get_mention_analytics(
         )
 
 
-@router.get("/analytics/compare")
+@router.get("/analytics/compare", response_model=APIResponse[ComparisonResponse])
 async def compare_brands(
     project_id: str,
     brands: str,  # 逗号分隔的品牌列表
@@ -305,21 +348,25 @@ async def compare_brands(
 ):
     """
     竞品对比分析
-    
+
     对比多个品牌的AI可见性表现。
     """
     try:
         # 解析品牌列表
         brand_list = [brand.strip() for brand in brands.split(",")]
-        
+
         # 执行竞品对比
         comparison = await mention_service.compare_brands(
             project_id=project_id,
             brands=brand_list
         )
-        
-        return comparison
-        
+
+        return APIResponse(
+            success=True,
+            data=comparison,
+            message="品牌对比分析完成"
+        )
+
     except Exception as e:
         raise HTTPException(
             status_code=500,

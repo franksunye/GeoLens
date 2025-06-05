@@ -21,10 +21,11 @@ class TestMentionRepository:
         repo = MentionRepository(async_db_session)
 
         check_id = str(uuid.uuid4())
+        user_id = str(uuid.uuid4())
         check_data = {
             "id": check_id,
             "project_id": "test-project",
-            "user_id": "test-user",
+            "user_id": user_id,
             "prompt": "推荐协作工具",
             "brands_checked": json.dumps(["Notion", "Obsidian"]),
             "models_used": json.dumps(["doubao", "deepseek"]),
@@ -50,10 +51,11 @@ class TestMentionRepository:
         
         # 先创建检测记录
         check_id = str(uuid.uuid4())
+        user_id = str(uuid.uuid4())
         check_data = {
             "id": check_id,
             "project_id": "test-project",
-            "user_id": "test-user",
+            "user_id": user_id,
             "prompt": "推荐协作工具",
             "brands_checked": json.dumps(["Notion", "Obsidian"]),
             "models_used": json.dumps(["doubao"]),
@@ -113,7 +115,7 @@ class TestMentionRepository:
             check_data = {
                 "id": str(uuid.uuid4()),
                 "project_id": project_id,
-                "user_id": "test-user",
+                "user_id": str(uuid.uuid4()),
                 "prompt": f"测试Prompt {i}",
                 "brands_checked": json.dumps(["Brand1", "Brand2"]),
                 "models_used": json.dumps(["doubao"]),
@@ -142,7 +144,7 @@ class TestMentionRepository:
         check_data = {
             "id": check_id,
             "project_id": "test-project",
-            "user_id": "test-user",
+            "user_id": str(uuid.uuid4()),
             "prompt": "测试更新",
             "brands_checked": json.dumps(["Brand1"]),
             "models_used": json.dumps(["doubao"]),
@@ -229,7 +231,7 @@ class TestMentionRepository:
         check_data = {
             "id": check_id,
             "project_id": project_id,
-            "user_id": "test-user",
+            "user_id": str(uuid.uuid4()),
             "prompt": "推荐工具",
             "brands_checked": json.dumps(["TestBrand"]),
             "models_used": json.dumps(["doubao"]),
@@ -281,7 +283,7 @@ class TestMentionRepository:
             check_data = {
                 "id": check_id,
                 "project_id": project_id,
-                "user_id": "test-user",
+                "user_id": str(uuid.uuid4()),
                 "prompt": f"推荐{brand}",
                 "brands_checked": json.dumps([brand]),
                 "models_used": json.dumps(["doubao"]),
