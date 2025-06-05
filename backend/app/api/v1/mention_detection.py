@@ -160,7 +160,8 @@ async def check_mention(
             prompt=request.prompt,
             brands=request.brands,
             models=request.models,
-            project_id=request.project_id
+            project_id=request.project_id,
+            user_id=current_user.id
         )
         
         return result

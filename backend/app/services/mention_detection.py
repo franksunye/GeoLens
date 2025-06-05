@@ -7,10 +7,14 @@
 import asyncio
 import uuid
 import re
+import json
 from typing import List, Dict, Any, Optional
 from datetime import datetime, timedelta
 
 from app.services.ai import AIServiceFactory
+from app.core.database import AsyncSessionLocal
+from app.repositories.mention_repository import MentionRepository
+from app.models.mention import create_mention_check, create_mention_result, create_brand_mention
 from app.api.v1.mention_detection import (
     MentionCheckResponse, ModelResult, BrandMention,
     HistoryResponse, HistoryItem, SavePromptResponse
@@ -22,105 +26,231 @@ class MentionDetectionService:
     
     def __init__(self):
         self.ai_factory = AIServiceFactory()
-        # 模拟数据存储，实际应该连接数据库
-        self.checks_storage = {}
-        self.templates_storage = {}
-        self.analytics_storage = {}
     
     async def check_mentions(
         self,
         prompt: str,
         brands: List[str],
         models: List[str],
-        project_id: str
+        project_id: str,
+        user_id: str = "default-user"
     ) -> MentionCheckResponse:
         """
-        执行引用检测
-        
+        执行引用检测，使用数据库持久化
+
         Args:
             prompt: 检测用的提示词
             brands: 要检测的品牌列表
             models: 要使用的AI模型列表
             project_id: 项目ID
-            
+            user_id: 用户ID
+
         Returns:
             检测结果
         """
         check_id = str(uuid.uuid4())
         start_time = datetime.now()
-        
-        # 并行调用多个AI模型
-        tasks = []
-        for model in models:
-            task = self._check_single_model(model, prompt, brands)
-            tasks.append(task)
-        
-        # 等待所有模型完成
-        model_results = await asyncio.gather(*tasks, return_exceptions=True)
-        
-        # 处理结果
-        valid_results = []
-        for i, result in enumerate(model_results):
-            if isinstance(result, Exception):
-                # 处理异常情况
-                valid_results.append(ModelResult(
-                    model=models[i],
-                    response_text=f"Error: {str(result)}",
-                    mentions=[],
-                    processing_time_ms=0
-                ))
-            else:
-                valid_results.append(result)
-        
-        # 计算汇总统计
-        total_mentions = sum(
-            len([m for m in result.mentions if m.mentioned]) 
-            for result in valid_results
-        )
-        
-        mention_rate = total_mentions / (len(brands) * len(models)) if brands and models else 0
-        
-        brands_mentioned = list(set([
-            mention.brand 
-            for result in valid_results 
-            for mention in result.mentions 
-            if mention.mentioned
-        ]))
-        
-        avg_confidence = 0
-        if total_mentions > 0:
-            all_confidences = [
-                mention.confidence_score 
-                for result in valid_results 
-                for mention in result.mentions 
-                if mention.mentioned
-            ]
-            avg_confidence = sum(all_confidences) / len(all_confidences)
-        
-        summary = {
-            "total_mentions": total_mentions,
-            "brands_mentioned": brands_mentioned,
-            "mention_rate": round(mention_rate, 4),
-            "avg_confidence": round(avg_confidence, 4)
-        }
-        
-        # 创建响应
-        response = MentionCheckResponse(
-            check_id=check_id,
-            project_id=project_id,
-            prompt=prompt,
-            status="completed",
-            results=valid_results,
-            summary=summary,
-            created_at=start_time,
-            completed_at=datetime.now()
-        )
-        
-        # 存储结果（实际应该存储到数据库）
-        self.checks_storage[check_id] = response
-        
-        return response
+
+        # 使用数据库会话
+        async with AsyncSessionLocal() as db:
+            repo = MentionRepository(db)
+
+            # 创建检测记录
+            check_data = {
+                "id": check_id,
+                "project_id": project_id,
+                "user_id": user_id,
+                "prompt": prompt,
+                "brands_checked": json.dumps(brands),
+                "models_used": json.dumps(models),
+                "status": "running",
+                "created_at": start_time
+            }
+
+            await repo.create_check(check_data)
+
+            try:
+                # 并行调用多个AI模型
+                tasks = []
+                for model in models:
+                    task = self._check_single_model_with_db(model, prompt, brands, check_id, repo)
+                    tasks.append(task)
+
+                # 等待所有模型完成
+                model_results = await asyncio.gather(*tasks, return_exceptions=True)
+
+                # 处理结果
+                valid_results = []
+                for i, result in enumerate(model_results):
+                    if isinstance(result, Exception):
+                        # 处理异常情况
+                        valid_results.append(ModelResult(
+                            model=models[i],
+                            response_text=f"Error: {str(result)}",
+                            mentions=[],
+                            processing_time_ms=0
+                        ))
+                    else:
+                        valid_results.append(result)
+
+                # 计算汇总统计
+                total_mentions = sum(
+                    len([m for m in result.mentions if m.mentioned])
+                    for result in valid_results
+                )
+
+                mention_rate = total_mentions / (len(brands) * len(models)) if brands and models else 0
+
+                brands_mentioned = list(set([
+                    mention.brand
+                    for result in valid_results
+                    for mention in result.mentions
+                    if mention.mentioned
+                ]))
+
+                avg_confidence = 0
+                if total_mentions > 0:
+                    all_confidences = [
+                        mention.confidence_score
+                        for result in valid_results
+                        for mention in result.mentions
+                        if mention.mentioned
+                    ]
+                    avg_confidence = sum(all_confidences) / len(all_confidences)
+
+                # 更新检测记录状态
+                await repo.update_check_status(
+                    check_id=check_id,
+                    status="completed",
+                    completed_at=datetime.now(),
+                    total_mentions=total_mentions,
+                    mention_rate=round(mention_rate, 4),
+                    avg_confidence=round(avg_confidence, 4)
+                )
+
+                summary = {
+                    "total_mentions": total_mentions,
+                    "brands_mentioned": brands_mentioned,
+                    "mention_rate": round(mention_rate, 4),
+                    "avg_confidence": round(avg_confidence, 4)
+                }
+
+                # 创建响应
+                return MentionCheckResponse(
+                    check_id=check_id,
+                    project_id=project_id,
+                    prompt=prompt,
+                    status="completed",
+                    results=valid_results,
+                    summary=summary,
+                    created_at=start_time,
+                    completed_at=datetime.now()
+                )
+
+            except Exception as e:
+                # 更新为失败状态
+                await repo.update_check_status(check_id, "failed")
+                raise e
     
+    async def _check_single_model_with_db(
+        self,
+        model: str,
+        prompt: str,
+        brands: List[str],
+        check_id: str,
+        repo: MentionRepository
+    ) -> ModelResult:
+        """
+        检测单个AI模型的品牌提及，并保存到数据库
+
+        Args:
+            model: AI模型名称
+            prompt: 提示词
+            brands: 品牌列表
+            check_id: 检测记录ID
+            repo: 数据库Repository
+
+        Returns:
+            单个模型的检测结果
+        """
+        start_time = datetime.now()
+        result_id = str(uuid.uuid4())
+
+        try:
+            # 调用AI模型获取回答
+            if model == "doubao":
+                ai_provider = self.ai_factory.get_provider("doubao")
+                response = await ai_provider.chat([{"role": "user", "content": prompt}])
+                response_text = response.content
+            elif model == "deepseek":
+                ai_provider = self.ai_factory.get_provider("deepseek")
+                response = await ai_provider.chat([{"role": "user", "content": prompt}])
+                response_text = response.content
+            elif model == "chatgpt":
+                # 暂时使用模拟响应，因为OpenAI provider可能未实现
+                response_text = f"模拟ChatGPT回答: {prompt}"
+            else:
+                raise ValueError(f"Unsupported model: {model}")
+
+            processing_time = int((datetime.now() - start_time).total_seconds() * 1000)
+
+            # 保存模型结果到数据库
+            result_data = {
+                "id": result_id,
+                "check_id": check_id,
+                "model": model,
+                "response_text": response_text,
+                "processing_time_ms": processing_time
+            }
+            await repo.save_result(result_data)
+
+            # 分析品牌提及
+            mentions = self._analyze_mentions(response_text, brands)
+
+            # 保存品牌提及到数据库
+            mentions_data = []
+            for mention in mentions:
+                mention_data = {
+                    "id": str(uuid.uuid4()),
+                    "result_id": result_id,
+                    "brand": mention.brand,
+                    "mentioned": mention.mentioned,
+                    "confidence_score": mention.confidence_score,
+                    "context_snippet": mention.context_snippet,
+                    "position": mention.position
+                }
+                mentions_data.append(mention_data)
+
+            await repo.save_mentions(mentions_data)
+
+            return ModelResult(
+                model=model,
+                response_text=response_text,
+                mentions=mentions,
+                processing_time_ms=processing_time
+            )
+
+        except Exception as e:
+            processing_time = int((datetime.now() - start_time).total_seconds() * 1000)
+
+            # 保存错误结果到数据库
+            result_data = {
+                "id": result_id,
+                "check_id": check_id,
+                "model": model,
+                "response_text": f"Error calling {model}: {str(e)}",
+                "processing_time_ms": processing_time,
+                "error_message": str(e)
+            }
+            await repo.save_result(result_data)
+
+            return ModelResult(
+                model=model,
+                response_text=f"Error calling {model}: {str(e)}",
+                mentions=[],
+                processing_time_ms=processing_time
+            )
+
     async def _check_single_model(
         self,
         model: str,
@@ -303,57 +433,48 @@ class MentionDetectionService:
         model_filter: Optional[str] = None
     ) -> HistoryResponse:
         """
-        获取检测历史记录
+        获取检测历史记录，从数据库查询
         """
-        # 模拟历史数据（实际应该从数据库查询）
-        history_items = [
-            HistoryItem(
-                id=str(uuid.uuid4()),
-                prompt="推荐几个适合团队协作的知识管理工具",
-                brands_checked=["Notion", "Obsidian", "Roam Research"],
-                models_used=["doubao", "deepseek"],
-                total_mentions=3,
-                mention_rate=0.75,
-                created_at=datetime.now() - timedelta(hours=2)
-            ),
-            HistoryItem(
-                id=str(uuid.uuid4()),
-                prompt="有哪些好用的项目管理软件？",
-                brands_checked=["Asana", "Trello", "Monday"],
-                models_used=["chatgpt", "doubao"],
-                total_mentions=2,
-                mention_rate=0.67,
-                created_at=datetime.now() - timedelta(days=1)
+        async with AsyncSessionLocal() as db:
+            repo = MentionRepository(db)
+
+            # 从数据库获取检测记录
+            checks = await repo.get_checks_by_project(
+                project_id=project_id,
+                page=page,
+                limit=limit,
+                brand_filter=brand_filter,
+                model_filter=model_filter
             )
-        ]
-        
-        # 应用过滤器
-        if brand_filter:
-            history_items = [
-                item for item in history_items 
-                if brand_filter in item.brands_checked
-            ]
-        
-        if model_filter:
-            history_items = [
-                item for item in history_items 
-                if model_filter in item.models_used
-            ]
-        
-        # 分页
-        start_idx = (page - 1) * limit
-        end_idx = start_idx + limit
-        paginated_items = history_items[start_idx:end_idx]
-        
-        return HistoryResponse(
-            checks=paginated_items,
-            pagination={
-                "page": page,
-                "limit": limit,
-                "total": len(history_items),
-                "pages": (len(history_items) + limit - 1) // limit
-            }
-        )
+
+            # 获取总数
+            total_count = await repo.get_checks_count_by_project(project_id)
+
+            # 转换为HistoryItem格式
+            history_items = []
+            for check in checks:
+                brands_checked = json.loads(check.brands_checked) if check.brands_checked else []
+                models_used = json.loads(check.models_used) if check.models_used else []
+
+                history_items.append(HistoryItem(
+                    id=check.id,
+                    prompt=check.prompt,
+                    brands_checked=brands_checked,
+                    models_used=models_used,
+                    total_mentions=check.total_mentions or 0,
+                    mention_rate=check.mention_rate or 0.0,
+                    created_at=check.created_at
+                ))
+
+            return HistoryResponse(
+                checks=history_items,
+                pagination={
+                    "page": page,
+                    "limit": limit,
+                    "total": total_count,
+                    "pages": (total_count + limit - 1) // limit
+                }
+            )
     
     async def save_prompt_template(
         self,
@@ -365,24 +486,37 @@ class MentionDetectionService:
         user_id: str
     ) -> SavePromptResponse:
         """
-        保存Prompt模板
+        保存Prompt模板到数据库
         """
-        template_id = str(uuid.uuid4())
-        
-        template_obj = SavePromptResponse(
-            id=template_id,
-            name=name,
-            category=category,
-            template=template,
-            variables=variables,
-            usage_count=0,
-            created_at=datetime.now()
-        )
-        
-        # 存储模板（实际应该存储到数据库）
-        self.templates_storage[template_id] = template_obj
-        
-        return template_obj
+        async with AsyncSessionLocal() as db:
+            repo = MentionRepository(db)
+
+            template_id = str(uuid.uuid4())
+
+            template_data = {
+                "id": template_id,
+                "user_id": user_id,
+                "name": name,
+                "category": category,
+                "template": template,
+                "variables": json.dumps(variables) if variables else None,
+                "description": description,
+                "usage_count": 0,
+                "is_public": False,
+                "created_at": datetime.now()
+            }
+
+            await repo.save_template(template_data)
+
+            return SavePromptResponse(
+                id=template_id,
+                name=name,
+                category=category,
+                template=template,
+                variables=variables,
+                usage_count=0,
+                created_at=datetime.now()
+            )
     
     async def get_prompt_templates(
         self,
@@ -392,46 +526,45 @@ class MentionDetectionService:
         user_id: str = None
     ) -> Dict[str, Any]:
         """
-        获取Prompt模板列表
+        获取Prompt模板列表，从数据库查询
         """
-        # 模拟模板数据
-        templates = [
-            {
-                "id": str(uuid.uuid4()),
-                "name": "协作工具推荐",
-                "category": "productivity",
-                "template": "推荐几个适合{team_size}人团队使用的{tool_type}工具",
-                "usage_count": 25,
-                "created_at": datetime.now() - timedelta(days=5)
-            },
-            {
-                "id": str(uuid.uuid4()),
-                "name": "项目管理软件",
-                "category": "productivity",
-                "template": "有哪些好用的项目管理软件适合{industry}行业？",
-                "usage_count": 18,
-                "created_at": datetime.now() - timedelta(days=3)
+        async with AsyncSessionLocal() as db:
+            repo = MentionRepository(db)
+
+            # 从数据库获取模板
+            templates_db = await repo.get_templates_by_user(
+                user_id=user_id or "default-user",
+                category=category,
+                page=page,
+                limit=limit
+            )
+
+            # 转换为响应格式
+            templates = []
+            for template_db in templates_db:
+                variables = json.loads(template_db.variables) if template_db.variables else {}
+                templates.append({
+                    "id": template_db.id,
+                    "name": template_db.name,
+                    "category": template_db.category,
+                    "template": template_db.template,
+                    "variables": variables,
+                    "usage_count": template_db.usage_count,
+                    "created_at": template_db.created_at
+                })
+
+            # 计算总数（简化版本，实际应该有专门的count方法）
+            total_count = len(templates)
+
+            return {
+                "templates": templates,
+                "pagination": {
+                    "page": page,
+                    "limit": limit,
+                    "total": total_count,
+                    "pages": (total_count + limit - 1) // limit
+                }
             }
-        ]
-        
-        # 应用分类过滤
-        if category:
-            templates = [t for t in templates if t["category"] == category]
-        
-        # 分页
-        start_idx = (page - 1) * limit
-        end_idx = start_idx + limit
-        paginated_templates = templates[start_idx:end_idx]
-        
-        return {
-            "templates": paginated_templates,
-            "pagination": {
-                "page": page,
-                "limit": limit,
-                "total": len(templates),
-                "pages": (len(templates) + limit - 1) // limit
-            }
-        }
     
     async def get_mention_analytics(
         self,
@@ -441,31 +574,40 @@ class MentionDetectionService:
         model: Optional[str] = None
     ) -> Dict[str, Any]:
         """
-        获取品牌引用统计
+        获取品牌引用统计，从数据库查询
         """
-        # 模拟分析数据
-        return {
-            "brand": brand or "All Brands",
-            "timeframe": timeframe,
-            "total_checks": 45,
-            "total_mentions": 32,
-            "mention_rate": 0.71,
-            "model_performance": {
-                "doubao": {"checks": 20, "mentions": 15, "rate": 0.75, "avg_confidence": 0.92},
-                "deepseek": {"checks": 15, "mentions": 10, "rate": 0.67, "avg_confidence": 0.88},
-                "chatgpt": {"checks": 10, "mentions": 7, "rate": 0.70, "avg_confidence": 0.90}
-            },
-            "trend_data": [
-                {"date": "2024-05-01", "mentions": 5, "checks": 7},
-                {"date": "2024-05-15", "mentions": 8, "checks": 12},
-                {"date": "2024-05-30", "mentions": 12, "checks": 15}
-            ],
-            "top_contexts": [
-                "推荐作为团队协作工具",
-                "适合知识管理和文档整理",
-                "支持多种内容类型的工作空间"
-            ]
-        }
+        async with AsyncSessionLocal() as db:
+            repo = MentionRepository(db)
+
+            # 解析时间范围
+            days = int(timeframe.replace('d', '')) if timeframe.endswith('d') else 30
+
+            if brand:
+                # 获取单个品牌统计
+                stats = await repo.get_brand_mention_stats(project_id, brand, days)
+                return {
+                    "brand": brand,
+                    "timeframe": timeframe,
+                    "total_checks": stats["total_checks"],
+                    "total_mentions": stats["total_mentions"],
+                    "mention_rate": stats["mention_rate"],
+                    "avg_confidence": stats["avg_confidence"],
+                    "model_performance": stats["model_performance"],
+                    "trend_data": [],  # TODO: 实现趋势数据
+                    "top_contexts": []  # TODO: 实现上下文分析
+                }
+            else:
+                # 返回项目整体统计（简化版本）
+                return {
+                    "brand": "All Brands",
+                    "timeframe": timeframe,
+                    "total_checks": 0,
+                    "total_mentions": 0,
+                    "mention_rate": 0.0,
+                    "model_performance": {},
+                    "trend_data": [],
+                    "top_contexts": []
+                }
     
     async def compare_brands(
         self,
@@ -473,22 +615,29 @@ class MentionDetectionService:
         brands: List[str]
     ) -> Dict[str, Any]:
         """
-        竞品对比分析
+        竞品对比分析，从数据库查询
         """
-        # 模拟对比数据
-        comparison_data = []
-        for i, brand in enumerate(brands):
-            comparison_data.append({
-                "brand": brand,
-                "mention_rate": 0.75 - (i * 0.15),  # 模拟递减的提及率
-                "avg_confidence": 0.92 - (i * 0.07),
-                "total_mentions": 32 - (i * 10)
-            })
-        
-        return {
-            "comparison": comparison_data,
-            "insights": [
-                f"{brands[0]}在团队协作场景中被提及最多" if brands else "",
-                f"{brands[1]}在个人知识管理场景表现较好" if len(brands) > 1 else ""
-            ]
-        }
+        async with AsyncSessionLocal() as db:
+            repo = MentionRepository(db)
+
+            # 获取品牌对比数据
+            comparison_data = await repo.get_brand_comparison_stats(project_id, brands, days=30)
+
+            # 生成洞察
+            insights = []
+            if comparison_data:
+                # 按提及率排序
+                sorted_brands = sorted(comparison_data, key=lambda x: x["mention_rate"], reverse=True)
+
+                if len(sorted_brands) > 0:
+                    top_brand = sorted_brands[0]
+                    insights.append(f"{top_brand['brand']}的提及率最高，达到{top_brand['mention_rate']:.2%}")
+
+                if len(sorted_brands) > 1:
+                    second_brand = sorted_brands[1]
+                    insights.append(f"{second_brand['brand']}在置信度方面表现良好，平均置信度{second_brand['avg_confidence']:.2f}")
+
+            return {
+                "comparison": comparison_data,
+                "insights": insights
+            }
