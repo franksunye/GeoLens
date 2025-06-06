@@ -1,0 +1,36 @@
+# Streamlit MVP Frontend Dependencies
+# GeoLens AI引用检测平台前端依赖
+
+# 核心框架
+streamlit>=1.28.0
+streamlit-authenticator>=0.2.3
+
+# HTTP客户端
+httpx>=0.25.0
+requests>=2.31.0
+
+# 数据处理
+pandas>=2.1.0
+numpy>=1.24.0
+
+# 数据可视化
+plotly>=5.17.0
+altair>=5.1.0
+matplotlib>=3.7.0
+seaborn>=0.12.0
+
+# UI组件增强
+streamlit-option-menu>=0.3.6
+streamlit-elements>=0.1.0
+streamlit-aggrid>=0.3.4
+
+# 工具库
+python-dotenv>=1.0.0
+pydantic>=2.5.0
+typing-extensions>=4.8.0
+
+# 开发工具
+pytest>=7.4.0
+black>=23.0.0
+isort>=5.12.0
+flake8>=6.0.0
