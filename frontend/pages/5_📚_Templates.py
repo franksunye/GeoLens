@@ -218,12 +218,18 @@ def render_template_editor():
             new_name = st.text_input("模板名称", value=editing_template.get('name', ''))
         
         with col2:
+            # 定义可用的类别
+            available_categories = ["笔记软件", "团队协作", "设计工具", "开发工具", "自定义"]
+            current_category = editing_template.get('category', '自定义')
+
+            # 如果当前类别不在预定义列表中，使用"自定义"
+            if current_category not in available_categories:
+                current_category = "自定义"
+
             new_category = st.selectbox(
                 "模板分类",
-                ["笔记软件", "团队协作", "设计工具", "开发工具", "自定义"],
-                index=["笔记软件", "团队协作", "设计工具", "开发工具", "自定义"].index(
-                    editing_template.get('category', '自定义')
-                )
+                available_categories,
+                index=available_categories.index(current_category)
             )
         
         new_description = st.text_area(
@@ -247,7 +253,7 @@ def render_template_editor():
                 st.write(", ".join([f"`{{{var}}}`" for var in variables]))
         
         # 模板测试
-        st.markdown("#### 🧪 模板测试")
+        st.markdown("#### 模板测试")
         
         if new_content and extract_variables(new_content):
             test_variables = {}
