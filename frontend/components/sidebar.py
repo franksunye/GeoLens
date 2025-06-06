@@ -14,9 +14,9 @@ def render_sidebar():
         # 应用标题和版本
         config = get_config()
         st.markdown(f"""
-        # 🌍 {config.app_name}
+        # {config.app_name}
         **{config.app_version}**
-        
+
         *AI引用检测平台*
         """)
         
@@ -46,7 +46,7 @@ def render_user_info():
     user = auth_manager.get_current_user()
     
     if user:
-        st.markdown("### 👤 用户信息")
+        st.markdown("### 用户信息")
         
         # 用户头像和基本信息
         col1, col2 = st.columns([1, 2])
@@ -71,28 +71,28 @@ def render_user_info():
         
         with col2:
             st.markdown(f"""
-            **{user.get('full_name', '用户')}**  
-            {user.get('email', '')}  
-            📊 {user.get('subscription_plan', 'free').title()}
+            **{user.get('full_name', '用户')}**
+            {user.get('email', '')}
+            {user.get('subscription_plan', 'free').title()}
             """)
         
         # 登出按钮
-        if st.button("🚪 登出", key="logout_btn", use_container_width=True):
+        if st.button("登出", key="logout_btn", use_container_width=True):
             auth_manager.logout()
 
 def render_navigation():
     """渲染导航菜单"""
-    st.markdown("### 📋 功能导航")
-    
+    st.markdown("### 功能导航")
+
     # 主要功能页面
     pages = [
-        {"name": "🏠 首页", "file": "main.py", "description": "概览和快速操作"},
-        {"name": "📁 项目管理", "file": "pages/2_📁_Projects.py", "description": "管理检测项目"},
-        {"name": "🔍 引用检测", "file": "pages/3_🔍_Detection.py", "description": "核心检测功能"},
-        {"name": "📜 检测历史", "file": "pages/4_📜_History.py", "description": "历史记录查看"},
-        {"name": "📚 模板管理", "file": "pages/5_📚_Templates.py", "description": "Prompt模板库"},
-        {"name": "📊 数据分析", "file": "pages/6_📊_Analytics.py", "description": "可视化分析"},
-        {"name": "👤 个人资料", "file": "pages/7_👤_Profile.py", "description": "用户设置"}
+        {"name": "首页", "file": "main.py", "description": "概览和快速操作"},
+        {"name": "项目管理", "file": "pages/2_📁_Projects.py", "description": "管理检测项目"},
+        {"name": "引用检测", "file": "pages/3_🔍_Detection.py", "description": "核心检测功能"},
+        {"name": "检测历史", "file": "pages/4_📜_History.py", "description": "历史记录查看"},
+        {"name": "模板管理", "file": "pages/5_📚_Templates.py", "description": "Prompt模板库"},
+        {"name": "数据分析", "file": "pages/6_📊_Analytics.py", "description": "可视化分析"},
+        {"name": "个人资料", "file": "pages/7_👤_Profile.py", "description": "用户设置"}
     ]
     
     for page in pages:
@@ -109,18 +109,18 @@ def render_navigation():
 
 def render_quick_actions():
     """渲染快速操作"""
-    st.markdown("### ⚡ 快速操作")
-    
+    st.markdown("### 快速操作")
+
     # 快速检测
-    if st.button("🚀 快速检测", key="quick_detection", use_container_width=True, type="primary"):
+    if st.button("快速检测", key="quick_detection", use_container_width=True, type="primary"):
         st.switch_page("pages/3_🔍_Detection.py")
-    
+
     # 查看最新结果
-    if st.button("📊 最新结果", key="latest_results", use_container_width=True):
+    if st.button("最新结果", key="latest_results", use_container_width=True):
         st.switch_page("pages/4_📜_History.py")
-    
+
     # 创建新项目
-    if st.button("➕ 新建项目", key="new_project", use_container_width=True):
+    if st.button("新建项目", key="new_project", use_container_width=True):
         st.switch_page("pages/2_📁_Projects.py")
 
 def render_current_project():

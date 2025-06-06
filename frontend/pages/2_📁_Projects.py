@@ -12,6 +12,7 @@ from components.auth import require_auth
 from components.sidebar import render_sidebar
 from services.api_client import SyncAPIClient
 from utils.session import set_current_project, get_current_project, update_cache, get_cache
+from styles.enterprise_theme import apply_enterprise_theme, render_enterprise_header, render_status_badge
 
 # 页面配置
 st.set_page_config(
@@ -20,16 +21,18 @@ st.set_page_config(
     layout="wide"
 )
 
+# 应用企业级主题
+apply_enterprise_theme()
+
 @require_auth
 def main():
     """主函数"""
     render_sidebar()
-    
-    st.markdown("# 📁 项目管理")
-    st.markdown("创建和管理您的品牌监测项目")
-    
+
+    render_enterprise_header("项目管理", "创建和管理您的品牌监测项目")
+
     # 主要功能选项卡
-    tab1, tab2, tab3 = st.tabs(["📋 项目列表", "➕ 创建项目", "⚙️ 项目设置"])
+    tab1, tab2, tab3 = st.tabs(["项目列表", "创建项目", "项目设置"])
     
     with tab1:
         render_projects_list()
