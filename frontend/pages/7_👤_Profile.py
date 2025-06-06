@@ -5,7 +5,7 @@
 
 import streamlit as st
 from datetime import datetime
-from typing import Dict, Any
+from typing import Dict, Any, List
 
 from components.auth import require_auth, AuthManager
 from components.sidebar import render_sidebar
