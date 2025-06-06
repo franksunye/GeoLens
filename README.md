@@ -108,13 +108,20 @@ open htmlcov/index.html
 
 ## 📚 文档
 
+### 核心文档
 - [📋 产品待办清单](docs/00_BACKLOG.md) - Sprint规划和功能优先级
 - [📝 版本变更记录](docs/01_CHANGELOG.md) - 版本历史和发布计划
 - [🏗️ 系统架构设计](docs/10_ARCHITECTURE.md) - 技术架构和部署方案
-
 - [🔌 API接口文档](docs/20_API.md) - RESTful API规范
+
+### 开发文档
 - [🛠️ 开发指南](docs/30_DEVELOPMENT.md) - 开发环境和编码规范
 - [🧪 测试策略](docs/31_TESTING.md) - 测试框架和质量保证
+- [🎨 前端开发指南](docs/32_FRONTEND.md) - 前端架构、开发规范和测试体系
+
+### 专项文档
+- [✅ 一致性检查清单](docs/CONSISTENCY_CHECKLIST.md) - 代码质量检查
+- [🔗 端到端集成指南](docs/E2E_INTEGRATION_GUIDE.md) - 集成测试指南
 
 ## 🛠️ 技术栈
 
@@ -137,13 +144,12 @@ open htmlcov/index.html
 - **AI集成**: OpenAI GPT-4 API完整集成
 - **部署**: Railway / Docker
 
-### 📋 Phase 2: 前端技术栈 (后续开发)
-- **框架**: Next.js 14 + TypeScript
-- **样式**: Tailwind CSS
-- **状态管理**: Zustand + React Query
-- **图表**: Recharts
-- **测试**: Jest + React Testing Library
-- **部署**: Vercel
+### 📋 Phase 2: 前端技术栈 (v0.8.0 完成)
+- **框架**: Streamlit + Python (MVP快速开发)
+- **样式**: 企业级主题系统
+- **图表**: Plotly + 交互式可视化
+- **测试**: 综合测试套件 + CI/CD管道
+- **部署**: Docker + 云部署就绪
 
 ### 🔧 开发工具
 - **API测试**: Postman + 自动化测试套件
