@@ -1,3 +1,4 @@
+from styles.enterprise_theme import apply_enterprise_theme, render_enterprise_header, render_status_badge
 """
 数据分析页面
 品牌提及分析和可视化
@@ -26,27 +27,30 @@ st.set_page_config(
     layout="wide"
 )
 
+# 应用企业级主题
+apply_enterprise_theme()
+
 @require_auth
 def main():
     """主函数"""
     render_sidebar()
     
-    st.markdown("# 📊 数据分析")
+    render_enterprise_header("数据分析", "")
     st.markdown("深入分析品牌在AI中的表现和趋势")
     
     # 检查当前项目
     current_project = get_current_project()
     if not current_project:
-        st.warning("⚠️ 请先选择一个项目")
-        if st.button("📁 前往项目管理"):
+        st.warning("请先选择一个项目")
+        if st.button("前往项目管理"):
             st.switch_page("pages/2_📁_Projects.py")
         return
     
     # 显示当前项目信息
-    st.info(f"📁 当前项目: **{current_project.get('name', '未命名项目')}**")
+    st.info(f"当前项目: **{current_project.get('name', '未命名项目')}**")
     
     # 主要功能选项卡
-    tab1, tab2, tab3, tab4 = st.tabs(["📈 趋势分析", "🏷️ 品牌对比", "🤖 模型分析", "📋 综合报告"])
+    tab1, tab2, tab3, tab4 = st.tabs(["趋势分析", "品牌对比", "模型分析", "综合报告"])
     
     with tab1:
         render_trend_analysis()
@@ -62,14 +66,14 @@ def main():
 
 def render_trend_analysis():
     """渲染趋势分析"""
-    st.markdown("### 📈 品牌提及趋势分析")
+    st.markdown("### 品牌提及趋势分析")
     
     # 分析配置
     col1, col2, col3 = st.columns(3)
     
     with col1:
         time_range = st.selectbox(
-            "📅 时间范围",
+            "时间范围",
             ["最近7天", "最近30天", "最近90天", "自定义"]
         )
     
@@ -77,33 +81,33 @@ def render_trend_analysis():
         current_project = get_current_project()
         available_brands = current_project.get('brands', [])
         selected_brands = st.multiselect(
-            "🏷️ 选择品牌",
+            "选择品牌",
             options=available_brands,
             default=available_brands[:3] if len(available_brands) >= 3 else available_brands
         )
     
     with col3:
         metric_type = st.selectbox(
-            "📊 分析指标",
+            "分析指标",
             ["提及率", "置信度", "检测次数"]
         )
     
     if not selected_brands:
-        st.warning("⚠️ 请选择至少一个品牌进行分析")
+        st.warning("请选择至少一个品牌进行分析")
         return
     
     # 获取趋势数据
     trend_data = get_trend_data(selected_brands, time_range, metric_type)
     
     if not trend_data:
-        st.info("📊 暂无趋势数据")
+        st.info("暂无趋势数据")
         return
     
     # 趋势图表
     render_brand_trend_chart(trend_data, selected_brands)
     
     # 趋势统计
-    st.markdown("#### 📋 趋势统计")
+    st.markdown("#### 趋势统计")
     
     trend_stats = calculate_trend_stats(trend_data, selected_brands)
     
@@ -139,7 +143,7 @@ def render_trend_analysis():
 
 def render_brand_comparison():
     """渲染品牌对比分析"""
-    st.markdown("### 🏷️ 品牌对比分析")
+    st.markdown("### 品牌对比分析")
     
     # 对比配置
     col1, col2 = st.columns(2)
@@ -148,7 +152,7 @@ def render_brand_comparison():
         current_project = get_current_project()
         available_brands = current_project.get('brands', [])
         comparison_brands = st.multiselect(
-            "🏷️ 选择对比品牌",
+            "选择对比品牌",
             options=available_brands,
             default=available_brands[:4] if len(available_brands) >= 4 else available_brands,
             help="选择2-6个品牌进行对比分析"
@@ -156,20 +160,20 @@ def render_brand_comparison():
     
     with col2:
         comparison_metrics = st.multiselect(
-            "📊 对比指标",
+            "对比指标",
             options=["提及率", "置信度", "响应时间", "检测频次"],
             default=["提及率", "置信度"]
         )
     
     if len(comparison_brands) < 2:
-        st.warning("⚠️ 请选择至少2个品牌进行对比")
+        st.warning("请选择至少2个品牌进行对比")
         return
     
     # 获取对比数据
     comparison_data = get_comparison_data(comparison_brands, comparison_metrics)
     
     if not comparison_data:
-        st.info("📊 暂无对比数据")
+        st.info("暂无对比数据")
         return
     
     # 对比图表
@@ -186,7 +190,7 @@ def render_brand_comparison():
             render_confidence_radar_chart(comparison_data.get('confidence_data', []))
     
     # 详细对比表格
-    st.markdown("#### 📋 详细对比数据")
+    st.markdown("#### 详细对比数据")
     
     comparison_df = pd.DataFrame(comparison_data.get('summary_data', []))
     
@@ -200,7 +204,7 @@ def render_brand_comparison():
         st.dataframe(comparison_df, use_container_width=True, hide_index=True)
     
     # 竞品分析洞察
-    st.markdown("#### 💡 竞品分析洞察")
+    st.markdown("#### 竞品分析洞察")
     
     insights = generate_brand_insights(comparison_data, comparison_brands)
     
@@ -209,7 +213,7 @@ def render_brand_comparison():
 
 def render_model_analysis():
     """渲染模型分析"""
-    st.markdown("### 🤖 AI模型性能分析")
+    st.markdown("### AI模型性能分析")
     
     # 模型配置
     col1, col2 = st.columns(2)
@@ -217,26 +221,26 @@ def render_model_analysis():
     with col1:
         available_models = ["doubao", "deepseek", "openai"]
         selected_models = st.multiselect(
-            "🤖 选择模型",
+            "选择模型",
             options=available_models,
             default=available_models
         )
     
     with col2:
         analysis_dimension = st.selectbox(
-            "📊 分析维度",
+            "分析维度",
             ["响应时间", "检测准确率", "品牌覆盖率", "综合表现"]
         )
     
     if not selected_models:
-        st.warning("⚠️ 请选择至少一个模型进行分析")
+        st.warning("请选择至少一个模型进行分析")
         return
     
     # 获取模型数据
     model_data = get_model_analysis_data(selected_models, analysis_dimension)
     
     if not model_data:
-        st.info("📊 暂无模型分析数据")
+        st.info("暂无模型分析数据")
         return
     
     # 模型性能图表
@@ -251,7 +255,7 @@ def render_model_analysis():
         render_model_accuracy_chart(model_data)
     
     # 模型详细统计
-    st.markdown("#### 📋 模型详细统计")
+    st.markdown("#### 模型详细统计")
     
     model_stats_df = pd.DataFrame(model_data.get('model_stats', []))
     
@@ -259,7 +263,7 @@ def render_model_analysis():
         st.dataframe(model_stats_df, use_container_width=True, hide_index=True)
     
     # 模型推荐
-    st.markdown("#### 🎯 模型使用建议")
+    st.markdown("#### 模型使用建议")
     
     recommendations = generate_model_recommendations(model_data, selected_models)
     
@@ -268,20 +272,20 @@ def render_model_analysis():
 
 def render_comprehensive_report():
     """渲染综合报告"""
-    st.markdown("### 📋 综合分析报告")
+    st.markdown("### 综合分析报告")
     
     # 报告配置
     col1, col2 = st.columns(2)
     
     with col1:
         report_period = st.selectbox(
-            "📅 报告周期",
+            "报告周期",
             ["本周", "本月", "本季度", "自定义"]
         )
     
     with col2:
         report_format = st.selectbox(
-            "📄 报告格式",
+            "报告格式",
             ["在线查看", "PDF导出", "Excel导出"]
         )
     
@@ -289,7 +293,7 @@ def render_comprehensive_report():
     report_data = generate_comprehensive_report(report_period)
     
     if not report_data:
-        st.info("📊 暂无报告数据")
+        st.info("暂无报告数据")
         return
     
     # 关键指标概览
@@ -299,21 +303,21 @@ def render_comprehensive_report():
     col1, col2 = st.columns(2)
     
     with col1:
-        st.markdown("#### 📈 主要发现")
+        st.markdown("#### 主要发现")
         
         findings = report_data.get('key_findings', [])
         for finding in findings:
             st.markdown(f"- {finding}")
     
     with col2:
-        st.markdown("#### 🎯 行动建议")
+        st.markdown("#### 行动建议")
         
         recommendations = report_data.get('recommendations', [])
         for rec in recommendations:
             st.markdown(f"- {rec}")
     
     # 详细分析
-    st.markdown("#### 📊 详细分析")
+    st.markdown("#### 详细分析")
     
     # 品牌表现排名
     if report_data.get('brand_ranking'):
@@ -334,7 +338,7 @@ def render_comprehensive_report():
         col1, col2, col3 = st.columns([1, 1, 1])
         
         with col2:
-            if st.button("📤 导出报告", type="primary"):
+            if st.button("导出报告", type="primary"):
                 export_report(report_data, report_format)
 
 # 辅助函数
@@ -563,9 +567,9 @@ def generate_comprehensive_report(period: str) -> Dict[str, Any]:
 def export_report(report_data: Dict[str, Any], format: str):
     """导出报告"""
     if format == "PDF导出":
-        st.info("📄 PDF导出功能开发中...")
+        st.info("PDF导出功能开发中...")
     elif format == "Excel导出":
-        st.info("📊 Excel导出功能开发中...")
+        st.info("Excel导出功能开发中...")
 
 if __name__ == "__main__":
     main()

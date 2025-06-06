@@ -1,3 +1,4 @@
+from styles.enterprise_theme import apply_enterprise_theme, render_enterprise_header, render_status_badge
 """
 用户资料页面
 用户信息管理和设置
@@ -18,16 +19,19 @@ st.set_page_config(
     layout="wide"
 )
 
+# 应用企业级主题
+apply_enterprise_theme()
+
 @require_auth
 def main():
     """主函数"""
     render_sidebar()
     
-    st.markdown("# 👤 个人资料")
+    render_enterprise_header("个人资料", "")
     st.markdown("管理您的账户信息和应用设置")
     
     # 主要功能选项卡
-    tab1, tab2, tab3, tab4 = st.tabs(["👤 基本信息", "⚙️ 应用设置", "📊 使用统计", "🔐 安全设置"])
+    tab1, tab2, tab3, tab4 = st.tabs(["基本信息", "应用设置", "使用统计", "🔐 安全设置"])
     
     with tab1:
         render_profile_info()
@@ -43,14 +47,14 @@ def main():
 
 def render_profile_info():
     """渲染个人信息"""
-    st.markdown("### 👤 基本信息")
+    st.markdown("### 基本信息")
     
     # 获取当前用户信息
     auth_manager = AuthManager()
     user = auth_manager.get_current_user()
     
     if not user:
-        st.error("❌ 无法获取用户信息")
+        st.error("无法获取用户信息")
         return
     
     # 用户头像和基本信息
@@ -88,7 +92,7 @@ def render_profile_info():
     with col2:
         # 编辑个人信息表单
         with st.form("profile_form"):
-            st.markdown("#### 📝 编辑信息")
+            st.markdown("#### 编辑信息")
             
             # 基本信息
             full_name = st.text_input(
@@ -140,7 +144,7 @@ def render_profile_info():
             col1, col2 = st.columns([1, 1])
             
             with col1:
-                if st.form_submit_button("💾 保存更改", type="primary"):
+                if st.form_submit_button("保存更改", type="primary"):
                     profile_data = {
                         "full_name": full_name,
                         "company": company,
@@ -150,16 +154,16 @@ def render_profile_info():
                     }
                     
                     if update_profile(profile_data):
-                        st.success("✅ 个人信息更新成功！")
+                        st.success("个人信息更新成功！")
                         st.rerun()
             
             with col2:
-                if st.form_submit_button("🔄 重置"):
+                if st.form_submit_button("重置"):
                     st.rerun()
     
     # 账户信息
     st.markdown("---")
-    st.markdown("#### 📋 账户信息")
+    st.markdown("#### 账户信息")
     
     col1, col2, col3 = st.columns(3)
     
@@ -177,10 +181,10 @@ def render_profile_info():
 
 def render_app_settings():
     """渲染应用设置"""
-    st.markdown("### ⚙️ 应用设置")
+    st.markdown("### 应用设置")
     
     # 界面设置
-    st.markdown("#### 🎨 界面设置")
+    st.markdown("#### 界面设置")
     
     col1, col2 = st.columns(2)
     
@@ -216,7 +220,7 @@ def render_app_settings():
         )
     
     # 通知设置
-    st.markdown("#### 🔔 通知设置")
+    st.markdown("#### 通知设置")
     
     col1, col2 = st.columns(2)
     
@@ -247,7 +251,7 @@ def render_app_settings():
         )
     
     # API设置
-    st.markdown("#### 🔗 API设置")
+    st.markdown("#### API设置")
     
     config = get_config()
     
@@ -272,7 +276,7 @@ def render_app_settings():
         )
     
     # 保存设置
-    if st.button("💾 保存设置", type="primary"):
+    if st.button("保存设置", type="primary"):
         settings_data = {
             "theme": theme,
             "language": language,
@@ -287,17 +291,17 @@ def render_app_settings():
         }
         
         if save_app_settings(settings_data):
-            st.success("✅ 设置保存成功！")
+            st.success("设置保存成功！")
 
 def render_usage_stats():
     """渲染使用统计"""
-    st.markdown("### 📊 使用统计")
+    st.markdown("### 使用统计")
     
     # 获取使用统计数据
     stats_data = get_usage_statistics()
     
     # 总体统计
-    st.markdown("#### 📈 总体统计")
+    st.markdown("#### 总体统计")
     
     col1, col2, col3, col4 = st.columns(4)
     
@@ -330,7 +334,7 @@ def render_usage_stats():
         )
     
     # 使用趋势
-    st.markdown("#### 📈 使用趋势")
+    st.markdown("#### 使用趋势")
     
     # 模拟趋势数据
     import pandas as pd
@@ -353,7 +357,7 @@ def render_usage_stats():
         st.plotly_chart(fig, use_container_width=True)
     
     # 功能使用情况
-    st.markdown("#### 🔧 功能使用情况")
+    st.markdown("#### 功能使用情况")
     
     feature_usage = stats_data.get('feature_usage', {})
     
@@ -405,19 +409,19 @@ def render_security_settings():
             placeholder="请再次输入新密码"
         )
         
-        if st.form_submit_button("🔄 修改密码", type="primary"):
+        if st.form_submit_button("修改密码", type="primary"):
             if not all([current_password, new_password, confirm_password]):
-                st.error("❌ 请填写完整信息")
+                st.error("请填写完整信息")
             elif new_password != confirm_password:
-                st.error("❌ 两次输入的新密码不一致")
+                st.error("两次输入的新密码不一致")
             elif len(new_password) < 6:
-                st.error("❌ 新密码长度至少6位")
+                st.error("新密码长度至少6位")
             else:
                 if change_password(current_password, new_password):
-                    st.success("✅ 密码修改成功！")
+                    st.success("密码修改成功！")
     
     # 登录记录
-    st.markdown("#### 📋 登录记录")
+    st.markdown("#### 登录记录")
     
     login_records = get_login_records()
     
@@ -425,10 +429,10 @@ def render_security_settings():
         login_df = pd.DataFrame(login_records)
         st.dataframe(login_df, use_container_width=True, hide_index=True)
     else:
-        st.info("📝 暂无登录记录")
+        st.info("暂无登录记录")
     
     # 安全选项
-    st.markdown("#### 🛡️ 安全选项")
+    st.markdown("#### 安全选项")
     
     col1, col2 = st.columns(2)
     
@@ -468,17 +472,17 @@ def render_security_settings():
     col1, col2 = st.columns(2)
     
     with col1:
-        if st.button("🔄 重置所有设置"):
+        if st.button("重置所有设置"):
             if st.session_state.get("confirm_reset_settings", False):
                 reset_all_settings()
-                st.success("✅ 设置已重置")
+                st.success("设置已重置")
                 st.rerun()
             else:
                 st.session_state.confirm_reset_settings = True
-                st.warning("⚠️ 再次点击确认重置所有设置")
+                st.warning("再次点击确认重置所有设置")
     
     with col2:
-        if st.button("🗑️ 删除账户"):
+        if st.button("删除账户"):
             st.error("⚠️ 账户删除功能需要联系客服处理")
 
 # 辅助函数
@@ -555,13 +559,13 @@ def get_login_records() -> List[Dict[str, Any]]:
             '登录时间': '2024-12-19 14:30:25',
             '登录IP': '192.168.1.100',
             '设备信息': 'Chrome 120.0 / Windows 10',
-            '登录状态': '✅ 成功'
+            '登录状态': '成功'
         },
         {
             '登录时间': '2024-12-18 09:15:42',
             '登录IP': '192.168.1.100',
             '设备信息': 'Chrome 120.0 / Windows 10',
-            '登录状态': '✅ 成功'
+            '登录状态': '成功'
         }
     ]
 

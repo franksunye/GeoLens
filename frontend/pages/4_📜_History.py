@@ -1,3 +1,4 @@
+from styles.enterprise_theme import apply_enterprise_theme, render_enterprise_header, render_status_badge
 """
 检测历史页面
 查看和管理历史检测记录
@@ -21,16 +22,19 @@ st.set_page_config(
     layout="wide"
 )
 
+# 应用企业级主题
+apply_enterprise_theme()
+
 @require_auth
 def main():
     """主函数"""
     render_sidebar()
     
-    st.markdown("# 📜 检测历史")
+    render_enterprise_header("检测历史", "")
     st.markdown("查看和分析历史检测记录")
     
     # 主要功能选项卡
-    tab1, tab2, tab3 = st.tabs(["📋 历史记录", "📊 统计分析", "📤 导出数据"])
+    tab1, tab2, tab3 = st.tabs(["历史记录", "统计分析", "导出数据"])
     
     with tab1:
         render_history_list()
@@ -43,7 +47,7 @@ def main():
 
 def render_history_list():
     """渲染历史记录列表"""
-    st.markdown("### 📋 检测历史记录")
+    st.markdown("### 检测历史记录")
     
     # 筛选控件
     col1, col2, col3, col4 = st.columns(4)
@@ -52,29 +56,29 @@ def render_history_list():
         # 项目筛选
         current_project = get_current_project()
         if current_project:
-            st.info(f"📁 当前项目: {current_project['name']}")
+            st.info(f"当前项目: {current_project['name']}")
             project_filter = current_project['id']
         else:
-            project_filter = st.selectbox("📁 选择项目", ["全部项目", "项目A", "项目B"])
+            project_filter = st.selectbox("选择项目", ["全部项目", "项目A", "项目B"])
     
     with col2:
         # 时间范围筛选
         time_range = st.selectbox(
-            "📅 时间范围",
+            "时间范围",
             ["最近7天", "最近30天", "最近90天", "自定义"]
         )
     
     with col3:
         # 状态筛选
         status_filter = st.selectbox(
-            "📊 检测状态",
+            "检测状态",
             ["全部", "已完成", "进行中", "失败"]
         )
     
     with col4:
         # 排序方式
         sort_by = st.selectbox(
-            "📈 排序方式",
+            "排序方式",
             ["创建时间", "提及率", "置信度", "品牌数量"]
         )
     
@@ -90,8 +94,8 @@ def render_history_list():
     history_records = get_history_records(project_filter, time_range, status_filter)
     
     if not history_records:
-        st.info("📝 暂无历史记录")
-        if st.button("🚀 开始第一次检测"):
+        st.info("暂无历史记录")
+        if st.button("开始第一次检测"):
             st.switch_page("pages/3_🔍_Detection.py")
         return
     
@@ -120,14 +124,14 @@ def render_history_list():
     col1, col2, col3 = st.columns([2, 1, 1])
     
     with col1:
-        st.markdown("#### 📋 检测记录")
+        st.markdown("#### 检测记录")
     
     with col2:
-        if st.button("🔄 刷新数据"):
+        if st.button("刷新数据"):
             st.rerun()
     
     with col3:
-        if st.button("🗑️ 清理旧记录"):
+        if st.button("清理旧记录"):
             show_cleanup_dialog()
     
     # 记录表格
@@ -141,10 +145,10 @@ def render_history_list():
         df['模型'] = df['models_used'].apply(lambda x: ', '.join(x))
         df['提及率'] = df['mention_rate'].apply(lambda x: f"{x:.1f}%")
         df['状态'] = df['status'].map({
-            'completed': '✅ 已完成',
-            'running': '🔄 进行中',
-            'failed': '❌ 失败',
-            'pending': '⏳ 等待中'
+            'completed': '已完成',
+            'running': '进行中',
+            'failed': '失败',
+            'pending': '等待中'
         })
         
         # 选择显示列
@@ -169,13 +173,13 @@ def render_history_list():
 
 def render_record_detail(record: Dict[str, Any]):
     """渲染记录详情"""
-    st.markdown("### 🔍 检测详情")
+    st.markdown("### 检测详情")
     
     # 基本信息
     col1, col2 = st.columns(2)
     
     with col1:
-        st.markdown("#### 📋 基本信息")
+        st.markdown("#### 基本信息")
         st.markdown(f"**检测ID**: {record.get('id', 'N/A')}")
         st.markdown(f"**创建时间**: {record.get('created_at', 'N/A')}")
         st.markdown(f"**状态**: {record.get('status', 'N/A')}")
@@ -183,25 +187,25 @@ def render_record_detail(record: Dict[str, Any]):
         st.markdown(f"**平均置信度**: {record.get('avg_confidence', 0):.2f}")
     
     with col2:
-        st.markdown("#### 🎯 检测配置")
+        st.markdown("#### 检测配置")
         st.markdown(f"**检测品牌**: {', '.join(record.get('brands_checked', []))}")
         st.markdown(f"**使用模型**: {', '.join(record.get('models_used', []))}")
         st.markdown(f"**提及率**: {record.get('mention_rate', 0):.1f}%")
     
     # Prompt内容
-    st.markdown("#### 📝 检测Prompt")
+    st.markdown("#### 检测Prompt")
     st.text_area("", value=record.get('prompt', ''), height=100, disabled=True)
     
     # 检测结果可视化
     if record.get('brand_mentions'):
-        st.markdown("#### 📊 检测结果可视化")
+        st.markdown("#### 检测结果可视化")
         render_detection_results_chart(record['brand_mentions'])
     
     # 操作按钮
     col1, col2, col3, col4 = st.columns(4)
     
     with col1:
-        if st.button("🔄 重新检测", key=f"rerun_{record.get('id')}"):
+        if st.button("重新检测", key=f"rerun_{record.get('id')}"):
             # 跳转到检测页面并预填数据
             st.session_state.template_prompt = record.get('prompt', '')
             st.session_state.selected_brands = record.get('brands_checked', [])
@@ -209,30 +213,30 @@ def render_record_detail(record: Dict[str, Any]):
             st.switch_page("pages/3_🔍_Detection.py")
     
     with col2:
-        if st.button("📤 导出结果", key=f"export_{record.get('id')}"):
+        if st.button("导出结果", key=f"export_{record.get('id')}"):
             export_single_record(record)
     
     with col3:
-        if st.button("📋 复制配置", key=f"copy_{record.get('id')}"):
+        if st.button("复制配置", key=f"copy_{record.get('id')}"):
             copy_detection_config(record)
     
     with col4:
-        if st.button("🗑️ 删除记录", key=f"delete_{record.get('id')}"):
+        if st.button("删除记录", key=f"delete_{record.get('id')}"):
             delete_record(record.get('id'))
 
 def render_history_analytics():
     """渲染历史分析"""
-    st.markdown("### 📊 检测历史分析")
+    st.markdown("### 检测历史分析")
     
     # 获取分析数据
     analytics_data = get_analytics_data()
     
     if not analytics_data:
-        st.info("📊 暂无足够数据进行分析")
+        st.info("暂无足够数据进行分析")
         return
     
     # 时间趋势分析
-    st.markdown("#### 📈 检测趋势分析")
+    st.markdown("#### 检测趋势分析")
     
     col1, col2 = st.columns(2)
     
@@ -253,7 +257,7 @@ def render_history_analytics():
             )
     
     # 品牌表现分析
-    st.markdown("#### 🏷️ 品牌表现分析")
+    st.markdown("#### 品牌表现分析")
     
     if analytics_data.get('brand_performance'):
         brand_df = pd.DataFrame(analytics_data['brand_performance'])
@@ -278,7 +282,7 @@ def render_history_analytics():
                 st.plotly_chart(fig, use_container_width=True)
     
     # 模型表现对比
-    st.markdown("#### 🤖 AI模型表现对比")
+    st.markdown("#### AI模型表现对比")
     
     if analytics_data.get('model_performance'):
         model_df = pd.DataFrame(analytics_data['model_performance'])
@@ -304,13 +308,13 @@ def render_history_analytics():
 
 def render_export_section():
     """渲染导出部分"""
-    st.markdown("### 📤 数据导出")
+    st.markdown("### 数据导出")
     
     # 导出选项
     col1, col2 = st.columns(2)
     
     with col1:
-        st.markdown("#### 📋 导出范围")
+        st.markdown("#### 导出范围")
         
         export_range = st.radio(
             "选择导出范围",
@@ -339,7 +343,7 @@ def render_export_section():
                 export_end_date = st.date_input("结束日期")
     
     with col2:
-        st.markdown("#### ⚙️ 导出设置")
+        st.markdown("#### 导出设置")
         
         export_format = st.selectbox(
             "导出格式",
@@ -362,7 +366,7 @@ def render_export_section():
         )
     
     # 导出预览
-    st.markdown("#### 👀 导出预览")
+    st.markdown("#### 导出预览")
     
     preview_data = get_export_preview(export_range, export_time_range)
     
@@ -376,13 +380,13 @@ def render_export_section():
         if len(preview_data) > 5:
             st.info(f"... 还有 {len(preview_data) - 5} 条记录")
     else:
-        st.info("📝 没有符合条件的记录")
+        st.info("没有符合条件的记录")
     
     # 导出按钮
     col1, col2, col3 = st.columns([1, 1, 1])
     
     with col2:
-        if st.button("📤 开始导出", type="primary", disabled=not preview_data):
+        if st.button("开始导出", type="primary", disabled=not preview_data):
             export_data(
                 data=preview_data,
                 format=export_format,
@@ -478,7 +482,7 @@ def export_data(data: List[Dict[str, Any]], format: str, fields: List[str], incl
             csv = df.to_csv(index=False)
             
             st.download_button(
-                label="📥 下载CSV文件",
+                label="下载CSV文件",
                 data=csv,
                 file_name=f"geolens_history_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv",
                 mime="text/csv"
@@ -494,41 +498,41 @@ def export_data(data: List[Dict[str, Any]], format: str, fields: List[str], incl
             json_data = json.dumps(data, ensure_ascii=False, indent=2)
             
             st.download_button(
-                label="📥 下载JSON文件",
+                label="下载JSON文件",
                 data=json_data,
                 file_name=f"geolens_history_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json",
                 mime="application/json"
             )
         
-        st.success("✅ 导出完成！")
+        st.success("导出完成！")
         
     except Exception as e:
         st.error(f"导出失败: {str(e)}")
 
 def export_single_record(record: Dict[str, Any]):
     """导出单条记录"""
-    st.info("📤 单条记录导出功能开发中...")
+    st.info("单条记录导出功能开发中...")
 
 def copy_detection_config(record: Dict[str, Any]):
     """复制检测配置"""
     st.session_state.template_prompt = record.get('prompt', '')
     st.session_state.selected_brands = record.get('brands_checked', [])
     st.session_state.selected_models = record.get('models_used', [])
-    st.success("✅ 配置已复制，可前往检测页面使用")
+    st.success("配置已复制，可前往检测页面使用")
 
 def delete_record(record_id: str):
     """删除记录"""
     try:
         detection_service = DetectionService()
         if detection_service.delete_detection_record(record_id):
-            st.success("✅ 记录删除成功")
+            st.success("记录删除成功")
             st.rerun()
     except Exception as e:
         st.error(f"删除失败: {str(e)}")
 
 def show_cleanup_dialog():
     """显示清理对话框"""
-    st.info("🗑️ 清理功能开发中...")
+    st.info("清理功能开发中...")
 
 if __name__ == "__main__":
     main()

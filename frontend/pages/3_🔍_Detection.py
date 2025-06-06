@@ -15,6 +15,7 @@ from services.api_client import APIClient
 from services.detection_service import DetectionService
 from components.charts import render_detection_results_chart, render_model_comparison_chart
 from utils.session import get_current_project, set_detection_state, get_detection_state
+from styles.enterprise_theme import apply_enterprise_theme, render_enterprise_header, render_status_badge
 
 # 页面配置
 st.set_page_config(
@@ -23,25 +24,27 @@ st.set_page_config(
     layout="wide"
 )
 
+# 应用企业级主题
+apply_enterprise_theme()
+
 @require_auth
 def main():
     """主函数"""
     render_sidebar()
-    
-    st.markdown("# 🔍 AI引用检测")
-    st.markdown("输入Prompt，选择品牌和AI模型，开始智能引用检测分析")
-    
+
+    render_enterprise_header("AI引用检测", "输入Prompt，选择品牌和AI模型，开始智能引用检测分析")
+
     # 检查当前项目
     current_project = get_current_project()
     if not current_project:
-        st.warning("⚠️ 请先选择一个项目")
-        if st.button("📁 前往项目管理"):
+        st.warning("请先选择一个项目")
+        if st.button("前往项目管理"):
             st.switch_page("pages/2_📁_Projects.py")
         return
-    
+
     # 显示当前项目信息
     with st.container():
-        st.info(f"📁 当前项目: **{current_project.get('name', '未命名项目')}** | 🌐 {current_project.get('domain', '')}")
+        st.info(f"当前项目: **{current_project.get('name', '未命名项目')}** | {current_project.get('domain', '')}")
     
     # 主要内容区域
     col1, col2 = st.columns([2, 1])
@@ -58,12 +61,12 @@ def main():
 
 def render_detection_form():
     """渲染检测表单"""
-    st.markdown("### 📝 检测配置")
-    
+    st.markdown("### 检测配置")
+
     with st.form("detection_form"):
         # Prompt输入
         prompt = st.text_area(
-            "🎯 检测Prompt",
+            "检测Prompt",
             height=120,
             placeholder="例如: 推荐几个好用的团队协作和笔记管理工具",
             help="输入您想要检测的问题或场景"
@@ -82,24 +85,24 @@ def render_detection_form():
             ])
             
             selected_brands = st.multiselect(
-                "🏷️ 选择品牌",
+                "选择品牌",
                 options=available_brands,
                 default=st.session_state.get('selected_brands', []),
                 help="选择要检测的品牌"
             )
-        
+
         with col2:
             # AI模型选择
             available_models = ["doubao", "deepseek", "openai"]
             selected_models = st.multiselect(
-                "🤖 选择AI模型",
+                "选择AI模型",
                 options=available_models,
                 default=st.session_state.get('selected_models', ["doubao", "deepseek"]),
                 help="选择用于检测的AI模型"
             )
         
         # 高级配置
-        with st.expander("⚙️ 高级配置", expanded=False):
+        with st.expander("高级配置", expanded=False):
             col1, col2, col3 = st.columns(3)
             
             with col1:
@@ -131,7 +134,7 @@ def render_detection_form():
         col1, col2, col3 = st.columns([1, 1, 1])
         with col2:
             submit_button = st.form_submit_button(
-                "🚀 开始检测",
+                "开始检测",
                 type="primary",
                 use_container_width=True
             )
@@ -139,15 +142,15 @@ def render_detection_form():
     # 处理表单提交
     if submit_button:
         if not prompt.strip():
-            st.error("❌ 请输入检测Prompt")
+            st.error("请输入检测Prompt")
             return
         
         if not selected_brands:
-            st.error("❌ 请选择至少一个品牌")
+            st.error("请选择至少一个品牌")
             return
         
         if not selected_models:
-            st.error("❌ 请选择至少一个AI模型")
+            st.error("请选择至少一个AI模型")
             return
         
         # 更新会话状态
@@ -189,35 +192,35 @@ def run_detection(prompt: str, brands: List[str], models: List[str],
         }
         
         # 模拟检测过程
-        status_text.text("🔄 正在初始化检测...")
+        status_text.text("正在初始化检测...")
         progress_bar.progress(10)
         
         # 调用检测服务
         detection_service = DetectionService()
         
-        status_text.text("🤖 正在调用AI模型...")
+        status_text.text("正在调用AI模型...")
         progress_bar.progress(30)
         
         # 模拟API调用
         import time
         time.sleep(2)  # 模拟网络延迟
         
-        status_text.text("🔍 正在分析检测结果...")
+        status_text.text("正在分析检测结果...")
         progress_bar.progress(70)
         
         # 生成模拟结果
         results = generate_mock_detection_results(prompt, brands, models)
         
-        status_text.text("✅ 检测完成！")
+        status_text.text("检测完成！")
         progress_bar.progress(100)
         
         # 保存结果
         set_detection_state(running=False, result=results)
         
-        st.success("🎉 检测完成！请查看下方结果")
+        st.success("检测完成！请查看下方结果")
         
     except Exception as e:
-        st.error(f"❌ 检测过程中发生错误: {str(e)}")
+        st.error(f"检测过程中发生错误: {str(e)}")
         set_detection_state(running=False)
     
     finally:
@@ -281,14 +284,14 @@ def generate_mock_detection_results(prompt: str, brands: List[str], models: List
 
 def render_detection_status():
     """渲染检测状态"""
-    st.markdown("### 📊 检测状态")
+    st.markdown("### 检测状态")
     
     running, last_result = get_detection_state()
     
     if running:
-        st.info("🔄 检测进行中...")
+        st.info("检测进行中...")
     elif last_result:
-        st.success("✅ 最近检测完成")
+        st.success("最近检测完成")
         
         # 显示简要统计
         col1, col2 = st.columns(2)
@@ -297,14 +300,14 @@ def render_detection_status():
         with col2:
             st.metric("提及率", f"{last_result.get('mention_rate', 0)}%")
         
-        if st.button("📊 查看详细结果"):
+        if st.button("查看详细结果"):
             st.rerun()
     else:
-        st.info("💡 尚未进行检测")
+        st.info("尚未进行检测")
 
 def render_quick_templates():
     """渲染快速模板"""
-    st.markdown("### 📚 快速模板")
+    st.markdown("### 快速模板")
     
     templates = [
         {
@@ -377,7 +380,7 @@ def render_detection_results():
         )
     
     # 详细结果展示
-    tab1, tab2, tab3 = st.tabs(["📊 可视化结果", "📝 详细数据", "🤖 模型回答"])
+    tab1, tab2, tab3 = st.tabs(["可视化结果", "详细数据", "模型回答"])
     
     with tab1:
         render_results_visualization(last_result)
@@ -411,12 +414,12 @@ def render_results_table(results: Dict[str, Any]):
             hide_index=True
         )
     else:
-        st.info("📝 暂无品牌提及数据")
+        st.info("暂无品牌提及数据")
 
 def render_model_responses(results: Dict[str, Any]):
     """渲染模型回答"""
     for model_result in results.get("model_results", []):
-        with st.expander(f"🤖 {model_result['model'].title()} 模型回答", expanded=False):
+        with st.expander(f"{model_result['model'].title()} 模型回答", expanded=False):
             st.markdown(f"**处理时间**: {model_result['processing_time_ms']}ms")
             st.markdown("**回答内容**:")
             st.text_area(
