@@ -1,4 +1,3 @@
-from styles.enterprise_theme import apply_enterprise_theme, render_enterprise_header, render_status_badge
 """
 检测历史页面
 查看和管理历史检测记录
@@ -14,6 +13,7 @@ from components.sidebar import render_sidebar
 from components.charts import render_detection_results_chart, render_time_series_chart
 from services.detection_service import DetectionService
 from utils.session import get_current_project
+from styles.enterprise_theme import apply_enterprise_theme, render_enterprise_header, render_status_badge
 
 # 页面配置
 st.set_page_config(

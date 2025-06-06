@@ -1,4 +1,3 @@
-from styles.enterprise_theme import apply_enterprise_theme, render_enterprise_header, render_status_badge
 """
 模板管理页面
 管理Prompt模板库
@@ -11,6 +10,7 @@ from typing import List, Dict, Any
 from components.auth import require_auth
 from components.sidebar import render_sidebar
 from services.detection_service import TemplateService
+from styles.enterprise_theme import apply_enterprise_theme, render_enterprise_header, render_status_badge
 
 # 页面配置
 st.set_page_config(

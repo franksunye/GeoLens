@@ -1,4 +1,3 @@
-from styles.enterprise_theme import apply_enterprise_theme, render_enterprise_header, render_status_badge
 """
 用户资料页面
 用户信息管理和设置
@@ -11,6 +10,7 @@ from typing import Dict, Any
 from components.auth import require_auth, AuthManager
 from components.sidebar import render_sidebar
 from utils.config import get_config
+from styles.enterprise_theme import apply_enterprise_theme, render_enterprise_header, render_status_badge
 
 # 页面配置
 st.set_page_config(
@@ -31,7 +31,7 @@ def main():
     st.markdown("管理您的账户信息和应用设置")
     
     # 主要功能选项卡
-    tab1, tab2, tab3, tab4 = st.tabs(["基本信息", "应用设置", "使用统计", "🔐 安全设置"])
+    tab1, tab2, tab3, tab4 = st.tabs(["基本信息", "应用设置", "使用统计", "安全设置"])
     
     with tab1:
         render_profile_info()
@@ -87,7 +87,7 @@ def render_profile_info():
         )
         
         if uploaded_file:
-            st.info("📸 头像上传功能开发中...")
+            st.info("头像上传功能开发中...")
     
     with col2:
         # 编辑个人信息表单
@@ -173,11 +173,11 @@ def render_profile_info():
     
     with col2:
         st.markdown(f"**订阅计划**: {user.get('subscription_plan', 'free').title()}")
-        st.markdown(f"**账户状态**: {'✅ 活跃' if user.get('is_active') else '❌ 停用'}")
-    
+        st.markdown(f"**账户状态**: {'活跃' if user.get('is_active') else '停用'}")
+
     with col3:
         st.markdown(f"**最后登录**: {user.get('last_login', 'N/A')[:16] if user.get('last_login') else 'N/A'}")
-        st.markdown(f"**邮箱验证**: {'✅ 已验证' if user.get('email_verified') else '❌ 未验证'}")
+        st.markdown(f"**邮箱验证**: {'已验证' if user.get('email_verified') else '未验证'}")
 
 def render_app_settings():
     """渲染应用设置"""
@@ -385,10 +385,10 @@ def render_usage_stats():
 
 def render_security_settings():
     """渲染安全设置"""
-    st.markdown("### 🔐 安全设置")
-    
+    st.markdown("### 安全设置")
+
     # 密码修改
-    st.markdown("#### 🔒 修改密码")
+    st.markdown("#### 修改密码")
     
     with st.form("change_password_form"):
         current_password = st.text_input(
@@ -467,7 +467,7 @@ def render_security_settings():
     
     # 账户操作
     st.markdown("---")
-    st.markdown("#### ⚠️ 危险操作")
+    st.markdown("#### 危险操作")
     
     col1, col2 = st.columns(2)
     
@@ -483,7 +483,7 @@ def render_security_settings():
     
     with col2:
         if st.button("删除账户"):
-            st.error("⚠️ 账户删除功能需要联系客服处理")
+            st.error("账户删除功能需要联系客服处理")
 
 # 辅助函数
 def update_profile(profile_data: Dict[str, Any]) -> bool:
