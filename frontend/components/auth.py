@@ -21,25 +21,25 @@ class AuthManager:
     def login(self, email: str, password: str) -> bool:
         """用户登录"""
         try:
-            # # 演示模式 - 直接成功
-            # if email == "demo@geolens.ai" and password == "demo123":
-            #     # 模拟用户数据
-            #     user_data = {
-            #         "id": "demo-user-id",
-            #         "email": "demo@geolens.ai",
-            #         "full_name": "演示用户",
-            #         "is_active": True,
-            #         "subscription_plan": "free"
-            #     }
+            # 演示模式 - 直接成功
+            if email == "demo@geolens.ai" and password == "demo123":
+                # 模拟用户数据
+                user_data = {
+                    "id": "demo-user-id",
+                    "email": "demo@geolens.ai",
+                    "full_name": "演示用户",
+                    "is_active": True,
+                    "subscription_plan": "free"
+                }
                 
-            #     # 模拟token
-            #     access_token = "demo-access-token"
-            #     refresh_token = "demo-refresh-token"
+                # 模拟token
+                access_token = "demo-access-token"
+                refresh_token = "demo-refresh-token"
                 
-            #     # 设置认证数据
-            #     set_auth_data(access_token, refresh_token, user_data, expires_in=3600)
+                # 设置认证数据
+                set_auth_data(access_token, refresh_token, user_data, expires_in=3600)
                 
-            #     return True
+                return True
             
             # 真实API调用
             login_url = self.config.get_api_url("auth/login")
