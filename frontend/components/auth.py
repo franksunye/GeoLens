@@ -43,8 +43,17 @@ class AuthManager:
             
             # 真实API调用
             login_url = self.config.get_api_url("auth/login")
-            
-            with httpx.Client(timeout=self.config.api_timeout) as client:
+
+            # 配置代理绕过本地地址
+            proxies = None
+            if login_url.startswith(('http://localhost', 'http://127.0.0.1')):
+                proxies = {}  # 空字典表示不使用代理
+
+            with httpx.Client(
+                timeout=self.config.api_timeout,
+                proxies=proxies,
+                follow_redirects=True
+            ) as client:
                 response = client.post(
                     login_url,
                     json={"email": email, "password": password}
@@ -86,8 +95,17 @@ class AuthManager:
         """用户注册"""
         try:
             register_url = self.config.get_api_url("auth/register")
-            
-            with httpx.Client(timeout=self.config.api_timeout) as client:
+
+            # 配置代理绕过本地地址
+            proxies = None
+            if register_url.startswith(('http://localhost', 'http://127.0.0.1')):
+                proxies = {}  # 空字典表示不使用代理
+
+            with httpx.Client(
+                timeout=self.config.api_timeout,
+                proxies=proxies,
+                follow_redirects=True
+            ) as client:
                 response = client.post(
                     register_url,
                     json={
@@ -111,10 +129,10 @@ class AuthManager:
     
     def is_authenticated(self) -> bool:
         """检查是否已认证"""
-        if not st.session_state.authenticated:
+        if not st.session_state.get('authenticated', False):
             return False
-        
-        if not st.session_state.access_token:
+
+        if not st.session_state.get('access_token'):
             return False
         
         # 检查token是否过期
@@ -140,8 +158,17 @@ class AuthManager:
             
             # 真实API调用
             refresh_url = self.config.get_api_url("auth/refresh")
-            
-            with httpx.Client(timeout=self.config.api_timeout) as client:
+
+            # 配置代理绕过本地地址
+            proxies = None
+            if refresh_url.startswith(('http://localhost', 'http://127.0.0.1')):
+                proxies = {}  # 空字典表示不使用代理
+
+            with httpx.Client(
+                timeout=self.config.api_timeout,
+                proxies=proxies,
+                follow_redirects=True
+            ) as client:
                 response = client.post(
                     refresh_url,
                     json={"refresh_token": st.session_state.refresh_token}
@@ -178,8 +205,17 @@ class AuthManager:
         try:
             update_url = self.config.get_api_url("auth/me")
             headers = get_auth_headers()
-            
-            with httpx.Client(timeout=self.config.api_timeout) as client:
+
+            # 配置代理绕过本地地址
+            proxies = None
+            if update_url.startswith(('http://localhost', 'http://127.0.0.1')):
+                proxies = {}  # 空字典表示不使用代理
+
+            with httpx.Client(
+                timeout=self.config.api_timeout,
+                proxies=proxies,
+                follow_redirects=True
+            ) as client:
                 response = client.put(
                     update_url,
                     json=profile_data,

@@ -78,8 +78,8 @@ def render_detection_form():
         with col1:
             # 从当前项目获取品牌列表
             current_project = get_current_project()
-            available_brands = current_project.get('brands', [
-                "Notion", "Obsidian", "Roam Research", 
+            available_brands = current_project.get('target_keywords', [
+                "Notion", "Obsidian", "Roam Research",
                 "Slack", "Teams", "Discord",
                 "Figma", "Sketch", "Adobe XD"
             ])
@@ -160,7 +160,7 @@ def render_detection_form():
         # 执行检测
         run_detection(
             prompt=prompt,
-            brands=selected_brands,
+            brands=selected_brands,  # 这里使用brands参数发送给API
             models=selected_models,
             max_tokens=max_tokens,
             temperature=temperature,
@@ -191,25 +191,43 @@ def run_detection(prompt: str, brands: List[str], models: List[str],
             "parallel_execution": parallel_execution
         }
         
-        # 模拟检测过程
+        # 真实检测过程
         status_text.text("正在初始化检测...")
         progress_bar.progress(10)
-        
+
         # 调用检测服务
         detection_service = DetectionService()
-        
+
         status_text.text("正在调用AI模型...")
         progress_bar.progress(30)
-        
-        # 模拟API调用
-        import time
-        time.sleep(2)  # 模拟网络延迟
-        
-        status_text.text("正在分析检测结果...")
-        progress_bar.progress(70)
-        
-        # 生成模拟结果
-        results = generate_mock_detection_results(prompt, brands, models)
+
+        # 真实API调用
+        try:
+            results = detection_service.run_detection(
+                project_id=current_project.get('id', 'demo-project'),
+                prompt=prompt,
+                brands=brands,
+                models=models,
+                max_tokens=max_tokens,
+                temperature=temperature,
+                parallel_execution=parallel_execution
+            )
+
+            status_text.text("正在分析检测结果...")
+            progress_bar.progress(70)
+
+            # 检查API响应
+            if results.get("success"):
+                results = results.get("data", {})
+            else:
+                st.error(f"检测失败: {results.get('message', '未知错误')}")
+                return
+
+        except Exception as e:
+            st.error(f"检测过程中出现错误: {str(e)}")
+            st.info("正在使用模拟数据...")
+            # 如果真实API失败，回退到模拟结果
+            results = generate_mock_detection_results(prompt, brands, models)
         
         status_text.text("检测完成！")
         progress_bar.progress(100)
@@ -313,17 +331,17 @@ def render_quick_templates():
         {
             "name": "笔记软件推荐",
             "prompt": "推荐几个好用的笔记管理软件",
-            "brands": ["Notion", "Obsidian", "Roam Research"]
+            "target_keywords": ["Notion", "Obsidian", "Roam Research"]
         },
         {
             "name": "团队协作工具",
             "prompt": "比较主流的团队协作工具",
-            "brands": ["Slack", "Teams", "Discord"]
+            "target_keywords": ["Slack", "Teams", "Discord"]
         },
         {
             "name": "设计工具对比",
             "prompt": "介绍几个专业的UI设计工具",
-            "brands": ["Figma", "Sketch", "Adobe XD"]
+            "target_keywords": ["Figma", "Sketch", "Adobe XD"]
         }
     ]
     
@@ -335,7 +353,7 @@ def render_quick_templates():
         ):
             # 应用模板到表单
             st.session_state.template_prompt = template["prompt"]
-            st.session_state.selected_brands = template["brands"]
+            st.session_state.selected_brands = template["target_keywords"]
             st.rerun()
 
 def render_detection_results():

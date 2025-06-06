@@ -11,7 +11,7 @@ from typing import List, Dict, Any
 from components.auth import require_auth
 from components.sidebar import render_sidebar
 from services.api_client import SyncAPIClient
-from utils.session import set_current_project, get_current_project, update_cache, get_cache
+from utils.session import init_session_state, set_current_project, get_current_project, update_cache, get_cache
 from styles.enterprise_theme import apply_enterprise_theme, render_enterprise_header, render_status_badge
 
 # 页面配置
@@ -27,6 +27,9 @@ apply_enterprise_theme()
 @require_auth
 def main():
     """主函数"""
+    # 初始化会话状态
+    init_session_state()
+
     render_sidebar()
 
     render_enterprise_header("项目管理", "创建和管理您的品牌监测项目")
@@ -104,7 +107,7 @@ def render_project_card(project: Dict[str, Any]):
             <h4>{status_color} {project.get('name', '未命名项目')}</h4>
             <p><strong>🌐 域名:</strong> {project.get('domain', '未设置')}</p>
             <p><strong>📝 描述:</strong> {project.get('description', '暂无描述')[:100]}...</p>
-            <p><strong>🏷️ 品牌数量:</strong> {len(project.get('brands', []))} 个</p>
+            <p><strong>🏷️ 品牌数量:</strong> {len(project.get('target_keywords', []))} 个</p>
             <p><strong>📅 创建时间:</strong> {project.get('created_at', '')[:10]}</p>
         </div>
         """, unsafe_allow_html=True)
@@ -253,7 +256,7 @@ def render_create_project():
             "name": project_name.strip(),
             "domain": project_domain.strip(),
             "description": project_description.strip(),
-            "brands": all_brands,
+            "target_keywords": all_brands,  # 后端期望的字段名
             "industry": industry,
             "is_active": is_active
         }
@@ -294,23 +297,64 @@ def render_project_settings():
         )
         
         # 品牌管理
-        st.markdown("#### 品牌管理")
-        
-        current_brands = current_project.get('brands', [])
-        
+        st.markdown("#### 品牌/关键词管理")
+
+        current_brands = current_project.get('target_keywords', [])
+
         # 显示当前品牌
         if current_brands:
-            st.markdown("**当前品牌:**")
-            brands_df = pd.DataFrame({
-                '品牌名称': current_brands,
-                '状态': ['✅ 活跃'] * len(current_brands)
-            })
-            st.dataframe(brands_df, hide_index=True)
-        
+            st.markdown("**当前监测品牌/关键词:**")
+
+            # 创建可编辑的品牌列表
+            col1, col2 = st.columns([3, 1])
+            with col1:
+                brands_df = pd.DataFrame({
+                    '品牌/关键词': current_brands,
+                    '状态': ['✅ 活跃'] * len(current_brands),
+                    '类型': ['品牌' if brand[0].isupper() else '关键词' for brand in current_brands]
+                })
+                st.dataframe(brands_df, hide_index=True, use_container_width=True)
+
+            with col2:
+                st.markdown("**快速操作**")
+                clear_all = st.checkbox("🗑️ 清空所有品牌", help="勾选此项将清空所有现有品牌/关键词")
+                if clear_all:
+                    current_brands = []
+        else:
+            st.info("📝 还没有添加任何品牌或关键词")
+
+        # 预设品牌类别
+        st.markdown("**📋 预设品牌类别**")
+        preset_categories = {
+            "笔记软件": ["Notion", "Obsidian", "Roam Research", "Logseq", "Remnote"],
+            "团队协作": ["Slack", "Teams", "Discord", "Zoom", "Lark"],
+            "设计工具": ["Figma", "Sketch", "Adobe XD", "Canva", "Framer"],
+            "开发工具": ["GitHub", "GitLab", "VS Code", "JetBrains", "Sublime"],
+            "项目管理": ["Jira", "Trello", "Asana", "Monday", "ClickUp"]
+        }
+
+        selected_category = st.selectbox(
+            "选择预设类别",
+            options=["自定义"] + list(preset_categories.keys()),
+            help="快速添加常见品牌类别"
+        )
+
+        if selected_category != "自定义":
+            preset_brands = preset_categories[selected_category]
+            selected_presets = st.multiselect(
+                f"选择{selected_category}品牌",
+                options=preset_brands,
+                help="选择要添加的预设品牌"
+            )
+            if selected_presets:
+                current_brands.extend(selected_presets)
+                current_brands = list(set(current_brands))  # 去重
+
         # 添加新品牌
         new_brands_text = st.text_area(
-            "添加新品牌（每行一个）",
-            placeholder="New Brand A\nNew Brand B"
+            "手动添加品牌/关键词（每行一个）",
+            placeholder="Brand A\nkeyword B\n产品名称C",
+            help="支持中英文品牌名称和关键词"
         )
         
         # 项目状态
@@ -332,15 +376,15 @@ def render_project_settings():
                 
                 updated_brands = list(set(current_brands + new_brands))
                 
-                # 更新项目数据
+                # 更新项目数据 - 只发送需要更新的字段
                 updated_project = {
-                    **current_project,
                     "name": new_name,
-                    "domain": new_domain,
                     "description": new_description,
-                    "brands": updated_brands,
+                    "target_keywords": updated_brands,  # 后端期望的字段名
                     "is_active": new_is_active
                 }
+
+                # 注意：domain字段通常不允许更新，所以我们不发送它
                 
                 if update_project(current_project['id'], updated_project):
                     set_current_project(updated_project)
@@ -363,7 +407,7 @@ def get_projects_list() -> List[Dict[str, Any]]:
     """获取项目列表"""
     try:
         api_client = SyncAPIClient()
-        response = api_client.get("projects")
+        response = api_client.get("projects/")
         return response.get("data", {}).get("items", [])
     except Exception as e:
         st.error(f"获取项目列表失败: {str(e)}")
@@ -393,7 +437,7 @@ def create_project(project_data: Dict[str, Any]) -> bool:
     """创建项目"""
     try:
         api_client = SyncAPIClient()
-        response = api_client.post("projects", data=project_data)
+        response = api_client.post("projects/", data=project_data)
         
         # 清除项目缓存
         from utils.session import clear_cache

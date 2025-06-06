@@ -63,7 +63,12 @@ class APIClient:
 
         # 发送请求
         start_time = datetime.now()
-        async with httpx.AsyncClient(timeout=self.timeout) as client:
+        # 配置代理绕过本地地址
+        proxies = None
+        if url.startswith(('http://localhost', 'http://127.0.0.1')):
+            proxies = {}  # 空字典表示不使用代理
+
+        async with httpx.AsyncClient(timeout=self.timeout, proxies=proxies) as client:
             try:
                 response = await client.request(
                     method=method.upper(),
@@ -196,7 +201,16 @@ class SyncAPIClient:
             request_headers.update(headers)
         
         # 发送请求
-        with httpx.Client(timeout=self.timeout) as client:
+        # 配置代理绕过本地地址
+        proxies = None
+        if url.startswith(('http://localhost', 'http://127.0.0.1')):
+            proxies = {}  # 空字典表示不使用代理
+
+        with httpx.Client(
+            timeout=self.timeout,
+            proxies=proxies,
+            follow_redirects=True  # 自动跟随重定向并保持认证头
+        ) as client:
             try:
                 response = client.request(
                     method=method.upper(),

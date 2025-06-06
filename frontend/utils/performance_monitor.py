@@ -47,9 +47,12 @@ class PerformanceMonitor:
         if 'performance_alerts' not in st.session_state:
             st.session_state.performance_alerts = []
     
-    def record_metric(self, name: str, value: float, unit: str = "", 
+    def record_metric(self, name: str, value: float, unit: str = "",
                      category: str = "general", metadata: Optional[Dict] = None):
         """记录性能指标"""
+        # 确保初始化
+        self._init_monitoring_storage()
+
         metric = PerformanceMetric(
             name=name,
             value=value,
@@ -58,7 +61,7 @@ class PerformanceMonitor:
             category=category,
             metadata=metadata or {}
         )
-        
+
         # 添加到会话存储
         st.session_state.performance_metrics.append(metric)
         
@@ -90,9 +93,11 @@ class PerformanceMonitor:
             if len(st.session_state.performance_alerts) > 50:
                 st.session_state.performance_alerts = st.session_state.performance_alerts[-50:]
     
-    def get_metrics(self, category: Optional[str] = None, 
+    def get_metrics(self, category: Optional[str] = None,
                    since: Optional[datetime] = None) -> List[PerformanceMetric]:
         """获取性能指标"""
+        # 确保初始化
+        self._init_monitoring_storage()
         metrics = st.session_state.performance_metrics
         
         # 按类别筛选
@@ -116,6 +121,8 @@ class PerformanceMonitor:
     
     def get_summary(self) -> Dict[str, Any]:
         """获取性能摘要"""
+        # 确保初始化
+        self._init_monitoring_storage()
         metrics = st.session_state.performance_metrics
         alerts = st.session_state.performance_alerts
         
