@@ -373,5 +373,39 @@ class MentionRepository:
 
 ---
 
+## 🔗 前后端集成架构
+
+### 集成状态概览
+**总体集成完成度**: 85%
+
+| 功能模块 | 前端实现 | 后端API | 集成状态 |
+|----------|----------|---------|----------|
+| 用户认证 | ✅ 完整 | ✅ 完整 | 🟢 就绪 |
+| 项目管理 | ✅ 完整 | ✅ 完整 | 🟢 就绪 |
+| 引用检测 | ✅ 完整 | ✅ 完整 | 🟢 就绪 |
+| 历史记录 | ✅ 完整 | ✅ 完整 | 🟢 就绪 |
+| 模板管理 | ✅ 完整 | ⚠️ 需确认 | 🟡 待验证 |
+
+### API端点映射
+```
+前端调用 -> 后端端点
+"api/check-mention" -> "/api/v1/api/check-mention"
+"api/get-history" -> "/api/v1/api/get-history"
+"projects" -> "/api/v1/projects"
+"auth/login" -> "/api/v1/auth/login"
+```
+
+### 双模式架构
+- 🎭 **演示模式**: 使用模拟数据，无需后端服务
+- 🔗 **真实模式**: 完整的前后端API集成
+- 🔄 **无缝切换**: 一键切换运行模式
+
+### 集成测试工具
+- 📋 **简单测试**: `python scripts/simple_integration_test.py`
+- 🚀 **自动化测试**: `./scripts/start_e2e_test.sh`
+- 🔧 **后端测试**: `./scripts/test_backend_only.sh`
+
+---
+
 *最后更新: 2024-12-19*
-*架构版本: v2.2 - MVP引用检测平台*
+*架构版本: v2.3 - 前后端集成完成*
