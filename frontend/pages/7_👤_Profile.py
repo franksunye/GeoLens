@@ -4,6 +4,8 @@
 """
 
 import streamlit as st
+import pandas as pd
+import plotly.express as px
 from datetime import datetime
 from typing import Dict, Any, List
 
@@ -337,9 +339,6 @@ def render_usage_stats():
     st.markdown("#### 使用趋势")
     
     # 模拟趋势数据
-    import pandas as pd
-    import plotly.express as px
-    
     trend_data = stats_data.get('usage_trend', [])
     
     if trend_data:
