@@ -1,0 +1,84 @@
+{
+  "summary": {
+    "start_time": "2025-06-06T04:59:54.381109",
+    "end_time": "2025-06-06T05:00:10.292839",
+    "duration_seconds": 15.91173,
+    "total_tests": 5,
+    "passed_tests": 4,
+    "failed_tests": 1,
+    "pass_rate": 80.0
+  },
+  "results": {
+    "前端语法检查": {
+      "success": true,
+      "checked_files": 27,
+      "total_files": 27,
+      "errors": [],
+      "message": "检查了27/27个文件",
+      "timestamp": "2025-06-06T04:59:54.473273"
+    },
+    "前端综合测试": {
+      "success": true,
+      "message": "前端综合测试100%通过",
+      "details": "语法、导入、结构、组件测试全部通过",
+      "timestamp": "2025-06-06T04:59:55.265837"
+    },
+    "前端启动测试": {
+      "success": true,
+      "message": "前端服务启动成功",
+      "url": "http://localhost:8502",
+      "timestamp": "2025-06-06T05:00:10.289046"
+    },
+    "前端页面访问": {
+      "success": false,
+      "total_checks": 3,
+      "passed_checks": 2,
+      "checks": [
+        [
+          "页面标题",
+          false
+        ],
+        [
+          "Streamlit框架",
+          true
+        ],
+        [
+          "页面结构",
+          true
+        ]
+      ],
+      "message": "页面访问测试: 2/3项通过",
+      "timestamp": "2025-06-06T05:00:10.291861"
+    },
+    "代码质量检查": {
+      "success": true,
+      "existing_files": 4,
+      "missing_files": 0,
+      "page_files": 6,
+      "details": {
+        "existing": [
+          "main.py",
+          "styles/enterprise_theme.py",
+          "components/auth.py",
+          "utils/config.py"
+        ],
+        "missing": [],
+        "pages": [
+          "7_👤_Profile.py",
+          "3_🔍_Detection.py",
+          "2_📁_Projects.py",
+          "4_📜_History.py",
+          "6_📊_Analytics.py",
+          "5_📚_Templates.py"
+        ]
+      },
+      "message": "代码结构检查: 4/4关键文件存在",
+      "timestamp": "2025-06-06T05:00:10.292738"
+    }
+  },
+  "environment": {
+    "python_version": "3.10.12 (main, Feb  4 2025, 14:57:36) [GCC 11.4.0]",
+    "project_root": "/mnt/persist/workspace",
+    "timestamp": "2025-06-06T05:00:10.292858"
+  }
+}
