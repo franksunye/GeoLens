@@ -1,0 +1,51 @@
+{
+  "timestamp": "2025-06-06T03:37:53.049400",
+  "all_passed": false,
+  "total_steps": 8,
+  "passed_steps": 7,
+  "failed_steps": 1,
+  "success_rate": 87.5,
+  "total_duration": 2.245638847351074,
+  "test_results": {
+    "环境检查": {
+      "success": true,
+      "duration": 6.532669067382812e-05,
+      "timestamp": "2025-06-06T03:37:50.803444"
+    },
+    "依赖验证": {
+      "success": true,
+      "duration": 0.6183393001556396,
+      "timestamp": "2025-06-06T03:37:51.421812"
+    },
+    "代码质量": {
+      "success": true,
+      "duration": 0.0026149749755859375,
+      "timestamp": "2025-06-06T03:37:51.424447"
+    },
+    "语法验证": {
+      "success": true,
+      "duration": 0.044690847396850586,
+      "timestamp": "2025-06-06T03:37:51.469155"
+    },
+    "导入测试": {
+      "success": true,
+      "duration": 0.8584413528442383,
+      "timestamp": "2025-06-06T03:37:52.327612"
+    },
+    "功能测试": {
+      "success": true,
+      "duration": 0.715529203414917,
+      "timestamp": "2025-06-06T03:37:53.043174"
+    },
+    "性能测试": {
+      "success": true,
+      "duration": 0.0010006427764892578,
+      "timestamp": "2025-06-06T03:37:53.044209"
+    },
+    "安全检查": {
+      "success": false,
+      "duration": 0.0049571990966796875,
+      "timestamp": "2025-06-06T03:37:53.049180"
+    }
+  }
+}
