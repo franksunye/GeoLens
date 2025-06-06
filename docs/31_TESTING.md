@@ -1014,6 +1014,8 @@ def test_created_recently(self):
 
 ## 🔗 端到端集成测试
 
+> 📖 **详细操作指南**: 查看 [E2E_INTEGRATION_GUIDE.md](E2E_INTEGRATION_GUIDE.md) 获取完整的分步操作说明
+
 ### 快速测试工具
 
 #### 1. 简单集成测试（推荐新手）
