@@ -11,14 +11,21 @@ import pandas as pd
 from typing import List, Dict, Any, Optional
 import numpy as np
 
+from utils.cache_manager import cached
+from utils.error_handler import error_handler, handle_error
+from utils.performance_monitor import PerformanceTimer
+
+@error_handler(context={"component": "charts", "function": "render_detection_results_chart"})
+@cached(ttl=300, key_prefix="chart_detection_results_")
 def render_detection_results_chart(brand_mentions: List[Dict[str, Any]]):
     """渲染检测结果图表"""
     if not brand_mentions:
         st.info("📊 暂无检测数据")
         return
-    
-    # 转换为DataFrame
-    df = pd.DataFrame(brand_mentions)
+
+    with PerformanceTimer("Detection Results Chart Render", "chart_performance"):
+        # 转换为DataFrame
+        df = pd.DataFrame(brand_mentions)
     
     # 品牌提及率柱状图
     st.markdown("#### 📊 品牌提及率分析")

@@ -14,8 +14,11 @@ sys.path.append(str(current_dir))
 
 from components.auth import AuthManager
 from components.sidebar import render_sidebar
-from utils.config import load_config
+from utils.config import load_config, get_config
 from utils.session import init_session_state
+from utils.error_handler import error_handler, handle_error, show_error_dashboard
+from utils.performance_monitor import monitor_page_load, show_performance_dashboard
+from utils.cache_manager import cache_stats
 
 # 页面配置
 st.set_page_config(
@@ -116,6 +119,7 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
+@error_handler(context={"page": "login"})
 def show_login_page():
     """显示登录页面"""
     st.markdown('<div class="main-header">🌍 GeoLens AI引用检测平台</div>', unsafe_allow_html=True)
@@ -155,35 +159,51 @@ def show_login_page():
         
         # 处理登录
         if login_button:
-            if email and password:
-                auth_manager = AuthManager()
-                if auth_manager.login(email, password):
-                    st.success("✅ 登录成功！正在跳转...")
-                    st.rerun()
-                else:
-                    st.error("❌ 登录失败，请检查邮箱和密码")
-            else:
-                st.warning("⚠️ 请填写完整的登录信息")
-        
+            handle_login_attempt(email, password)
+
         # 处理注册
         if register_button:
-            st.info("📝 注册功能开发中，请联系管理员获取账号")
+            handle_register_attempt()
         
         # 演示账号
-        st.markdown("---")
-        st.markdown("### 🎮 演示账号")
-        st.info("""
-        **演示邮箱**: demo@geolens.ai  
-        **演示密码**: demo123
-        
-        *注意: 这是演示账号，数据仅供测试使用*
-        """)
+        render_demo_account_info()
 
+def handle_login_attempt(email: str, password: str):
+    """处理登录尝试"""
+    if email and password:
+        auth_manager = AuthManager()
+        if auth_manager.login(email, password):
+            st.success("✅ 登录成功！正在跳转...")
+            st.rerun()
+        else:
+            st.error("❌ 登录失败，请检查邮箱和密码")
+    else:
+        st.warning("⚠️ 请填写完整的登录信息")
+
+def handle_register_attempt():
+    """处理注册尝试"""
+    st.info("📝 注册功能开发中，请联系管理员获取账号")
+
+def render_demo_account_info():
+    """渲染演示账号信息"""
+    st.markdown("---")
+    st.markdown("### 🎮 演示账号")
+    st.info("""
+    **演示邮箱**: demo@geolens.ai
+    **演示密码**: demo123
+
+    *注意: 这是演示账号，数据仅供测试使用*
+    """)
+
+@error_handler(context={"page": "dashboard"})
 def show_main_app():
     """显示主应用"""
+    # 监控页面加载性能
+    monitor_page_load()
+
     # 渲染侧边栏
     render_sidebar()
-    
+
     # 主内容区域
     st.markdown('<div class="main-header">🌍 GeoLens Dashboard</div>', unsafe_allow_html=True)
     
@@ -279,19 +299,43 @@ def show_main_app():
 
 def main():
     """主函数"""
-    # 初始化会话状态
-    init_session_state()
-    
-    # 加载配置
-    config = load_config()
-    
-    # 检查认证状态
-    auth_manager = AuthManager()
-    
-    if not auth_manager.is_authenticated():
-        show_login_page()
-    else:
-        show_main_app()
+    try:
+        # 初始化会话状态
+        init_session_state()
+
+        # 加载配置
+        config = load_config()
+
+        # 检查认证状态
+        auth_manager = AuthManager()
+
+        # 调试模式显示额外信息
+        if config.debug:
+            with st.sidebar:
+                st.markdown("---")
+                st.markdown("### 🔧 调试信息")
+
+                # 性能监控
+                if st.checkbox("显示性能监控", key="show_perf"):
+                    show_performance_dashboard()
+
+                # 错误监控
+                if st.checkbox("显示错误监控", key="show_errors"):
+                    show_error_dashboard()
+
+                # 缓存统计
+                if st.checkbox("显示缓存统计", key="show_cache"):
+                    st.markdown("#### 📊 缓存统计")
+                    stats = cache_stats()
+                    st.json(stats)
+
+        if not auth_manager.is_authenticated():
+            show_login_page()
+        else:
+            show_main_app()
+
+    except Exception as e:
+        handle_error(e, context={"page": "main", "function": "main"})
 
 if __name__ == "__main__":
     main()

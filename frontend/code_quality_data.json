@@ -1,0 +1,2220 @@
+{
+  "metrics": {
+    "total_files": 20,
+    "total_lines": 6951,
+    "total_functions": 251,
+    "total_classes": 21,
+    "duplicated_code_blocks": 161,
+    "long_functions": 29,
+    "complex_functions": 4,
+    "missing_docstrings": 29
+  },
+  "issues": [
+    {
+      "type": "long_function",
+      "file": "code_quality_check.py",
+      "line": 296,
+      "function": "generate_report",
+      "length": 90,
+      "message": "函数 'generate_report' 过长 (90 行)",
+      "severity": "warning"
+    },
+    {
+      "type": "complex_function",
+      "file": "code_quality_check.py",
+      "line": 296,
+      "function": "generate_report",
+      "complexity": 12,
+      "message": "函数 'generate_report' 复杂度过高 (12)",
+      "severity": "warning"
+    },
+    {
+      "type": "missing_docstring",
+      "file": "code_quality_check.py",
+      "line": 17,
+      "function": "__init__",
+      "message": "函数 '__init__' 缺少文档字符串",
+      "severity": "info"
+    },
+    {
+      "type": "debug_print",
+      "file": "code_quality_check.py",
+      "line": 33,
+      "message": "发现print语句，建议使用日志",
+      "severity": "info"
+    },
+    {
+      "type": "debug_print",
+      "file": "code_quality_check.py",
+      "line": 390,
+      "message": "发现print语句，建议使用日志",
+      "severity": "info"
+    },
+    {
+      "type": "debug_print",
+      "file": "code_quality_check.py",
+      "line": 391,
+      "message": "发现print语句，建议使用日志",
+      "severity": "info"
+    },
+    {
+      "type": "debug_print",
+      "file": "code_quality_check.py",
+      "line": 406,
+      "message": "发现print语句，建议使用日志",
+      "severity": "info"
+    },
+    {
+      "type": "debug_print",
+      "file": "code_quality_check.py",
+      "line": 407,
+      "message": "发现print语句，建议使用日志",
+      "severity": "info"
+    },
+    {
+      "type": "debug_print",
+      "file": "code_quality_check.py",
+      "line": 408,
+      "message": "发现print语句，建议使用日志",
+      "severity": "info"
+    },
+    {
+      "type": "debug_print",
+      "file": "code_quality_check.py",
+      "line": 409,
+      "message": "发现print语句，建议使用日志",
+      "severity": "info"
+    },
+    {
+      "type": "debug_print",
+      "file": "code_quality_check.py",
+      "line": 410,
+      "message": "发现print语句，建议使用日志",
+      "severity": "info"
+    },
+    {
+      "type": "debug_print",
+      "file": "code_quality_check.py",
+      "line": 411,
+      "message": "发现print语句，建议使用日志",
+      "severity": "info"
+    },
+    {
+      "type": "debug_print",
+      "file": "code_quality_check.py",
+      "line": 418,
+      "message": "发现print语句，建议使用日志",
+      "severity": "info"
+    },
+    {
+      "type": "long_function",
+      "file": "main.py",
+      "line": 123,
+      "function": "show_login_page",
+      "length": 61,
+      "message": "函数 'show_login_page' 过长 (61 行)",
+      "severity": "warning"
+    },
+    {
+      "type": "long_function",
+      "file": "main.py",
+      "line": 187,
+      "function": "show_main_app",
+      "length": 99,
+      "message": "函数 'show_main_app' 过长 (99 行)",
+      "severity": "warning"
+    },
+    {
+      "type": "debug_print",
+      "file": "run.py",
+      "line": 18,
+      "message": "发现print语句，建议使用日志",
+      "severity": "info"
+    },
+    {
+      "type": "debug_print",
+      "file": "run.py",
+      "line": 21,
+      "message": "发现print语句，建议使用日志",
+      "severity": "info"
+    },
+    {
+      "type": "debug_print",
+      "file": "run.py",
+      "line": 22,
+      "message": "发现print语句，建议使用日志",
+      "severity": "info"
+    },
+    {
+      "type": "debug_print",
+      "file": "run.py",
+      "line": 32,
+      "message": "发现print语句，建议使用日志",
+      "severity": "info"
+    },
+    {
+      "type": "debug_print",
+      "file": "run.py",
+      "line": 34,
+      "message": "发现print语句，建议使用日志",
+      "severity": "info"
+    },
+    {
+      "type": "debug_print",
+      "file": "run.py",
+      "line": 36,
+      "message": "发现print语句，建议使用日志",
+      "severity": "info"
+    },
+    {
+      "type": "debug_print",
+      "file": "run.py",
+      "line": 43,
+      "message": "发现print语句，建议使用日志",
+      "severity": "info"
+    },
+    {
+      "type": "debug_print",
+      "file": "run.py",
+      "line": 64,
+      "message": "发现print语句，建议使用日志",
+      "severity": "info"
+    },
+    {
+      "type": "debug_print",
+      "file": "run.py",
+      "line": 67,
+      "message": "发现print语句，建议使用日志",
+      "severity": "info"
+    },
+    {
+      "type": "debug_print",
+      "file": "run.py",
+      "line": 72,
+      "message": "发现print语句，建议使用日志",
+      "severity": "info"
+    },
+    {
+      "type": "debug_print",
+      "file": "run.py",
+      "line": 73,
+      "message": "发现print语句，建议使用日志",
+      "severity": "info"
+    },
+    {
+      "type": "debug_print",
+      "file": "run.py",
+      "line": 77,
+      "message": "发现print语句，建议使用日志",
+      "severity": "info"
+    },
+    {
+      "type": "debug_print",
+      "file": "run.py",
+      "line": 89,
+      "message": "发现print语句，建议使用日志",
+      "severity": "info"
+    },
+    {
+      "type": "debug_print",
+      "file": "run.py",
+      "line": 90,
+      "message": "发现print语句，建议使用日志",
+      "severity": "info"
+    },
+    {
+      "type": "debug_print",
+      "file": "run.py",
+      "line": 91,
+      "message": "发现print语句，建议使用日志",
+      "severity": "info"
+    },
+    {
+      "type": "debug_print",
+      "file": "run.py",
+      "line": 92,
+      "message": "发现print语句，建议使用日志",
+      "severity": "info"
+    },
+    {
+      "type": "debug_print",
+      "file": "run.py",
+      "line": 93,
+      "message": "发现print语句，建议使用日志",
+      "severity": "info"
+    },
+    {
+      "type": "long_function",
+      "file": "pages/7_👤_Profile.py",
+      "line": 44,
+      "function": "render_profile_info",
+      "length": 132,
+      "message": "函数 'render_profile_info' 过长 (132 行)",
+      "severity": "warning"
+    },
+    {
+      "type": "long_function",
+      "file": "pages/7_👤_Profile.py",
+      "line": 178,
+      "function": "render_app_settings",
+      "length": 112,
+      "message": "函数 'render_app_settings' 过长 (112 行)",
+      "severity": "warning"
+    },
+    {
+      "type": "long_function",
+      "file": "pages/7_👤_Profile.py",
+      "line": 292,
+      "function": "render_usage_stats",
+      "length": 88,
+      "message": "函数 'render_usage_stats' 过长 (88 行)",
+      "severity": "warning"
+    },
+    {
+      "type": "long_function",
+      "file": "pages/7_👤_Profile.py",
+      "line": 382,
+      "function": "render_security_settings",
+      "length": 100,
+      "message": "函数 'render_security_settings' 过长 (100 行)",
+      "severity": "warning"
+    },
+    {
+      "type": "long_function",
+      "file": "pages/3_🔍_Detection.py",
+      "line": 59,
+      "function": "render_detection_form",
+      "length": 106,
+      "message": "函数 'render_detection_form' 过长 (106 行)",
+      "severity": "warning"
+    },
+    {
+      "type": "long_function",
+      "file": "pages/3_🔍_Detection.py",
+      "line": 167,
+      "function": "run_detection",
+      "length": 59,
+      "message": "函数 'run_detection' 过长 (59 行)",
+      "severity": "warning"
+    },
+    {
+      "type": "long_function",
+      "file": "pages/3_🔍_Detection.py",
+      "line": 228,
+      "function": "generate_mock_detection_results",
+      "length": 52,
+      "message": "函数 'generate_mock_detection_results' 过长 (52 行)",
+      "severity": "warning"
+    },
+    {
+      "type": "long_function",
+      "file": "pages/3_🔍_Detection.py",
+      "line": 338,
+      "function": "render_detection_results",
+      "length": 51,
+      "message": "函数 'render_detection_results' 过长 (51 行)",
+      "severity": "warning"
+    },
+    {
+      "type": "long_function",
+      "file": "pages/2_📁_Projects.py",
+      "line": 137,
+      "function": "render_create_project",
+      "length": 126,
+      "message": "函数 'render_create_project' 过长 (126 行)",
+      "severity": "warning"
+    },
+    {
+      "type": "long_function",
+      "file": "pages/2_📁_Projects.py",
+      "line": 265,
+      "function": "render_project_settings",
+      "length": 91,
+      "message": "函数 'render_project_settings' 过长 (91 行)",
+      "severity": "warning"
+    },
+    {
+      "type": "long_function",
+      "file": "pages/4_📜_History.py",
+      "line": 44,
+      "function": "render_history_list",
+      "length": 124,
+      "message": "函数 'render_history_list' 过长 (124 行)",
+      "severity": "warning"
+    },
+    {
+      "type": "long_function",
+      "file": "pages/4_📜_History.py",
+      "line": 170,
+      "function": "render_record_detail",
+      "length": 51,
+      "message": "函数 'render_record_detail' 过长 (51 行)",
+      "severity": "warning"
+    },
+    {
+      "type": "long_function",
+      "file": "pages/4_📜_History.py",
+      "line": 223,
+      "function": "render_history_analytics",
+      "length": 80,
+      "message": "函数 'render_history_analytics' 过长 (80 行)",
+      "severity": "warning"
+    },
+    {
+      "type": "long_function",
+      "file": "pages/4_📜_History.py",
+      "line": 305,
+      "function": "render_export_section",
+      "length": 86,
+      "message": "函数 'render_export_section' 过长 (86 行)",
+      "severity": "warning"
+    },
+    {
+      "type": "long_function",
+      "file": "pages/6_📊_Analytics.py",
+      "line": 63,
+      "function": "render_trend_analysis",
+      "length": 75,
+      "message": "函数 'render_trend_analysis' 过长 (75 行)",
+      "severity": "warning"
+    },
+    {
+      "type": "long_function",
+      "file": "pages/6_📊_Analytics.py",
+      "line": 140,
+      "function": "render_brand_comparison",
+      "length": 68,
+      "message": "函数 'render_brand_comparison' 过长 (68 行)",
+      "severity": "warning"
+    },
+    {
+      "type": "long_function",
+      "file": "pages/6_📊_Analytics.py",
+      "line": 210,
+      "function": "render_model_analysis",
+      "length": 57,
+      "message": "函数 'render_model_analysis' 过长 (57 行)",
+      "severity": "warning"
+    },
+    {
+      "type": "long_function",
+      "file": "pages/6_📊_Analytics.py",
+      "line": 269,
+      "function": "render_comprehensive_report",
+      "length": 69,
+      "message": "函数 'render_comprehensive_report' 过长 (69 行)",
+      "severity": "warning"
+    },
+    {
+      "type": "long_function",
+      "file": "pages/5_📚_Templates.py",
+      "line": 113,
+      "function": "render_create_template",
+      "length": 81,
+      "message": "函数 'render_create_template' 过长 (81 行)",
+      "severity": "warning"
+    },
+    {
+      "type": "long_function",
+      "file": "pages/5_📚_Templates.py",
+      "line": 196,
+      "function": "render_template_editor",
+      "length": 103,
+      "message": "函数 'render_template_editor' 过长 (103 行)",
+      "severity": "warning"
+    },
+    {
+      "type": "complex_function",
+      "file": "pages/5_📚_Templates.py",
+      "line": 196,
+      "function": "render_template_editor",
+      "complexity": 14,
+      "message": "函数 'render_template_editor' 复杂度过高 (14)",
+      "severity": "warning"
+    },
+    {
+      "type": "long_function",
+      "file": "components/charts.py",
+      "line": 20,
+      "function": "render_detection_results_chart",
+      "length": 54,
+      "message": "函数 'render_detection_results_chart' 过长 (54 行)",
+      "severity": "warning"
+    },
+    {
+      "type": "long_function",
+      "file": "components/charts.py",
+      "line": 76,
+      "function": "render_model_comparison_chart",
+      "length": 74,
+      "message": "函数 'render_model_comparison_chart' 过长 (74 行)",
+      "severity": "warning"
+    },
+    {
+      "type": "long_line",
+      "file": "components/charts.py",
+      "line": 91,
+      "length": 122,
+      "message": "行过长 (122 字符)",
+      "severity": "info"
+    },
+    {
+      "type": "missing_docstring",
+      "file": "components/auth.py",
+      "line": 17,
+      "function": "__init__",
+      "message": "函数 '__init__' 缺少文档字符串",
+      "severity": "info"
+    },
+    {
+      "type": "long_function",
+      "file": "components/auth.py",
+      "line": 21,
+      "function": "login",
+      "length": 56,
+      "message": "函数 'login' 过长 (56 行)",
+      "severity": "warning"
+    },
+    {
+      "type": "missing_docstring",
+      "file": "components/auth.py",
+      "line": 257,
+      "function": "wrapper",
+      "message": "函数 'wrapper' 缺少文档字符串",
+      "severity": "info"
+    },
+    {
+      "type": "missing_docstring",
+      "file": "services/api_client.py",
+      "line": 21,
+      "function": "__init__",
+      "message": "函数 '__init__' 缺少文档字符串",
+      "severity": "info"
+    },
+    {
+      "type": "missing_docstring",
+      "file": "services/api_client.py",
+      "line": 161,
+      "function": "__init__",
+      "message": "函数 '__init__' 缺少文档字符串",
+      "severity": "info"
+    },
+    {
+      "type": "long_line",
+      "file": "services/api_client.py",
+      "line": 242,
+      "length": 147,
+      "message": "行过长 (147 字符)",
+      "severity": "info"
+    },
+    {
+      "type": "missing_docstring",
+      "file": "services/detection_service.py",
+      "line": 17,
+      "function": "__init__",
+      "message": "函数 '__init__' 缺少文档字符串",
+      "severity": "info"
+    },
+    {
+      "type": "missing_docstring",
+      "file": "services/detection_service.py",
+      "line": 222,
+      "function": "__init__",
+      "message": "函数 '__init__' 缺少文档字符串",
+      "severity": "info"
+    },
+    {
+      "type": "long_function",
+      "file": "utils/session.py",
+      "line": 10,
+      "function": "init_session_state",
+      "length": 51,
+      "message": "函数 'init_session_state' 过长 (51 行)",
+      "severity": "warning"
+    },
+    {
+      "type": "complex_function",
+      "file": "utils/session.py",
+      "line": 10,
+      "function": "init_session_state",
+      "complexity": 16,
+      "message": "函数 'init_session_state' 复杂度过高 (16)",
+      "severity": "warning"
+    },
+    {
+      "type": "long_line",
+      "file": "utils/session.py",
+      "line": 176,
+      "length": 130,
+      "message": "行过长 (130 字符)",
+      "severity": "info"
+    },
+    {
+      "type": "missing_docstring",
+      "file": "utils/error_handler.py",
+      "line": 33,
+      "function": "__init__",
+      "message": "函数 '__init__' 缺少文档字符串",
+      "severity": "info"
+    },
+    {
+      "type": "missing_docstring",
+      "file": "utils/error_handler.py",
+      "line": 44,
+      "function": "__init__",
+      "message": "函数 '__init__' 缺少文档字符串",
+      "severity": "info"
+    },
+    {
+      "type": "missing_docstring",
+      "file": "utils/error_handler.py",
+      "line": 49,
+      "function": "__init__",
+      "message": "函数 '__init__' 缺少文档字符串",
+      "severity": "info"
+    },
+    {
+      "type": "missing_docstring",
+      "file": "utils/error_handler.py",
+      "line": 54,
+      "function": "__init__",
+      "message": "函数 '__init__' 缺少文档字符串",
+      "severity": "info"
+    },
+    {
+      "type": "missing_docstring",
+      "file": "utils/error_handler.py",
+      "line": 59,
+      "function": "__init__",
+      "message": "函数 '__init__' 缺少文档字符串",
+      "severity": "info"
+    },
+    {
+      "type": "long_function",
+      "file": "utils/error_handler.py",
+      "line": 65,
+      "function": "__init__",
+      "length": 65,
+      "message": "函数 '__init__' 过长 (65 行)",
+      "severity": "warning"
+    },
+    {
+      "type": "missing_docstring",
+      "file": "utils/error_handler.py",
+      "line": 65,
+      "function": "__init__",
+      "message": "函数 '__init__' 缺少文档字符串",
+      "severity": "info"
+    },
+    {
+      "type": "missing_docstring",
+      "file": "utils/error_handler.py",
+      "line": 255,
+      "function": "decorator",
+      "message": "函数 'decorator' 缺少文档字符串",
+      "severity": "info"
+    },
+    {
+      "type": "missing_docstring",
+      "file": "utils/error_handler.py",
+      "line": 280,
+      "function": "wrapper",
+      "message": "函数 'wrapper' 缺少文档字符串",
+      "severity": "info"
+    },
+    {
+      "type": "missing_docstring",
+      "file": "utils/error_handler.py",
+      "line": 257,
+      "function": "wrapper",
+      "message": "函数 'wrapper' 缺少文档字符串",
+      "severity": "info"
+    },
+    {
+      "type": "missing_docstring",
+      "file": "utils/error_handler.py",
+      "line": 305,
+      "function": "validator",
+      "message": "函数 'validator' 缺少文档字符串",
+      "severity": "info"
+    },
+    {
+      "type": "missing_docstring",
+      "file": "utils/error_handler.py",
+      "line": 312,
+      "function": "validator",
+      "message": "函数 'validator' 缺少文档字符串",
+      "severity": "info"
+    },
+    {
+      "type": "missing_docstring",
+      "file": "utils/error_handler.py",
+      "line": 319,
+      "function": "validator",
+      "message": "函数 'validator' 缺少文档字符串",
+      "severity": "info"
+    },
+    {
+      "type": "missing_docstring",
+      "file": "utils/cache_manager.py",
+      "line": 27,
+      "function": "__init__",
+      "message": "函数 '__init__' 缺少文档字符串",
+      "severity": "info"
+    },
+    {
+      "type": "missing_docstring",
+      "file": "utils/cache_manager.py",
+      "line": 299,
+      "function": "decorator",
+      "message": "函数 'decorator' 缺少文档字符串",
+      "severity": "info"
+    },
+    {
+      "type": "missing_docstring",
+      "file": "utils/cache_manager.py",
+      "line": 300,
+      "function": "wrapper",
+      "message": "函数 'wrapper' 缺少文档字符串",
+      "severity": "info"
+    },
+    {
+      "type": "long_line",
+      "file": "utils/cache_manager.py",
+      "line": 247,
+      "length": 122,
+      "message": "行过长 (122 字符)",
+      "severity": "info"
+    },
+    {
+      "type": "long_function",
+      "file": "utils/performance_monitor.py",
+      "line": 263,
+      "function": "show_performance_dashboard",
+      "length": 143,
+      "message": "函数 'show_performance_dashboard' 过长 (143 行)",
+      "severity": "warning"
+    },
+    {
+      "type": "complex_function",
+      "file": "utils/performance_monitor.py",
+      "line": 263,
+      "function": "show_performance_dashboard",
+      "complexity": 11,
+      "message": "函数 'show_performance_dashboard' 复杂度过高 (11)",
+      "severity": "warning"
+    },
+    {
+      "type": "missing_docstring",
+      "file": "utils/performance_monitor.py",
+      "line": 29,
+      "function": "__init__",
+      "message": "函数 '__init__' 缺少文档字符串",
+      "severity": "info"
+    },
+    {
+      "type": "missing_docstring",
+      "file": "utils/performance_monitor.py",
+      "line": 193,
+      "function": "decorator",
+      "message": "函数 'decorator' 缺少文档字符串",
+      "severity": "info"
+    },
+    {
+      "type": "missing_docstring",
+      "file": "utils/performance_monitor.py",
+      "line": 238,
+      "function": "__init__",
+      "message": "函数 '__init__' 缺少文档字符串",
+      "severity": "info"
+    },
+    {
+      "type": "missing_docstring",
+      "file": "utils/performance_monitor.py",
+      "line": 244,
+      "function": "__enter__",
+      "message": "函数 '__enter__' 缺少文档字符串",
+      "severity": "info"
+    },
+    {
+      "type": "missing_docstring",
+      "file": "utils/performance_monitor.py",
+      "line": 248,
+      "function": "__exit__",
+      "message": "函数 '__exit__' 缺少文档字符串",
+      "severity": "info"
+    },
+    {
+      "type": "missing_docstring",
+      "file": "utils/performance_monitor.py",
+      "line": 195,
+      "function": "wrapper",
+      "message": "函数 'wrapper' 缺少文档字符串",
+      "severity": "info"
+    },
+    {
+      "type": "missing_docstring",
+      "file": "utils/config.py",
+      "line": 18,
+      "function": "__init__",
+      "message": "函数 '__init__' 缺少文档字符串",
+      "severity": "info"
+    },
+    {
+      "type": "code_duplication",
+      "file": "code_quality_check.py",
+      "line": 43,
+      "duplicate_file": "code_quality_check.py",
+      "duplicate_line": 42,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "code_quality_check.py",
+      "line": 220,
+      "duplicate_file": "code_quality_check.py",
+      "duplicate_line": 219,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "code_quality_check.py",
+      "line": 224,
+      "duplicate_file": "code_quality_check.py",
+      "duplicate_line": 38,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "code_quality_check.py",
+      "line": 269,
+      "duplicate_file": "code_quality_check.py",
+      "duplicate_line": 268,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "code_quality_check.py",
+      "line": 274,
+      "duplicate_file": "code_quality_check.py",
+      "duplicate_line": 273,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "code_quality_check.py",
+      "line": 279,
+      "duplicate_file": "code_quality_check.py",
+      "duplicate_line": 278,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "code_quality_check.py",
+      "line": 291,
+      "duplicate_file": "code_quality_check.py",
+      "duplicate_line": 290,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "code_quality_check.py",
+      "line": 322,
+      "duplicate_file": "code_quality_check.py",
+      "duplicate_line": 321,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "code_quality_check.py",
+      "line": 353,
+      "duplicate_file": "code_quality_check.py",
+      "duplicate_line": 352,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "code_quality_check.py",
+      "line": 400,
+      "duplicate_file": "code_quality_check.py",
+      "duplicate_line": 399,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "code_quality_check.py",
+      "line": 413,
+      "duplicate_file": "code_quality_check.py",
+      "duplicate_line": 412,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "main.py",
+      "line": 55,
+      "duplicate_file": "main.py",
+      "duplicate_line": 54,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "main.py",
+      "line": 122,
+      "duplicate_file": "main.py",
+      "duplicate_line": 121,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "main.py",
+      "line": 320,
+      "duplicate_file": "main.py",
+      "duplicate_line": 319,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "run.py",
+      "line": 25,
+      "duplicate_file": "run.py",
+      "duplicate_line": 24,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "run.py",
+      "line": 75,
+      "duplicate_file": "run.py",
+      "duplicate_line": 74,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "pages/7_👤_Profile.py",
+      "line": 88,
+      "duplicate_file": "pages/7_👤_Profile.py",
+      "duplicate_line": 87,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "pages/7_👤_Profile.py",
+      "line": 339,
+      "duplicate_file": "pages/7_👤_Profile.py",
+      "duplicate_line": 338,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "pages/7_👤_Profile.py",
+      "line": 355,
+      "duplicate_file": "pages/7_👤_Profile.py",
+      "duplicate_line": 354,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "pages/7_👤_Profile.py",
+      "line": 358,
+      "duplicate_file": "pages/7_👤_Profile.py",
+      "duplicate_line": 357,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "pages/3_🔍_Detection.py",
+      "line": 214,
+      "duplicate_file": "pages/3_🔍_Detection.py",
+      "duplicate_line": 213,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "pages/3_🔍_Detection.py",
+      "line": 271,
+      "duplicate_file": "pages/3_🔍_Detection.py",
+      "duplicate_line": 270,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "pages/2_📁_Projects.py",
+      "line": 6,
+      "duplicate_file": "pages/2_📁_Projects.py",
+      "duplicate_line": 5,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "pages/2_📁_Projects.py",
+      "line": 8,
+      "duplicate_file": "pages/3_🔍_Detection.py",
+      "duplicate_line": 9,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "pages/2_📁_Projects.py",
+      "line": 11,
+      "duplicate_file": "pages/2_📁_Projects.py",
+      "duplicate_line": 10,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "pages/2_📁_Projects.py",
+      "line": 71,
+      "duplicate_file": "pages/2_📁_Projects.py",
+      "duplicate_line": 70,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "pages/2_📁_Projects.py",
+      "line": 118,
+      "duplicate_file": "pages/2_📁_Projects.py",
+      "duplicate_line": 117,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "pages/2_📁_Projects.py",
+      "line": 123,
+      "duplicate_file": "pages/2_📁_Projects.py",
+      "duplicate_line": 122,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "pages/2_📁_Projects.py",
+      "line": 208,
+      "duplicate_file": "pages/2_📁_Projects.py",
+      "duplicate_line": 207,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "pages/2_📁_Projects.py",
+      "line": 233,
+      "duplicate_file": "pages/2_📁_Projects.py",
+      "duplicate_line": 232,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "pages/2_📁_Projects.py",
+      "line": 279,
+      "duplicate_file": "pages/2_📁_Projects.py",
+      "duplicate_line": 278,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "pages/2_📁_Projects.py",
+      "line": 293,
+      "duplicate_file": "pages/2_📁_Projects.py",
+      "duplicate_line": 292,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "pages/2_📁_Projects.py",
+      "line": 342,
+      "duplicate_file": "pages/2_📁_Projects.py",
+      "duplicate_line": 341,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "pages/2_📁_Projects.py",
+      "line": 410,
+      "duplicate_file": "pages/2_📁_Projects.py",
+      "duplicate_line": 395,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "pages/2_📁_Projects.py",
+      "line": 411,
+      "duplicate_file": "pages/2_📁_Projects.py",
+      "duplicate_line": 396,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "pages/2_📁_Projects.py",
+      "line": 425,
+      "duplicate_file": "pages/2_📁_Projects.py",
+      "duplicate_line": 395,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "pages/2_📁_Projects.py",
+      "line": 426,
+      "duplicate_file": "pages/2_📁_Projects.py",
+      "duplicate_line": 396,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "pages/4_📜_History.py",
+      "line": 6,
+      "duplicate_file": "pages/4_📜_History.py",
+      "duplicate_line": 5,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "pages/4_📜_History.py",
+      "line": 162,
+      "duplicate_file": "pages/4_📜_History.py",
+      "duplicate_line": 161,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "pages/4_📜_History.py",
+      "line": 195,
+      "duplicate_file": "pages/4_📜_History.py",
+      "duplicate_line": 194,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "pages/4_📜_History.py",
+      "line": 258,
+      "duplicate_file": "pages/4_📜_History.py",
+      "duplicate_line": 257,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "pages/4_📜_History.py",
+      "line": 283,
+      "duplicate_file": "pages/4_📜_History.py",
+      "duplicate_line": 282,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "pages/4_📜_History.py",
+      "line": 364,
+      "duplicate_file": "pages/4_📜_History.py",
+      "duplicate_line": 363,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "pages/4_📜_History.py",
+      "line": 367,
+      "duplicate_file": "pages/4_📜_History.py",
+      "duplicate_line": 366,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "pages/4_📜_History.py",
+      "line": 376,
+      "duplicate_file": "pages/4_📜_History.py",
+      "duplicate_line": 375,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "pages/4_📜_History.py",
+      "line": 399,
+      "duplicate_file": "pages/4_📜_History.py",
+      "duplicate_line": 398,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "pages/4_📜_History.py",
+      "line": 487,
+      "duplicate_file": "pages/4_📜_History.py",
+      "duplicate_line": 486,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "pages/6_📊_Analytics.py",
+      "line": 19,
+      "duplicate_file": "pages/4_📜_History.py",
+      "duplicate_line": 14,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "pages/6_📊_Analytics.py",
+      "line": 36,
+      "duplicate_file": "pages/3_🔍_Detection.py",
+      "duplicate_line": 33,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "pages/6_📊_Analytics.py",
+      "line": 37,
+      "duplicate_file": "pages/3_🔍_Detection.py",
+      "duplicate_line": 34,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "pages/6_📊_Analytics.py",
+      "line": 38,
+      "duplicate_file": "pages/3_🔍_Detection.py",
+      "duplicate_line": 35,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "pages/6_📊_Analytics.py",
+      "line": 39,
+      "duplicate_file": "pages/3_🔍_Detection.py",
+      "duplicate_line": 36,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "pages/6_📊_Analytics.py",
+      "line": 40,
+      "duplicate_file": "pages/3_🔍_Detection.py",
+      "duplicate_line": 37,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "pages/6_📊_Analytics.py",
+      "line": 41,
+      "duplicate_file": "pages/3_🔍_Detection.py",
+      "duplicate_line": 38,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "pages/6_📊_Analytics.py",
+      "line": 71,
+      "duplicate_file": "pages/4_📜_History.py",
+      "duplicate_line": 62,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "pages/6_📊_Analytics.py",
+      "line": 105,
+      "duplicate_file": "pages/6_📊_Analytics.py",
+      "duplicate_line": 104,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "pages/6_📊_Analytics.py",
+      "line": 178,
+      "duplicate_file": "pages/6_📊_Analytics.py",
+      "duplicate_line": 177,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "pages/6_📊_Analytics.py",
+      "line": 183,
+      "duplicate_file": "pages/6_📊_Analytics.py",
+      "duplicate_line": 182,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "pages/6_📊_Analytics.py",
+      "line": 188,
+      "duplicate_file": "pages/6_📊_Analytics.py",
+      "duplicate_line": 187,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "pages/6_📊_Analytics.py",
+      "line": 200,
+      "duplicate_file": "pages/6_📊_Analytics.py",
+      "duplicate_line": 199,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "pages/6_📊_Analytics.py",
+      "line": 202,
+      "duplicate_file": "pages/6_📊_Analytics.py",
+      "duplicate_line": 201,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "pages/6_📊_Analytics.py",
+      "line": 205,
+      "duplicate_file": "pages/6_📊_Analytics.py",
+      "duplicate_line": 204,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "pages/6_📊_Analytics.py",
+      "line": 253,
+      "duplicate_file": "pages/6_📊_Analytics.py",
+      "duplicate_line": 252,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "pages/6_📊_Analytics.py",
+      "line": 256,
+      "duplicate_file": "pages/6_📊_Analytics.py",
+      "duplicate_line": 255,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "pages/6_📊_Analytics.py",
+      "line": 261,
+      "duplicate_file": "pages/6_📊_Analytics.py",
+      "duplicate_line": 260,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "pages/6_📊_Analytics.py",
+      "line": 264,
+      "duplicate_file": "pages/6_📊_Analytics.py",
+      "duplicate_line": 263,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "pages/6_📊_Analytics.py",
+      "line": 371,
+      "duplicate_file": "pages/6_📊_Analytics.py",
+      "duplicate_line": 370,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "pages/5_📚_Templates.py",
+      "line": 73,
+      "duplicate_file": "pages/5_📚_Templates.py",
+      "duplicate_line": 72,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "pages/5_📚_Templates.py",
+      "line": 78,
+      "duplicate_file": "pages/5_📚_Templates.py",
+      "duplicate_line": 77,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "pages/5_📚_Templates.py",
+      "line": 93,
+      "duplicate_file": "pages/5_📚_Templates.py",
+      "duplicate_line": 92,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "pages/5_📚_Templates.py",
+      "line": 98,
+      "duplicate_file": "pages/5_📚_Templates.py",
+      "duplicate_line": 97,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "pages/5_📚_Templates.py",
+      "line": 156,
+      "duplicate_file": "pages/2_📁_Projects.py",
+      "duplicate_line": 220,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "pages/5_📚_Templates.py",
+      "line": 166,
+      "duplicate_file": "pages/5_📚_Templates.py",
+      "duplicate_line": 165,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "pages/5_📚_Templates.py",
+      "line": 285,
+      "duplicate_file": "pages/5_📚_Templates.py",
+      "duplicate_line": 284,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "pages/5_📚_Templates.py",
+      "line": 290,
+      "duplicate_file": "pages/5_📚_Templates.py",
+      "duplicate_line": 289,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "pages/5_📚_Templates.py",
+      "line": 307,
+      "duplicate_file": "pages/5_📚_Templates.py",
+      "duplicate_line": 306,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "pages/5_📚_Templates.py",
+      "line": 312,
+      "duplicate_file": "pages/5_📚_Templates.py",
+      "duplicate_line": 311,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "pages/5_📚_Templates.py",
+      "line": 365,
+      "duplicate_file": "pages/5_📚_Templates.py",
+      "duplicate_line": 364,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "components/sidebar.py",
+      "line": 6,
+      "duplicate_file": "components/sidebar.py",
+      "duplicate_line": 5,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "components/sidebar.py",
+      "line": 38,
+      "duplicate_file": "components/sidebar.py",
+      "duplicate_line": 37,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "components/sidebar.py",
+      "line": 43,
+      "duplicate_file": "components/sidebar.py",
+      "duplicate_line": 42,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "components/sidebar.py",
+      "line": 224,
+      "duplicate_file": "components/sidebar.py",
+      "duplicate_line": 223,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "components/charts.py",
+      "line": 145,
+      "duplicate_file": "components/charts.py",
+      "duplicate_line": 144,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "components/charts.py",
+      "line": 234,
+      "duplicate_file": "components/charts.py",
+      "duplicate_line": 233,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "components/charts.py",
+      "line": 341,
+      "duplicate_file": "components/charts.py",
+      "duplicate_line": 340,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "components/auth.py",
+      "line": 6,
+      "duplicate_file": "components/auth.py",
+      "duplicate_line": 5,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "components/auth.py",
+      "line": 39,
+      "duplicate_file": "components/auth.py",
+      "duplicate_line": 38,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "components/auth.py",
+      "line": 42,
+      "duplicate_file": "components/auth.py",
+      "duplicate_line": 41,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "components/auth.py",
+      "line": 64,
+      "duplicate_file": "components/auth.py",
+      "duplicate_line": 63,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "components/auth.py",
+      "line": 85,
+      "duplicate_file": "components/auth.py",
+      "duplicate_line": 84,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "components/auth.py",
+      "line": 112,
+      "duplicate_file": "components/auth.py",
+      "duplicate_line": 111,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "components/auth.py",
+      "line": 129,
+      "duplicate_file": "components/auth.py",
+      "duplicate_line": 128,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "components/auth.py",
+      "line": 148,
+      "duplicate_file": "components/auth.py",
+      "duplicate_line": 51,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "components/auth.py",
+      "line": 166,
+      "duplicate_file": "components/auth.py",
+      "duplicate_line": 165,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "components/auth.py",
+      "line": 173,
+      "duplicate_file": "components/auth.py",
+      "duplicate_line": 172,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "components/auth.py",
+      "line": 189,
+      "duplicate_file": "components/auth.py",
+      "duplicate_line": 188,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "services/api_client.py",
+      "line": 92,
+      "duplicate_file": "services/api_client.py",
+      "duplicate_line": 91,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "services/api_client.py",
+      "line": 141,
+      "duplicate_file": "services/api_client.py",
+      "duplicate_line": 140,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "services/api_client.py",
+      "line": 160,
+      "duplicate_file": "services/api_client.py",
+      "duplicate_line": 20,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "services/api_client.py",
+      "line": 161,
+      "duplicate_file": "services/api_client.py",
+      "duplicate_line": 20,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "services/api_client.py",
+      "line": 167,
+      "duplicate_file": "services/api_client.py",
+      "duplicate_line": 28,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "services/api_client.py",
+      "line": 168,
+      "duplicate_file": "services/api_client.py",
+      "duplicate_line": 29,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "services/api_client.py",
+      "line": 202,
+      "duplicate_file": "services/api_client.py",
+      "duplicate_line": 69,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "services/api_client.py",
+      "line": 203,
+      "duplicate_file": "services/api_client.py",
+      "duplicate_line": 70,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "services/api_client.py",
+      "line": 204,
+      "duplicate_file": "services/api_client.py",
+      "duplicate_line": 71,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "services/api_client.py",
+      "line": 217,
+      "duplicate_file": "services/api_client.py",
+      "duplicate_line": 105,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "services/api_client.py",
+      "line": 218,
+      "duplicate_file": "services/api_client.py",
+      "duplicate_line": 106,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "services/api_client.py",
+      "line": 219,
+      "duplicate_file": "services/api_client.py",
+      "duplicate_line": 107,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "services/api_client.py",
+      "line": 220,
+      "duplicate_file": "services/api_client.py",
+      "duplicate_line": 108,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "services/api_client.py",
+      "line": 237,
+      "duplicate_file": "services/api_client.py",
+      "duplicate_line": 136,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "services/api_client.py",
+      "line": 377,
+      "duplicate_file": "services/api_client.py",
+      "duplicate_line": 376,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "services/detection_service.py",
+      "line": 6,
+      "duplicate_file": "services/detection_service.py",
+      "duplicate_line": 5,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "services/detection_service.py",
+      "line": 49,
+      "duplicate_file": "services/detection_service.py",
+      "duplicate_line": 48,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "services/detection_service.py",
+      "line": 106,
+      "duplicate_file": "services/detection_service.py",
+      "duplicate_line": 71,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "services/detection_service.py",
+      "line": 133,
+      "duplicate_file": "services/detection_service.py",
+      "duplicate_line": 71,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "services/detection_service.py",
+      "line": 208,
+      "duplicate_file": "services/detection_service.py",
+      "duplicate_line": 207,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "services/detection_service.py",
+      "line": 234,
+      "duplicate_file": "services/detection_service.py",
+      "duplicate_line": 71,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "services/detection_service.py",
+      "line": 246,
+      "duplicate_file": "services/detection_service.py",
+      "duplicate_line": 145,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "services/detection_service.py",
+      "line": 247,
+      "duplicate_file": "services/detection_service.py",
+      "duplicate_line": 146,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "services/detection_service.py",
+      "line": 248,
+      "duplicate_file": "services/detection_service.py",
+      "duplicate_line": 147,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "services/detection_service.py",
+      "line": 249,
+      "duplicate_file": "services/detection_service.py",
+      "duplicate_line": 148,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "services/detection_service.py",
+      "line": 300,
+      "duplicate_file": "services/detection_service.py",
+      "duplicate_line": 280,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "services/detection_service.py",
+      "line": 301,
+      "duplicate_file": "services/detection_service.py",
+      "duplicate_line": 281,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "services/detection_service.py",
+      "line": 302,
+      "duplicate_file": "services/detection_service.py",
+      "duplicate_line": 282,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "services/detection_service.py",
+      "line": 333,
+      "duplicate_file": "services/detection_service.py",
+      "duplicate_line": 332,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "services/detection_service.py",
+      "line": 338,
+      "duplicate_file": "services/detection_service.py",
+      "duplicate_line": 337,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "utils/session.py",
+      "line": 79,
+      "duplicate_file": "utils/session.py",
+      "duplicate_line": 78,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "utils/session.py",
+      "line": 84,
+      "duplicate_file": "utils/session.py",
+      "duplicate_line": 83,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "utils/session.py",
+      "line": 142,
+      "duplicate_file": "utils/session.py",
+      "duplicate_line": 141,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "utils/error_handler.py",
+      "line": 42,
+      "duplicate_file": "utils/error_handler.py",
+      "duplicate_line": 41,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "utils/error_handler.py",
+      "line": 47,
+      "duplicate_file": "utils/error_handler.py",
+      "duplicate_line": 46,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "utils/error_handler.py",
+      "line": 52,
+      "duplicate_file": "utils/error_handler.py",
+      "duplicate_line": 51,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "utils/error_handler.py",
+      "line": 57,
+      "duplicate_file": "utils/error_handler.py",
+      "duplicate_line": 56,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "utils/error_handler.py",
+      "line": 132,
+      "duplicate_file": "utils/error_handler.py",
+      "duplicate_line": 131,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "utils/error_handler.py",
+      "line": 198,
+      "duplicate_file": "utils/error_handler.py",
+      "duplicate_line": 197,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "utils/error_handler.py",
+      "line": 237,
+      "duplicate_file": "utils/error_handler.py",
+      "duplicate_line": 236,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "utils/error_handler.py",
+      "line": 290,
+      "duplicate_file": "utils/error_handler.py",
+      "duplicate_line": 289,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "utils/error_handler.py",
+      "line": 340,
+      "duplicate_file": "utils/error_handler.py",
+      "duplicate_line": 339,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "utils/error_handler.py",
+      "line": 373,
+      "duplicate_file": "utils/error_handler.py",
+      "duplicate_line": 372,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "utils/cache_manager.py",
+      "line": 44,
+      "duplicate_file": "utils/cache_manager.py",
+      "duplicate_line": 43,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "utils/cache_manager.py",
+      "line": 67,
+      "duplicate_file": "utils/cache_manager.py",
+      "duplicate_line": 66,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "utils/cache_manager.py",
+      "line": 85,
+      "duplicate_file": "utils/cache_manager.py",
+      "duplicate_line": 84,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "utils/cache_manager.py",
+      "line": 121,
+      "duplicate_file": "utils/cache_manager.py",
+      "duplicate_line": 120,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "utils/cache_manager.py",
+      "line": 138,
+      "duplicate_file": "utils/cache_manager.py",
+      "duplicate_line": 137,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "utils/cache_manager.py",
+      "line": 173,
+      "duplicate_file": "utils/cache_manager.py",
+      "duplicate_line": 172,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "utils/cache_manager.py",
+      "line": 181,
+      "duplicate_file": "utils/cache_manager.py",
+      "duplicate_line": 180,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "utils/cache_manager.py",
+      "line": 212,
+      "duplicate_file": "utils/cache_manager.py",
+      "duplicate_line": 211,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "utils/cache_manager.py",
+      "line": 217,
+      "duplicate_file": "utils/cache_manager.py",
+      "duplicate_line": 216,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "utils/cache_manager.py",
+      "line": 232,
+      "duplicate_file": "utils/cache_manager.py",
+      "duplicate_line": 231,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "utils/cache_manager.py",
+      "line": 275,
+      "duplicate_file": "utils/cache_manager.py",
+      "duplicate_line": 274,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "utils/cache_manager.py",
+      "line": 304,
+      "duplicate_file": "utils/cache_manager.py",
+      "duplicate_line": 303,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "utils/performance_monitor.py",
+      "line": 42,
+      "duplicate_file": "utils/performance_monitor.py",
+      "duplicate_line": 41,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "utils/performance_monitor.py",
+      "line": 72,
+      "duplicate_file": "utils/performance_monitor.py",
+      "duplicate_line": 71,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "utils/performance_monitor.py",
+      "line": 93,
+      "duplicate_file": "utils/performance_monitor.py",
+      "duplicate_line": 92,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "utils/performance_monitor.py",
+      "line": 112,
+      "duplicate_file": "utils/performance_monitor.py",
+      "duplicate_line": 111,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "utils/performance_monitor.py",
+      "line": 117,
+      "duplicate_file": "utils/performance_monitor.py",
+      "duplicate_line": 116,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "utils/performance_monitor.py",
+      "line": 220,
+      "duplicate_file": "utils/performance_monitor.py",
+      "duplicate_line": 203,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "utils/performance_monitor.py",
+      "line": 327,
+      "duplicate_file": "utils/performance_monitor.py",
+      "duplicate_line": 326,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "utils/config.py",
+      "line": 83,
+      "duplicate_file": "utils/config.py",
+      "duplicate_line": 82,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "utils/config.py",
+      "line": 109,
+      "duplicate_file": "utils/config.py",
+      "duplicate_line": 108,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    },
+    {
+      "type": "code_duplication",
+      "file": "utils/config.py",
+      "line": 116,
+      "duplicate_file": "utils/config.py",
+      "duplicate_line": 115,
+      "message": "发现重复代码块",
+      "severity": "warning"
+    }
+  ],
+  "recommendations": [
+    "发现 29 个过长函数，建议拆分为更小的函数",
+    "发现 4 个复杂函数，建议简化逻辑或拆分函数",
+    "发现 29 个缺少文档字符串的函数/类，建议添加文档",
+    "发现 161 个重复代码块，建议提取公共函数",
+    "发现 194 个警告，建议逐步改进"
+  ]
+}

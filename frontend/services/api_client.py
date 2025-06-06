@@ -11,7 +11,9 @@ from datetime import datetime
 
 from utils.config import get_config
 from utils.session import get_auth_headers, is_token_expired
-from components.auth import AuthManager
+from utils.cache_manager import cache_get, cache_set, cached
+from utils.error_handler import NetworkError, APIError, AuthError, handle_error
+from utils.performance_monitor import monitor_api_call, record_metric
 
 class APIClient:
     """API客户端类"""
@@ -29,28 +31,38 @@ class APIClient:
         data: Optional[Dict[str, Any]] = None,
         params: Optional[Dict[str, Any]] = None,
         headers: Optional[Dict[str, str]] = None,
-        require_auth: bool = True
+        require_auth: bool = True,
+        use_cache: bool = False,
+        cache_ttl: int = 300
     ) -> Dict[str, Any]:
         """发送HTTP请求"""
-        
+
+        # 检查缓存（仅GET请求）
+        if use_cache and method.upper() == "GET":
+            cache_key = f"api_{endpoint}_{hash(str(params))}"
+            cached_response = cache_get(cache_key)
+            if cached_response:
+                return cached_response
+
         # 构建完整URL
         url = f"{self.base_url.rstrip('/')}/{endpoint.lstrip('/')}"
-        
+
         # 准备请求头
         request_headers = {"Content-Type": "application/json"}
-        
+
         # 添加认证头
         if require_auth:
             auth_headers = get_auth_headers()
             if not auth_headers and not self._is_demo_mode():
-                raise Exception("未认证，请先登录")
+                raise AuthError("未认证，请先登录")
             request_headers.update(auth_headers)
-        
+
         # 添加自定义头
         if headers:
             request_headers.update(headers)
-        
+
         # 发送请求
+        start_time = datetime.now()
         async with httpx.AsyncClient(timeout=self.timeout) as client:
             try:
                 response = await client.request(
@@ -60,15 +72,36 @@ class APIClient:
                     params=params,
                     headers=request_headers
                 )
-                
-                return self._handle_response(response)
-                
+
+                # 记录性能指标
+                response_time = (datetime.now() - start_time).total_seconds()
+                record_metric(
+                    name="API Response Time",
+                    value=response_time,
+                    unit="seconds",
+                    category="api_performance",
+                    metadata={
+                        'endpoint': endpoint,
+                        'method': method,
+                        'status_code': response.status_code
+                    }
+                )
+
+                result = self._handle_response(response)
+
+                # 缓存成功的GET响应
+                if use_cache and method.upper() == "GET" and response.status_code == 200:
+                    cache_key = f"api_{endpoint}_{hash(str(params))}"
+                    cache_set(cache_key, result, cache_ttl)
+
+                return result
+
             except httpx.TimeoutException:
-                raise Exception("请求超时，请检查网络连接")
+                raise NetworkError("请求超时，请检查网络连接")
             except httpx.ConnectError:
-                raise Exception("无法连接到服务器")
+                raise NetworkError("无法连接到服务器")
             except Exception as e:
-                raise Exception(f"请求失败: {str(e)}")
+                raise APIError(f"请求失败: {str(e)}")
     
     def _handle_response(self, response: httpx.Response) -> Dict[str, Any]:
         """处理响应"""
@@ -76,18 +109,18 @@ class APIClient:
             response_data = response.json()
         except json.JSONDecodeError:
             response_data = {"detail": response.text}
-        
+
         if response.status_code == 200:
             return response_data
         elif response.status_code == 401:
             # 认证失败，清除认证数据
             from utils.session import clear_auth_data
             clear_auth_data()
-            raise Exception("认证失败，请重新登录")
+            raise AuthError("认证失败，请重新登录")
         elif response.status_code == 403:
-            raise Exception("权限不足")
+            raise AuthError("权限不足")
         elif response.status_code == 404:
-            raise Exception("资源不存在")
+            raise APIError("资源不存在")
         elif response.status_code == 422:
             # 验证错误
             detail = response_data.get("detail", "数据验证失败")
@@ -95,10 +128,11 @@ class APIClient:
                 error_msg = detail[0].get("msg", "数据验证失败")
             else:
                 error_msg = str(detail)
-            raise Exception(f"数据验证失败: {error_msg}")
+            from utils.error_handler import ValidationError
+            raise ValidationError(f"数据验证失败: {error_msg}")
         else:
             error_msg = response_data.get("detail", f"请求失败 (状态码: {response.status_code})")
-            raise Exception(error_msg)
+            raise APIError(error_msg)
     
     def _is_demo_mode(self) -> bool:
         """检查是否为演示模式"""
